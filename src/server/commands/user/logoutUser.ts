@@ -12,7 +12,7 @@ interface Args {
 
 interface Context {
     readonly repositories: {
-        readonly access: AccessRepository;
+        readonly AccessRepository: AccessRepository;
     }
 }
 
@@ -24,12 +24,12 @@ export class LogoutUser extends ServerCommand<any, Context, Args> {
     );
 
     public async execute(args: Args): Promise<Response> {
-        const access = await this.context.repositories.access.getByAPI(args.session);
+        const access = await this.context.repositories.AccessRepository.getByAPI(args.session);
 
         if (!access)
             throw new UnauthorizedError('#_login_invalid');
 
-        await this.context.repositories.access.delete(access.id);
+        await this.context.repositories.AccessRepository.delete(access.id);
 
         this.message(`delete access '${access.id}'`);
 

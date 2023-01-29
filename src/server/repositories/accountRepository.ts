@@ -1,9 +1,9 @@
 import { Repository } from "../utils/repository";
 import { AccountEntity } from "../entities/accountEntity";
 
-export class AccountRepository extends Repository<any> {
+export class AccountRepository extends Repository {
     public async getByID(id: number): Promise<AccountEntity | null> {
-        const result = await this.database.query(`SELECT *, FROM_UNIXTIME(\`created\`) as \`created\` FROM ${this.config.table} WHERE \`id\`=? LIMIT 1`, [
+        const result = await this.database.query(`SELECT *, FROM_UNIXTIME(\`created\`) as \`created\` FROM ${this.table} WHERE \`id\`=? LIMIT 1`, [
             id
         ]);
 
@@ -19,7 +19,7 @@ export class AccountRepository extends Repository<any> {
     }
 
     public async getByName(username: string): Promise<AccountEntity | null> {
-        const result = await this.database.query(`SELECT *, FROM_UNIXTIME(\`created\`) as \`created\` FROM ${this.config.table} WHERE \`username\`=? LIMIT 1`, [
+        const result = await this.database.query(`SELECT *, FROM_UNIXTIME(\`created\`) as \`created\` FROM ${this.table} WHERE \`username\`=? LIMIT 1`, [
             username
         ]);
 
@@ -36,7 +36,7 @@ export class AccountRepository extends Repository<any> {
 
     public async create(username: string, key: string): Promise<AccountEntity | null> {
         const created = Date.now();
-        const result = await this.database.query(`INSERT INTO ${this.config.table} (\`username\`,\`key\`,\`created\`) VALUES (?,?,FROM_UNIXTIME(?))`, [
+        const result = await this.database.query(`INSERT INTO ${this.table} (\`username\`,\`key\`,\`created\`) VALUES (?,?,FROM_UNIXTIME(?))`, [
             username,
             key,
             created / 1000
@@ -51,7 +51,7 @@ export class AccountRepository extends Repository<any> {
     }
 
     public async changePassword(account: number, key: string): Promise<void> {
-        await this.database.query(`UPDATE ${this.config.table} SET \`key\`=? WHERE \`id\`=?`, [
+        await this.database.query(`UPDATE ${this.table} SET \`key\`=? WHERE \`id\`=?`, [
             key,
             account
         ]);

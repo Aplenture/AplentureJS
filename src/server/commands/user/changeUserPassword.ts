@@ -15,7 +15,7 @@ interface Args {
 
 interface Context {
     readonly repositories: {
-        readonly accounts: AccountRepository;
+        readonly AccountRepository: AccountRepository;
     }
 }
 
@@ -29,12 +29,12 @@ export class ChangeUserPassword extends ServerCommand<void, Context, Args> {
     );
 
     public async execute(args: Args): Promise<Response> {
-        const account = await this.context.repositories.accounts.getByID(args.account);
+        const account = await this.context.repositories.AccountRepository.getByID(args.account);
 
         if (account.key != args.publickey_old)
             throw new ForbiddenError('#_wrong_public_key');
 
-        await this.context.repositories.accounts.changePassword(args.account, args.publickey_new);
+        await this.context.repositories.AccountRepository.changePassword(args.account, args.publickey_new);
 
         return new OKResponse();
     }

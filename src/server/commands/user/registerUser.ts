@@ -23,8 +23,8 @@ interface Args {
 
 interface Context {
     readonly repositories: {
-        readonly accounts: AccountRepository;
-        readonly access: AccessRepository;
+        readonly AccountRepository: AccountRepository;
+        readonly AccessRepository: AccessRepository;
     }
 }
 
@@ -43,12 +43,12 @@ export class RegisterUser extends ServerCommand<void, Context, Args>{
         const seed = !args.publickey && (args.password || randomPassword(6));
         const publicKey = args.publickey || EC.secp256k1.createPublicKey(EC.createPrivateKey(seed));
 
-        const account = await this.context.repositories.accounts.create(args.username, publicKey.toString());
+        const account = await this.context.repositories.AccountRepository.create(args.username, publicKey.toString());
 
         if (!args.access)
             return new OKResponse();
 
-        const access = await this.context.repositories.access.create(account.id, args.label, DURATION_EXPIRATION);
+        const access = await this.context.repositories.AccessRepository.create(account.id, args.label, DURATION_EXPIRATION);
 
         return new JSONResponse(access);
     }

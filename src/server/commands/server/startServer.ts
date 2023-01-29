@@ -10,7 +10,7 @@ interface Config extends ServerConfig {
 
 interface Context {
     readonly repositories: {
-        readonly access: AccessRepository;
+        readonly AccessRepository: AccessRepository;
     }
 }
 
@@ -19,7 +19,7 @@ export class StartServer extends Command<Config, Context, any, string> {
     public readonly property = null;
 
     public async execute(): Promise<string> {
-        const server = new Server(this.context.repositories.access, this.config);
+        const server = new Server(this.context.repositories.AccessRepository, this.config);
 
         server.init();
         server.start(...this.config.servers);

@@ -3,9 +3,9 @@ import { toHex } from "../../core/other/bigMath";
 import { AccessEntity } from "../entities/accessEntity";
 import { Repository } from "../utils/repository";
 
-export class AccessRepository extends Repository<any> {
+export class AccessRepository extends Repository {
     public async hasAccess(api: string): Promise<boolean> {
-        const result = await this.database.query(`SELECT UNIX_TIMESTAMP(\`expiration\`) FROM ${this.config.table} WHERE \`api\`=?`, [api]);
+        const result = await this.database.query(`SELECT UNIX_TIMESTAMP(\`expiration\`) FROM ${this.table} WHERE \`api\`=?`, [api]);
 
         if (!result.length)
             return false;
@@ -20,7 +20,7 @@ export class AccessRepository extends Repository<any> {
     }
 
     public async getByAPI(api: string): Promise<AccessEntity | null> {
-        const result = await this.database.query(`SELECT *, UNIX_TIMESTAMP(\`created\`) as \`created\`, UNIX_TIMESTAMP(\`expiration\`) as \`expiration\` FROM ${this.config.table} WHERE \`api\`=? LIMIT 1`, [api]);
+        const result = await this.database.query(`SELECT *, UNIX_TIMESTAMP(\`created\`) as \`created\`, UNIX_TIMESTAMP(\`expiration\`) as \`expiration\` FROM ${this.table} WHERE \`api\`=? LIMIT 1`, [api]);
 
         if (!result.length)
             return null;
@@ -61,7 +61,7 @@ export class AccessRepository extends Repository<any> {
             args.push(expiration / 1000);
         }
 
-        const result = await this.database.query(`INSERT INTO ${this.config.table} (${keys.join(',')}) VALUES (${values.join(',')})`, args);
+        const result = await this.database.query(`INSERT INTO ${this.table} (${keys.join(',')}) VALUES (${values.join(',')})`, args);
 
         return {
             id: result.insertId,
@@ -75,6 +75,6 @@ export class AccessRepository extends Repository<any> {
     }
 
     public async delete(id: number): Promise<void> {
-        await this.database.query(`DELETE FROM ${this.config.table} WHERE \`id\`=?`, [id]);
+        await this.database.query(`DELETE FROM ${this.table} WHERE \`id\`=?`, [id]);
     }
 }

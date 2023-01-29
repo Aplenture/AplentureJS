@@ -16,7 +16,7 @@ interface Args {
 
 interface Context {
     readonly repositories: {
-        readonly access: AccessRepository;
+        readonly AccessRepository: AccessRepository;
     }
 }
 
@@ -30,7 +30,7 @@ export class HasAccess extends ServerCommand<void, Context, Args> {
     );
 
     public async execute(args: Args): Promise<Response> {
-        const access = await this.context.repositories.access.getByAPI(args.session);
+        const access = await this.context.repositories.AccessRepository.getByAPI(args.session);
         const time = Date.now();
 
         if (!Server.validateAccess(access, time))

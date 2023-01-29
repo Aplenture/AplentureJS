@@ -1,9 +1,8 @@
-import { RepositoryConfig } from "../models/repositoryConfig";
 import { Database } from "./database";
 
-export abstract class Repository<TConfig extends RepositoryConfig> {
+export abstract class Repository {
     constructor(
         protected readonly database: Database,
-        protected readonly config: TConfig
+        protected readonly table: string
     ) { }
 }
