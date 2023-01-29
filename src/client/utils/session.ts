@@ -1,7 +1,12 @@
-import { Access, EC, ECDSA, Event, toHashInt } from "../../core";
-import { SessionConfig } from "../models";
-import { BoolRequest, JSONRequest } from "../requests";
-import { MessageViewController } from "../viewControllers";
+import { EC } from "../../core/crypto/ec";
+import { ECDSA } from "../../core/crypto/ecdsa";
+import { toHashInt } from "../../core/crypto/hash";
+import { Access } from "../../core/models/access";
+import { Event } from "../../core/utils/event";
+import { SessionConfig } from "../models/sessionConfig";
+import { BoolRequest } from "../requests/boolRequest";
+import { JSONRequest } from "../requests/jsonRequest";
+import { MessageViewController } from "../viewControllers/messageViewController";
 
 const KEY_ACCESS = 'session.access';
 

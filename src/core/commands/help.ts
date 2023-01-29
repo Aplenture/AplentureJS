@@ -1,5 +1,7 @@
-import { DictionaryProperty, StringProperty } from "../properties";
-import { Command, Singleton } from "../utils";
+import { DictionaryProperty } from "../properties/dictionaryProperty";
+import { StringProperty } from "../properties/stringProperty";
+import { Command } from "../utils/command";
+import { Singleton } from "../utils/singleton";
 
 interface Context {
     readonly commands: NodeJS.ReadOnlyDict<Singleton<Command<any, any, any, any>>>;

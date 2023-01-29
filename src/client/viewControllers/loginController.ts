@@ -1,5 +1,9 @@
-import { TextField, Switch, Button, TitleBar } from "../views";
-import { Session, ViewController } from "../utils";
+import { Session } from "../utils/session";
+import { ViewController } from "../utils/viewController";
+import { Button } from "../views/button";
+import { Switch } from "../views/switch";
+import { TextField } from "../views/textField";
+import { TitleBar } from "../views/titleBar";
 import { MessageViewController } from "./messageViewController";
 
 export class LoginController extends ViewController {

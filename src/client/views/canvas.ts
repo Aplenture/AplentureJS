@@ -1,4 +1,4 @@
-import { View } from "../utils";
+import { View } from "../utils/view";
 
 export class Canvas extends View {
     protected readonly canvas = document.createElement('canvas');

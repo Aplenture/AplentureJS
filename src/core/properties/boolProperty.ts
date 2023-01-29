@@ -1,5 +1,5 @@
-import { parseToBool } from "../other";
-import { Property } from "../utils";
+import { parseToBool } from "../other/text";
+import { Property } from "../utils/property";
 
 export class BoolProperty extends Property<boolean> {
     public parse(data: any): boolean {

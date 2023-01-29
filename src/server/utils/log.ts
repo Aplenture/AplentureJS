@@ -1,5 +1,5 @@
 import * as FS from "fs";
-import { formatDateTime } from "../../core";
+import { formatDateTime } from "../../core/other/time";
 
 export class Log {
     constructor(private readonly stream: NodeJS.WritableStream) { }

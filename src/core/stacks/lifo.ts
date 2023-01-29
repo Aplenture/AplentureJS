@@ -1,4 +1,4 @@
-import { Stack } from "../interfaces";
+import { Stack } from "../interfaces/stack";
 
 export class Lifo<T> implements Stack<T> {
     private readonly _elements: T[] = [];

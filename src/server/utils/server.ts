@@ -2,13 +2,24 @@ import * as FS from "fs";
 import * as hTTPS from "https";
 import * as HTTP from "http";
 import { ServerCommand } from "./serverCommand";
-import { AccessRepository } from "../repositories";
-import { AccessEntity } from "../entities";
+import { Event } from "../../core/utils/event";
+import { Commander } from "../../core/utils/commander";
+import { AccessRepository } from "../repositories/accessRepository";
+import { ServerConfig } from "../models/serverConfig";
+import { ServerHelp } from "../commands/other/serverHelp";
+import { Protocol } from "../enums/protocol";
+import { HTTPConfig } from "../models/httpConfig";
+import { ResponseHeader } from "../../core/enums/responseHeader";
+import { RequestHeader } from "../../core/enums/constants";
+import { ResponseType } from "../../core/enums/responseType";
+import { ResponseCode } from "../../core/enums/responseCode";
+import { RequestMethod } from "../../core/enums/requestMethod";
+import { BadRequestError, ForbiddenError, UnauthorizedError } from "../../core/utils/error";
+import { ErrorMessage } from "../../core/enums/errorMessage";
+import { parseToString } from "../../core/other/text";
+import { AccessEntity } from "../entities/accessEntity";
+import { createSign } from "../../core/crypto/hash";
 import { Response } from "./response";
-import { ServerHelp } from "../commands";
-import { Protocol } from "../enums";
-import { BadRequestError, Commander, createSign, ErrorMessage, Event, ForbiddenError, parseToString, RequestHeader, RequestMethod, ResponseCode, ResponseHeader, ResponseType, UnauthorizedError } from "../../core";
-import { AppConfig, ServerConfig } from "../models";
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_TIMEOUT = 5000;
@@ -27,7 +38,7 @@ export class Server {
 
     constructor(
         public readonly access: AccessRepository,
-        public readonly config: AppConfig
+        public readonly config: ServerConfig
     ) {
         this.commander.addCommand('help', ServerHelp, config, { commands: this.commander.commands });
 
@@ -38,7 +49,7 @@ export class Server {
         Server.onMessage.emit(this, "init");
     }
 
-    public start(...configs: readonly ServerConfig[]) {
+    public start(...configs: readonly HTTPConfig[]) {
         configs.forEach(config => {
             const isHTTPS = config.protocol == Protocol.HTTPS;
             const allowedOrigins = config.headers[ResponseHeader.AllowOrigin]

@@ -1,5 +1,5 @@
-import { toHex } from "../other";
-import { createSign } from "../crypto";
+import { createSign } from "../crypto/hash";
+import { toHex } from "../other/bigMath";
 
 export class Access {
     constructor(

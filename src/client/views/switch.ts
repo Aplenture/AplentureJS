@@ -1,5 +1,6 @@
-import { Event, Localization } from "../../core";
-import { View } from "../utils";
+import { Event } from "../../core/utils/event";
+import { Localization } from "../../core/utils/localization";
+import { View } from "../utils/view";
 
 export class Switch extends View {
     public static readonly onChange = new Event<Switch, boolean>();
@@ -28,7 +29,7 @@ export class Switch extends View {
 
     public get title(): string { return this.label.innerText; }
     public set title(value: string) { this.label.innerText = Localization.translate(value); }
-
+    
     public get enabled(): boolean { return this.input.checked; }
     public set enabled(value: boolean) { this.input.checked = value; }
 

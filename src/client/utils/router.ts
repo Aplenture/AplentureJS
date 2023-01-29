@@ -1,5 +1,6 @@
-import { Event, EventHandler } from "../../core";
-import { Route, RouterConfig } from "../models";
+import { Event, EventHandler } from "../../core/utils/event";
+import { Route } from "../models/route";
+import { RouterConfig } from "../models/routerConfig";
 
 export class Router {
     public static readonly onRouteChanged = new Event<Router, Route>();

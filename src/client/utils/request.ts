@@ -1,4 +1,7 @@
-import { encodeString, Event, RequestMethod, ResponseCode } from "../../core";
+import { RequestMethod } from "../../core/enums/requestMethod";
+import { ResponseCode } from "../../core/enums/responseCode";
+import { encodeString } from "../../core/other/text";
+import { Event } from "../../core/utils/event";
 
 export interface RequestOptions {
     readonly type?: RequestMethod;

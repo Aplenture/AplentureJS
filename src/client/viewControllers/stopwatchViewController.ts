@@ -1,6 +1,7 @@
-import { formatDuration, Stopwatch } from "../../core";
-import { ViewController } from "../utils";
-import { Label } from "../views";
+import { formatDuration } from "../../core/other/time";
+import { Stopwatch } from "../../core/utils/stopwatch";
+import { ViewController } from "../utils/viewController";
+import { Label } from "../views/label";
 
 export class StopwatchViewController extends ViewController {
     public readonly label = new Label('stopwatch');

@@ -1,5 +1,5 @@
-import { parseToString } from "../other";
-import { Property } from "../utils";
+import { parseToString } from "../other/text";
+import { Property } from "../utils/property";
 
 export class StringProperty extends Property<string> {
     public parse(data: any): string {

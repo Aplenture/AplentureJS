@@ -1,13 +1,14 @@
-import { TextResponse } from "../../responses";
-import { Response } from "../../utils";
-import { Command, Singleton } from "../../../core";
-import { AppConfig } from "../../models";
+import { Command } from "../../../core/utils/command";
+import { Singleton } from "../../../core/utils/singleton";
+import { ServerConfig } from "../../models/serverConfig";
+import { TextResponse } from "../../responses/textResponse";
+import { Response } from "../../utils/response";
 
 interface Context {
     readonly commands: NodeJS.ReadOnlyDict<Singleton<Command<any, any, any, any>>>;
 }
 
-export class ServerHelp extends Command<AppConfig, Context, any, Response> {
+export class ServerHelp extends Command<ServerConfig, Context, any, Response> {
     public description = "Returna the API description.";
     public property = null;
 

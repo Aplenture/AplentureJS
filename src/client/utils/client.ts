@@ -1,13 +1,15 @@
 import { ViewController } from "./viewController";
-import { MessageViewController, PopupViewController } from "../viewControllers";
 import { Router } from "./router";
 import { Session } from "./session";
-import { JSONRequest } from "../requests";
 import { Request } from "./request";
-import { AppConfig } from "../models";
-import { Localization, RequestHeader } from "../../core";
+import { ClientConfig } from "../models/clientConfig";
+import { MessageViewController } from "../viewControllers/messageViewController";
+import { Localization } from "../../core/utils/localization";
+import { PopupViewController } from "../viewControllers/popupViewController";
+import { RequestHeader } from "../../core/enums/constants";
+import { JSONRequest } from "../requests/jsonRequest";
 
-export abstract class Client<TConfig extends AppConfig> {
+export abstract class Client<TConfig extends ClientConfig> {
     public readonly rootViewController = new ViewController('root');
     public readonly messageViewController: MessageViewController;
 

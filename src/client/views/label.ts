@@ -1,5 +1,5 @@
-import { Localization } from "../../core";
-import { View } from "../utils";
+import { Localization } from "../../core/utils/localization";
+import { View } from "../utils/view";
 
 export class Label extends View {
     protected readonly label = document.createElement('label');

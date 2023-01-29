@@ -1,4 +1,5 @@
-import { ResponseCode, ResponseType } from "../../core";
+import { ResponseCode } from "../../core/enums/responseCode";
+import { ResponseType } from "../../core/enums/responseType";
 
 export class Response {
     constructor(

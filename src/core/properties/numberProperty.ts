@@ -1,5 +1,5 @@
-import { parseToNumber } from "../other";
-import { Property } from "../utils";
+import { parseToNumber } from "../other/text";
+import { Property } from "../utils/property";
 
 export class NumberProperty extends Property<number> {
     public parse(data: any): number {

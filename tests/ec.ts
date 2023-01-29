@@ -1,6 +1,5 @@
 import { expect } from "chai";
-import { EC } from "../src/core/crypto";
-import { ZERO, ONE, NEGATIVE_ONE } from "../src";
+import { ZERO, ONE, NEGATIVE_ONE, EC } from "../src";
 
 describe("EC", () => {
     describe("Private key", () => {

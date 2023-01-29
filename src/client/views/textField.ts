@@ -1,5 +1,6 @@
-import { Event, Localization } from "../../core";
-import { View } from "../utils";
+import { Event } from "../../core/utils/event";
+import { Localization } from "../../core/utils/localization";
+import { View } from "../utils/view";
 
 export enum TextFieldType {
     Text = 'text',

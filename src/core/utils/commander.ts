@@ -2,8 +2,9 @@ import { Singleton } from "./singleton";
 import { Command } from "./command";
 import { Event } from "./event";
 import { Stopwatch } from "./stopwatch";
-import { formatDuration, parseArgs } from "../other";
-import { Help } from "../commands";
+import { Help } from "../commands/help";
+import { formatDuration } from "../other/time";
+import { parseArgs } from "../other/text";
 
 const MAX_LENGTH_RESULT = 30;
 

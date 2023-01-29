@@ -1,7 +1,19 @@
-import { BoolProperty, DictionaryProperty, EC, ECDSA, Milliseconds, NumberProperty, parseToString, sleep, StringProperty, toHashInt, UnauthorizedError } from "../../../core";
-import { AccessRepository, AccountRepository } from "../../repositories";
-import { JSONResponse } from "../../responses";
-import { ServerCommand, Response } from "../../utils";
+import { EC } from "../../../core/crypto/ec";
+import { ECDSA } from "../../../core/crypto/ecdsa";
+import { toHashInt } from "../../../core/crypto/hash";
+import { sleep } from "../../../core/other/sleep";
+import { parseToString } from "../../../core/other/text";
+import { Milliseconds } from "../../../core/other/time";
+import { BoolProperty } from "../../../core/properties/boolProperty";
+import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { NumberProperty } from "../../../core/properties/numberProperty";
+import { StringProperty } from "../../../core/properties/stringProperty";
+import { UnauthorizedError } from "../../../core/utils/error";
+import { AccessRepository } from "../../repositories/accessRepository";
+import { AccountRepository } from "../../repositories/accountRepository";
+import { JSONResponse } from "../../responses/jsonResponse";
+import { Response } from "../../utils/response";
+import { ServerCommand } from "../../utils/serverCommand";
 
 const DURATION_DELAY = Milliseconds.Second;
 const DURATION_SHORT_ACCESS = Milliseconds.Day;

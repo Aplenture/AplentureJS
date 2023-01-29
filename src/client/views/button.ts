@@ -1,4 +1,4 @@
-import { View } from "../utils";
+import { View } from "../utils/view";
 import { Label } from "./label";
 
 export class Button extends View {

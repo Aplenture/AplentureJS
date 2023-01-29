@@ -1,7 +1,10 @@
 import * as MySQL from "mariadb";
 import * as fs from "fs";
-import { decodeString, encodeString, Event, formatDuration, Stopwatch } from "../../core";
-import { DatabaseConfig } from "../models";
+import { Event } from "../../core/utils/event";
+import { DatabaseConfig } from "../models/databaseConfig";
+import { Stopwatch } from "../../core/utils/stopwatch";
+import { formatDuration } from "../../core/other/time";
+import { decodeString, encodeString } from "../../core/other/text";
 
 type Type = string | number
 type Entry = NodeJS.ReadOnlyDict<any>;

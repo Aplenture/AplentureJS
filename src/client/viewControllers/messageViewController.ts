@@ -1,6 +1,9 @@
-import { Event, Fifo, Message } from "../../core";
-import { ViewController } from "../utils";
-import { Button, Label } from "../views";
+import { Message } from "../../core/models/message";
+import { Fifo } from "../../core/stacks/fifo";
+import { Event } from "../../core/utils/event";
+import { ViewController } from "../utils/viewController";
+import { Button } from "../views/button";
+import { Label } from "../views/label";
 
 export class MessageViewController extends ViewController {
     public static readonly onMessage = new Event<MessageViewController, Message>();

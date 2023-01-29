@@ -1,6 +1,8 @@
-import { Command, DictionaryProperty, StringProperty } from "../../../core";
-import { DatabaseConfig } from "../../models";
-import { Database } from "../../utils";
+import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { StringProperty } from "../../../core/properties/stringProperty";
+import { Command } from "../../../core/utils/command";
+import { DatabaseConfig } from "../../models/databaseConfig";
+import { Database } from "../../utils/database";
 
 interface Config {
     readonly databases: readonly DatabaseConfig[];

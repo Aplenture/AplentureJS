@@ -1,4 +1,4 @@
-import { RepositoryConfig } from "../models";
+import { RepositoryConfig } from "../models/repositoryConfig";
 import { Database } from "./database";
 
 export abstract class Repository<TConfig extends RepositoryConfig> {

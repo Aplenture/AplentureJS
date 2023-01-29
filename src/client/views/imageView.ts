@@ -1,4 +1,4 @@
-import { View } from "../utils";
+import { View } from "../utils/view";
 
 export class ImageView extends View {
     protected readonly image = document.createElement('img');

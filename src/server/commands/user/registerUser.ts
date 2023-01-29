@@ -1,7 +1,15 @@
-import { BoolProperty, DictionaryProperty, EC, Milliseconds, randomPassword, StringProperty } from "../../../core";
-import { AccessRepository, AccountRepository } from "../../repositories";
-import { JSONResponse, OKResponse } from "../../responses";
-import { ServerCommand, Response } from "../../utils";
+import { EC } from "../../../core/crypto/ec";
+import { randomPassword } from "../../../core/crypto/random";
+import { Milliseconds } from "../../../core/other/time";
+import { BoolProperty } from "../../../core/properties/boolProperty";
+import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { StringProperty } from "../../../core/properties/stringProperty";
+import { AccessRepository } from "../../repositories/accessRepository";
+import { AccountRepository } from "../../repositories/accountRepository";
+import { JSONResponse } from "../../responses/jsonResponse";
+import { OKResponse } from "../../responses/okResponse";
+import { Response } from "../../utils/response";
+import { ServerCommand } from "../../utils/serverCommand";
 
 const DURATION_EXPIRATION = Milliseconds.Hour;
 

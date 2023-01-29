@@ -1,4 +1,4 @@
-import { Property } from "../utils";
+import { Property } from "../utils/property";
 
 export class DictionaryProperty<T extends NodeJS.ReadOnlyDict<any>> extends Property<T> {
     public readonly properties: readonly Property<any>[];

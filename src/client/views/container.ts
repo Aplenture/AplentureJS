@@ -1,4 +1,4 @@
-import { View } from "../utils";
+import { View } from "../utils/view";
 
 export class Container extends View {
     public readonly contentView = new View('content');

@@ -1,5 +1,6 @@
-import { View, ViewController } from "../utils";
-import { Container } from "../views";
+import { View } from "../utils/view";
+import { ViewController } from "../utils/viewController";
+import { Container } from "../views/container";
 
 export class PopupViewController extends ViewController {
     public readonly contentView = new Container('content');

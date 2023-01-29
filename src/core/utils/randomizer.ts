@@ -1,4 +1,4 @@
-import { random, randomRanged, randomSeeded, shuffle } from "../crypto";
+import { random, randomRanged, randomSeeded, shuffle } from "../crypto/random";
 
 export class Randomizer {
     private _iterations = 0;

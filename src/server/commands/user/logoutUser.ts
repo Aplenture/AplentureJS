@@ -1,7 +1,10 @@
-import { DictionaryProperty, StringProperty, UnauthorizedError } from "../../../core";
-import { AccessRepository } from "../../repositories";
-import { OKResponse } from "../../responses";
-import { ServerCommand, Response } from "../../utils";
+import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { StringProperty } from "../../../core/properties/stringProperty";
+import { UnauthorizedError } from "../../../core/utils/error";
+import { AccessRepository } from "../../repositories/accessRepository";
+import { OKResponse } from "../../responses/okResponse";
+import { Response } from "../../utils/response";
+import { ServerCommand } from "../../utils/serverCommand";
 
 interface Args {
     readonly session: string;

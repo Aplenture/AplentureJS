@@ -1,4 +1,4 @@
-import { View } from "../utils";
+import { View } from "../utils/view";
 
 export class FlexView extends View {
     constructor(...classes: string[]) {

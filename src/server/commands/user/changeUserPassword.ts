@@ -1,7 +1,11 @@
-import { DictionaryProperty, ForbiddenError, NumberProperty, StringProperty } from "../../../core";
-import { AccountRepository } from "../../repositories";
-import { OKResponse } from "../../responses";
-import { ServerCommand, Response } from "../../utils";
+import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { NumberProperty } from "../../../core/properties/numberProperty";
+import { StringProperty } from "../../../core/properties/stringProperty";
+import { ForbiddenError } from "../../../core/utils/error";
+import { AccountRepository } from "../../repositories/accountRepository";
+import { OKResponse } from "../../responses/okResponse";
+import { Response } from "../../utils/response";
+import { ServerCommand } from "../../utils/serverCommand";
 
 interface Args {
     readonly account: number;

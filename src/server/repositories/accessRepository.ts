@@ -1,4 +1,5 @@
-import { random, toHex } from "../../core";
+import { random } from "../../core/crypto/random";
+import { toHex } from "../../core/other/bigMath";
 import { AccessEntity } from "../entities/accessEntity";
 import { Repository } from "../utils/repository";
 

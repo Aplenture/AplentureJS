@@ -1,4 +1,4 @@
-import { Event } from "../../core";
+import { Event } from "../../core/utils/event";
 
 export class View {
     public static readonly onClick = new Event<View, void>();

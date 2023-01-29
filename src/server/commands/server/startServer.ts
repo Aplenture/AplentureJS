@@ -1,10 +1,11 @@
-import { Command } from "../../../core";
-import { AppConfig, ServerConfig } from "../../models";
-import { AccessRepository } from "../../repositories";
-import { Server } from "../../utils";
+import { Command } from "../../../core/utils/command";
+import { HTTPConfig } from "../../models/httpConfig";
+import { ServerConfig } from "../../models/serverConfig";
+import { AccessRepository } from "../../repositories/accessRepository";
+import { Server } from "../../utils/server";
 
-interface Config extends AppConfig {
-    readonly servers: readonly ServerConfig[];
+interface Config extends ServerConfig {
+    readonly servers: readonly HTTPConfig[];
 }
 
 interface Context {

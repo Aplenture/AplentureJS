@@ -1,21 +1,8 @@
-import { Event } from "../../core";
-import { View, ViewController } from "../utils";
-
-export enum TableViewControllerSelectionMode {
-    None,
-    Clickable,
-    Single,
-    Multiple
-}
-
-export interface TableViewControllerSource<TCell extends View> {
-    numberOfCategories?(): number;
-    numberOfCells(category: number): number;
-    createHeader(): View;
-    createCategory?(index: number): View | null;
-    createCell(category: number): TCell;
-    updateCell(cell: TCell, row: number, category: number): void;
-}
+import { Event } from "../../core/utils/event";
+import { TableSelectionMode } from "../enums/tableSelectionMode";
+import { TableViewControllerSource } from "../interfaces/tableViewControllerDataSource";
+import { View } from "../utils/view";
+import { ViewController } from "../utils/viewController";
 
 export class TableViewController<TCell extends View> extends ViewController {
     public static readonly onSelected = new Event<TableViewController<any>, number>();
@@ -26,7 +13,7 @@ export class TableViewController<TCell extends View> extends ViewController {
     private readonly _cells: TCell[] = [];
     private readonly _selectedRows: number[] = [];
 
-    private _selectionMode = TableViewControllerSelectionMode.None;
+    private _selectionMode = TableSelectionMode.None;
 
     constructor(public source: TableViewControllerSource<TCell>, ...classes: string[]) {
         super(...classes);
@@ -37,10 +24,10 @@ export class TableViewController<TCell extends View> extends ViewController {
     public get cells(): readonly TCell[] { return this._cells; }
     public get selectedRows(): readonly number[] { return this._selectedRows; }
 
-    public get selectionMode(): TableViewControllerSelectionMode { return this._selectionMode; }
-    public set selectionMode(value: TableViewControllerSelectionMode) {
+    public get selectionMode(): TableSelectionMode { return this._selectionMode; }
+    public set selectionMode(value: TableSelectionMode) {
         this._selectionMode = value;
-        this.cells.forEach(cell => cell.clickable = value != TableViewControllerSelectionMode.None);
+        this.cells.forEach(cell => cell.clickable = value != TableSelectionMode.None);
     }
 
     public get alternatingBackgroundColor(): boolean { return this.view.hasClass('alternatingBackgroundColor'); }
@@ -120,16 +107,16 @@ export class TableViewController<TCell extends View> extends ViewController {
     }
 
     public selectRow(row: number): void {
-        if (this._selectionMode == TableViewControllerSelectionMode.None)
+        if (this._selectionMode == TableSelectionMode.None)
             return;
 
         if (this.isRowSelected(row))
             return;
 
-        if (this._selectionMode == TableViewControllerSelectionMode.Single)
+        if (this._selectionMode == TableSelectionMode.Single)
             this.deselectAllRows();
 
-        if (this._selectionMode != TableViewControllerSelectionMode.Clickable) {
+        if (this._selectionMode != TableSelectionMode.Clickable) {
             this._cells[row].selected = true;
 
             if (!this._selectedRows.includes(row))
@@ -146,10 +133,10 @@ export class TableViewController<TCell extends View> extends ViewController {
     private reuseCell(category: number): TCell {
         const cell = this.source.createCell(category);
 
-        cell.clickable = this._selectionMode != TableViewControllerSelectionMode.None;
+        cell.clickable = this._selectionMode != TableSelectionMode.None;
 
         View.onClick.on(() => {
-            if (this._selectionMode == TableViewControllerSelectionMode.None)
+            if (this._selectionMode == TableSelectionMode.None)
                 return;
 
             const row = this.cellIndex(cell);

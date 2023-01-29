@@ -1,7 +1,12 @@
-import { Server, ServerCommand, Response } from "../../utils";
-import { AccessRepository } from "../../repositories";
-import { BoolResponse, OKResponse } from "../../responses";
-import { DictionaryProperty, NumberProperty, StringProperty } from "../../../core";
+import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { NumberProperty } from "../../../core/properties/numberProperty";
+import { StringProperty } from "../../../core/properties/stringProperty";
+import { AccessRepository } from "../../repositories/accessRepository";
+import { BoolResponse } from "../../responses/boolResponse";
+import { OKResponse } from "../../responses/okResponse";
+import { Response } from "../../utils/response";
+import { Server } from "../../utils/server";
+import { ServerCommand } from "../../utils/serverCommand";
 
 interface Args {
     readonly session: string;

@@ -1,4 +1,4 @@
-import { Stack } from "../interfaces";
+import { Stack } from "../interfaces/stack";
 
 interface Node<T> {
     element: T;

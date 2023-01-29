@@ -1,4 +1,4 @@
-import { Property } from "../utils";
+import { Property } from "../utils/property";
 
 export class ArrayProperty<T> extends Property<readonly T[]> {
     public readonly properties: readonly Property<T>[];
