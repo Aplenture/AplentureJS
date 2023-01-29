@@ -89,6 +89,7 @@ export class Server {
     }
 
     public addCommand(command: string, _constructor: new (...args: any[]) => ServerCommand<any, any, any>, ...args: any[]): void {
+        Server.onMessage.emit(this, `add command '${command}'`);
         this.commander.addCommand(command, _constructor, ...args);
     }
 
