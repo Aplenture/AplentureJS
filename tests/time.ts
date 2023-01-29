@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Milliseconds, trimTime } from "../src/other/time"
+import { Milliseconds, trimTime } from "../src"
 
 describe("Time", () => {
     describe("Trim Time", () => {

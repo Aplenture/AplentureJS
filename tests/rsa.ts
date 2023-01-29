@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { RSA } from "../src/crypto";
+import { RSA } from "../src";
 
 describe.skip("RSA", () => {
     it("creates random key pairs", () => {

@@ -1,6 +1,6 @@
 import { expect } from "chai";
-import { EC } from "../src/crypto";
-import { ZERO, ONE, NEGATIVE_ONE } from "../src/other/bigMath";
+import { EC } from "../src/core/crypto";
+import { ZERO, ONE, NEGATIVE_ONE } from "../src";
 
 describe("EC", () => {
     describe("Private key", () => {

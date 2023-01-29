@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Singleton } from "../src/utils";
+import { Singleton } from "../src";
 
 describe("Singleton", () => {
     it("instantiates", () => {

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { parseToBool, parseToNumber, parseToString, parseToTime, parseToJSON, toFirstUpperCase, parseArgs } from "../src/other/text"
+import { parseToBool, parseToNumber, parseToString, parseToTime, parseToJSON, toFirstUpperCase, parseArgs } from "../src"
 
 describe("Text", () => {
     describe("Parse Time", () => {

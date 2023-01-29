@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { calcEGCD, calcModInv, toHex, fromHex, toBuffer, fromBuffer } from "../src/other/bigMath";
+import { calcEGCD, calcModInv, toHex, fromHex, toBuffer, fromBuffer } from "../src";
 
 describe("BigInteger math", () => {
     it("calculates egcd", () => {

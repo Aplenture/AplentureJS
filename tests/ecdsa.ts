@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { ECDSA, EC } from "../src/crypto";
+import { ECDSA, EC } from "../src";
 
 describe("ECDSA", () => {
     const privateKey = 73465813435010424130020467409668748140716258667324402470139896679062606285692n;

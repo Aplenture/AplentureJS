@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Commander } from "../src/utils/commander";
+import { Commander } from "../src";
 
 describe("Commander", () => {
     const commander = new Commander();

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Access } from "../src/models/access";
+import { Access } from "../src";
 
 describe("Access", () => {
     describe("Serialization", () => {

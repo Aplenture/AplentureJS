@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Localization } from "../src/utils";
+import { Localization } from "../src";
 
 describe("Localization", () => {
     Localization.dictionary = { "hello": "world" };

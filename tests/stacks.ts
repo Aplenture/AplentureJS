@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import * as Stacks from "../src/stacks";
+import * as Stacks from "../src";
 
 describe("Stacks", () => {
     describe("Fifo", () => {

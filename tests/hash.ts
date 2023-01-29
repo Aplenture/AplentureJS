@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { sha256, toHashInt, createSign } from "../src/crypto";
+import { sha256, toHashInt, createSign } from "../src";
 
 describe("Hash", () => {
     it("calculates sha256", () => [

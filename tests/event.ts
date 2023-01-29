@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { Event } from "../src/utils";
+import { Event } from "../src";
 
 describe("Event", () => {
     it("emits message", () => {
