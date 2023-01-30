@@ -1,14 +1,16 @@
 export abstract class Property<T> {
+    public readonly optional: boolean;
+
     constructor(
         public readonly name: string,
         public readonly description: string,
         protected readonly _default?: T
-    ) { }
-
-    public get optional(): boolean { return undefined != this._default; }
+    ) {
+        this.optional = "undefined" != typeof this._default;
+    }
 
     public parse(data: any): T {
-        if (undefined == data && this.optional)
+        if (this.optional && "undefined" == typeof data)
             return this._default;
 
         return this.parseData(data);
