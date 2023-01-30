@@ -6,11 +6,11 @@ export abstract class Property<T> {
         public readonly description: string,
         protected readonly _default?: T
     ) {
-        this.optional = "undefined" != typeof this._default;
+        this.optional = undefined !== this._default;
     }
 
     public parse(data: any): T {
-        if (this.optional && "undefined" == typeof data)
+        if (this.optional && undefined === data)
             return this._default;
 
         return this.parseData(data);
