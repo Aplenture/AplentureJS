@@ -11,7 +11,7 @@ export class ArrayProperty<T> extends Property<readonly T[]> {
         this.properties = properties;
     }
 
-    public parse(data = []): readonly T[] {
+    protected parseData(data = []): readonly T[] {
         return this.properties.map((property, index) => property.parse(data[index]));
     }
 }

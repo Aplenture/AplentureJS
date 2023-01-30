@@ -41,8 +41,8 @@ export class LoginUser extends ServerCommand<void, Context, Args> {
         new NumberProperty("timestamp", "For validation."),
         new StringProperty("username", "From account."),
         new StringProperty("sign", "From timestamp."),
-        new BoolProperty("keepLogin", "Keeps access for long time.", true),
-        new StringProperty("label", "To assign the access creator.", true)
+        new BoolProperty("keepLogin", "Keeps access for long time.", false),
+        new StringProperty("label", "To assign the access creator.", '')
     );
 
     public async execute(args: Args): Promise<Response> {

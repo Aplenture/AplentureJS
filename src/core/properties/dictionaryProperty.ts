@@ -11,7 +11,7 @@ export class DictionaryProperty<T extends NodeJS.ReadOnlyDict<any>> extends Prop
         this.properties = properties;
     }
 
-    public parse(data = {}): T {
+    protected parseData(data = {}): T {
         const result = {};
 
         this.properties.forEach(property => result[property.name] = property.parse(data[property.name]));

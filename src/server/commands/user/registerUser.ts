@@ -33,10 +33,10 @@ export class RegisterUser extends ServerCommand<void, Context, Args>{
     public readonly description = "Creates a new account and optionaly a temporary access.";
     public readonly property = new DictionaryProperty<Args>("",
         new StringProperty("username", "For account."),
-        new StringProperty("password", "For account.", true),
-        new StringProperty("publickey", "From password.", true),
-        new StringProperty("label", "To assign creator of temporary open access for created account.", true),
-        new BoolProperty("access", "Flag to create temporary access too.", true)
+        new StringProperty("password", "For account.", null),
+        new StringProperty("publickey", "From password.", null),
+        new StringProperty("label", "To assign creator of temporary open access for created account.", ''),
+        new BoolProperty("access", "Flag to create temporary access too.", false)
     );
 
     public async execute(args: Args): Promise<Response> {

@@ -14,7 +14,7 @@ interface Args {
 export class Help extends Command<void, Context, Args, string> {
     public readonly description = "Lists all commands.";
     public readonly property = new DictionaryProperty<Args>("",
-        new StringProperty("command", "Name of part of name of command to get detailed help.", true)
+        new StringProperty("command", "Name of part of name of command to get detailed help.", '')
     );
 
     public async execute(args: Args): Promise<string> {
