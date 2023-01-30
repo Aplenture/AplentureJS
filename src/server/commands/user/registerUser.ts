@@ -2,7 +2,7 @@ import { EC } from "../../../core/crypto/ec";
 import { randomPassword } from "../../../core/crypto/random";
 import { Milliseconds } from "../../../core/other/time";
 import { BoolProperty } from "../../../core/properties/boolProperty";
-import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { CommandArgs } from "../../../core/properties/commandArgs";
 import { StringProperty } from "../../../core/properties/stringProperty";
 import { AccessRepository } from "../../repositories/accessRepository";
 import { AccountRepository } from "../../repositories/accountRepository";
@@ -31,7 +31,7 @@ interface Context {
 export class RegisterUser extends ServerCommand<void, Context, Args>{
     public readonly isPrivate = false;
     public readonly description = "Creates a new account and optionaly a temporary access.";
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new StringProperty("username", "For account."),
         new StringProperty("password", "For account.", null),
         new StringProperty("publickey", "From password.", null),

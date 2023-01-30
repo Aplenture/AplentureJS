@@ -1,4 +1,4 @@
-import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { CommandArgs } from "../../../core/properties/commandArgs";
 import { StringProperty } from "../../../core/properties/stringProperty";
 import { Command } from "../../../core/utils/command";
 import { DatabaseConfig } from "../../models/databaseConfig";
@@ -14,7 +14,7 @@ interface Args {
 
 export class UpdateDatabase extends Command<Config, void, Args, string> {
     public readonly description = "Updates the databases.";
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new StringProperty("directory", "Directory of update files.")
     );
 

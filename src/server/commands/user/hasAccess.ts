@@ -1,4 +1,4 @@
-import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { CommandArgs } from "../../../core/properties/commandArgs";
 import { NumberProperty } from "../../../core/properties/numberProperty";
 import { StringProperty } from "../../../core/properties/stringProperty";
 import { AccessRepository } from "../../repositories/accessRepository";
@@ -23,7 +23,7 @@ interface Context {
 export class HasAccess extends ServerCommand<void, Context, Args> {
     public readonly isPrivate = false;
     public readonly description = "Returns whether access is valid."
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new StringProperty("sesion", "Access session."),
         new StringProperty("signature", "Signatured timestamp."),
         new NumberProperty("timestamp", "Validation timestamp.")

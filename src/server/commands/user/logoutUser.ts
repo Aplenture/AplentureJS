@@ -1,4 +1,4 @@
-import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { CommandArgs } from "../../../core/properties/commandArgs";
 import { StringProperty } from "../../../core/properties/stringProperty";
 import { UnauthorizedError } from "../../../core/utils/error";
 import { AccessRepository } from "../../repositories/accessRepository";
@@ -19,7 +19,7 @@ interface Context {
 export class LogoutUser extends ServerCommand<any, Context, Args> {
     public readonly isPrivate = true;
     public readonly description = "Closes the access."
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new StringProperty("session", "Session from access to close.")
     );
 

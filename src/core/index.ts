@@ -27,7 +27,7 @@ export * from "./other/time";
 
 export * from "./properties/arrayProperty";
 export * from "./properties/boolProperty";
-export * from "./properties/dictionaryProperty";
+export * from "./properties/commandArgs";
 export * from "./properties/numberProperty";
 export * from "./properties/stringProperty";
 

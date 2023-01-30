@@ -1,4 +1,4 @@
-import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { CommandArgs } from "../../../core/properties/commandArgs";
 import { NumberProperty } from "../../../core/properties/numberProperty";
 import { StringProperty } from "../../../core/properties/stringProperty";
 import { ForbiddenError } from "../../../core/utils/error";
@@ -22,7 +22,7 @@ interface Context {
 export class ChangeUserPassword extends ServerCommand<void, Context, Args> {
     public readonly isPrivate = true;
     public readonly description = "Changes the account password."
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new NumberProperty("account", "Where to change the password."),
         new StringProperty("publickkey_old", "Of current password."),
         new StringProperty("publickkey_new", "Of new password.")

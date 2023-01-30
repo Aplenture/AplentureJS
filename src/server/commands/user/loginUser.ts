@@ -5,7 +5,7 @@ import { sleep } from "../../../core/other/sleep";
 import { parseToString } from "../../../core/other/text";
 import { Milliseconds } from "../../../core/other/time";
 import { BoolProperty } from "../../../core/properties/boolProperty";
-import { DictionaryProperty } from "../../../core/properties/dictionaryProperty";
+import { CommandArgs } from "../../../core/properties/commandArgs";
 import { NumberProperty } from "../../../core/properties/numberProperty";
 import { StringProperty } from "../../../core/properties/stringProperty";
 import { UnauthorizedError } from "../../../core/utils/error";
@@ -37,7 +37,7 @@ interface Context {
 export class LoginUser extends ServerCommand<void, Context, Args> {
     public readonly isPrivate = false;
     public readonly description = "Creates access to account."
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new NumberProperty("timestamp", "For validation."),
         new StringProperty("username", "From account."),
         new StringProperty("sign", "From timestamp."),

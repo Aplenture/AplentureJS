@@ -1,4 +1,4 @@
-import { DictionaryProperty } from "../properties/dictionaryProperty";
+import { CommandArgs } from "../properties/commandArgs";
 import { StringProperty } from "../properties/stringProperty";
 import { Command } from "../utils/command";
 import { Singleton } from "../utils/singleton";
@@ -13,7 +13,7 @@ interface Args {
 
 export class Help extends Command<void, Context, Args, string> {
     public readonly description = "Lists all commands.";
-    public readonly property = new DictionaryProperty<Args>("",
+    public readonly property = new CommandArgs<Args>(
         new StringProperty("command", "Name of part of name of command to get detailed help.", '')
     );
 
