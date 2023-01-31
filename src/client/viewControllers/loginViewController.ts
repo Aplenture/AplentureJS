@@ -34,6 +34,12 @@ export class LoginViewController extends ViewController {
         TextField.onReturn.on(() => this.login(), { sender: this.passwordTextfield });
         Button.onClick.on(() => this.login(), { sender: this.loginButton });
 
+        this.titleBar.title = '#_login';
+        this.loginButton.text = '#_login';
+        this.usernameTextfield.title = '#_username';
+        this.passwordTextfield.title = '#_password';
+        this.keepLoginSwitch.title = '#_remember_me';
+
         super.init();
     }
 
