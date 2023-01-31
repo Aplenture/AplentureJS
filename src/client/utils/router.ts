@@ -30,13 +30,12 @@ export class Router {
         Router.onRouteChanged.emit(this, this._route);
     }
 
-    public addRoute(name: string, isPrivate = false, onRouteChanged?: EventHandler<Router, Route>) {
+    public addRoute(name: string, onRouteChanged: EventHandler<Router, Route>, isPrivate = false) {
         const route = { name, isPrivate };
 
         this.routes.push(route);
 
-        if (onRouteChanged)
-            Router.onRouteChanged.on(onRouteChanged, { args: route });
+        Router.onRouteChanged.on(onRouteChanged, { args: route });
     }
 
     public removeRoute(name) {

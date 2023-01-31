@@ -36,8 +36,13 @@ export class LoginViewController extends ViewController {
 
         this.titleBar.title = '#_login';
         this.loginButton.text = '#_login';
+
         this.usernameTextfield.title = '#_username';
+        this.usernameTextfield.placeholder = '#_username';
+
         this.passwordTextfield.title = '#_password';
+        this.passwordTextfield.placeholder = '#_password';
+
         this.keepLoginSwitch.title = '#_remember_me';
 
         super.init();
