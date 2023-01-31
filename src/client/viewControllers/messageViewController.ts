@@ -2,6 +2,7 @@ import { Message } from "../../core/models/message";
 import { Fifo } from "../../core/stacks/fifo";
 import { Event } from "../../core/utils/event";
 import { ViewController } from "../utils/viewController";
+import { Window } from "../utils/window";
 import { Button } from "../views/button";
 import { Label } from "../views/label";
 
@@ -28,6 +29,7 @@ export class MessageViewController extends ViewController {
 
         this.doneButton.text = '#_done';
 
+        Window.onEnterKey.on(() => this.currentMessage && this.pop());
         Button.onClick.on(() => this.pop(), { sender: this.doneButton });
 
         super.init();
