@@ -2,16 +2,17 @@ import { TextAlignment } from "../enums/textAlignment";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Window } from "../utils/window";
-import { Bar } from "../views/bar";
 import { BottomFlexView } from "../views/bottomFlexView";
 import { Label } from "../views/label";
 import { LeftFlexView } from "../views/leftFlexView";
+import { MenuView } from "../views/menuView";
+import { TabBar } from "../views/tabBar";
 
 export class NavigationViewController extends ViewController {
     public readonly contentViewController = new ViewController('content');
 
-    public readonly menuView = new View('menu');
-    public readonly tabBar = new Bar('tab');
+    public readonly menuView = new MenuView();
+    public readonly tabBar = new TabBar();
 
     private _selected = 0;
 
@@ -51,31 +52,10 @@ export class NavigationViewController extends ViewController {
     }
 
     public appendChild(child: ViewController): number {
-        const menuItem = new View('item');
-        const menuLabel = new Label();
-
-        const barItem = new View('item');
-        const barLabel = new Label();
-
         const index = this.contentViewController.appendChild(child);
 
-        this.menuView.appendChild(menuItem);
-        this.tabBar.appendChild(barItem);
-
-        menuLabel.text = child.title || '#_missing_title';
-        menuLabel.textAlignment = TextAlignment.Center;
-
-        barLabel.text = child.title || '#_missing_title';
-        barLabel.textAlignment = TextAlignment.Center;
-
-        menuItem.appendChild(menuLabel);
-        menuItem.clickable = true;
-
-        barItem.appendChild(barLabel);
-        barItem.clickable = true;
-
-        View.onClick.on(() => this.selected = index, { sender: menuItem });
-        View.onClick.on(() => this.selected = index, { sender: barItem });
+        this.menuView.addItem(child.title || '#_missing_title', (index) => this.selected = index);
+        this.tabBar.addItem(child.title || '#_missing_title', (index) => this.selected = index);
 
         this.updateSelected();
 
