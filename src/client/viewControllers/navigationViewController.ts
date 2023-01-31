@@ -38,7 +38,6 @@ export class NavigationViewController extends ViewController {
 
         this.view.appendChild(leftFlexView);
 
-        Window.onResize.on(() => this.updateSizes());
         View.onResize.on(() => this.updateSizes(), { sender: this.view });
 
         super.init();
