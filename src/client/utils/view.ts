@@ -104,7 +104,7 @@ export class View {
 
         this.div.appendChild(child.div);
 
-        return this._children.push(child);
+        return this._children.push(child) - 1;
     }
 
     public removeChild(child: View) {

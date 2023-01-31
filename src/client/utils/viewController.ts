@@ -37,7 +37,7 @@ export class ViewController {
 
         this.view.appendChild(child.view);
 
-        return this._children.push(child);
+        return this._children.push(child) - 1;
     }
 
     public removeChild(child: ViewController): number {
