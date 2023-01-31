@@ -3,8 +3,8 @@ import { ViewController } from "../utils/viewController";
 import { Window } from "../utils/window";
 import { Bar } from "../views/bar";
 import { BottomFlexView } from "../views/bottomFlexView";
-import { HorizontalFlexView } from "../views/horizontalFlexView";
 import { Label } from "../views/label";
+import { LeftFlexView } from "../views/leftFlexView";
 
 export class NavigationViewController extends ViewController {
     public readonly contentViewController = new ViewController('content');
@@ -25,7 +25,7 @@ export class NavigationViewController extends ViewController {
     }
 
     public init(): void {
-        const horizontalFlexView = new HorizontalFlexView();
+        const leftFlexView = new LeftFlexView();
         const bottomFlexView = new BottomFlexView();
 
         super.appendChild(this.contentViewController);
@@ -33,10 +33,10 @@ export class NavigationViewController extends ViewController {
         bottomFlexView.appendChild(this.contentViewController.view);
         bottomFlexView.appendChild(this.tabBar);
 
-        horizontalFlexView.appendChild(this.menuView);
-        horizontalFlexView.appendChild(bottomFlexView);
+        leftFlexView.appendChild(this.menuView);
+        leftFlexView.appendChild(bottomFlexView);
 
-        this.view.appendChild(horizontalFlexView);
+        this.view.appendChild(leftFlexView);
 
         Window.onResize.on(() => this.updateSizes());
         View.onResize.on(() => this.updateSizes(), { sender: this.view });
@@ -51,11 +51,11 @@ export class NavigationViewController extends ViewController {
     }
 
     public appendChild(child: ViewController): number {
-        const menuItem = new View('menu_item');
-        const menuLabel = new Label('menu_label');
+        const menuItem = new View('item');
+        const menuLabel = new Label();
 
-        const barItem = new View('bar_item');
-        const barLabel = new Label('bar_label');
+        const barItem = new View('item');
+        const barLabel = new Label();
 
         const index = this.contentViewController.appendChild(child);
 
