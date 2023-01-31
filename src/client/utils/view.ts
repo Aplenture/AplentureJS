@@ -105,13 +105,19 @@ export class View {
         return this._children.push(child) - 1;
     }
 
-    public removeChild(child: View) {
+    public removeChild(child: View): number {
+        let result: number;
+
         this.div.childNodes.forEach((node, index) => {
             if (node !== child.div)
                 return;
 
+            result = index;
+
             this.removeChildAtIndex(index);
         });
+
+        return result;
     }
 
     public removeChildAtIndex(index: number) {

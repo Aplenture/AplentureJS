@@ -19,8 +19,8 @@ export class Container extends View {
         return this.contentView.appendChild(child);
     }
 
-    public removeChild(child: View): void {
-        this.contentView.removeChild(child);
+    public removeChild(child: View): number {
+        return this.contentView.removeChild(child);
     }
 
     public removeChildAtIndex(index: number) {
