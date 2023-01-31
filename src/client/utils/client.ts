@@ -70,12 +70,12 @@ export abstract class Client<TConfig extends ClientConfig> {
 
     protected async handleLoaded(confg: TConfig) {
         await this.setup(confg);
-        await this.session.init();
 
-        this.router.init();
         this.rootViewController.init();
-
         await this.rootViewController.update();
+
+        await this.session.init();
+        this.router.init();
     }
 
     private static async loadTranslation(defaultLanguage: string): Promise<void> {
