@@ -35,19 +35,19 @@ export class View {
     public get description(): string { return this.div.title; }
     public set description(value: string) { this.div.title = value; }
 
-    public get hidden(): boolean { return this.div.hidden; }
-    public set hidden(value: boolean) {
-        this.div.hidden = value;
-
-        if (!value)
-            this.focus();
-    }
-
     public get visible(): boolean { return !this.hidden; }
     public set visible(value: boolean) { this.hidden = !value; }
 
     public get enabled(): boolean { return !this.disabled; }
     public set enabled(value: boolean) { this.disabled = !value; }
+
+    public get hidden() { return this.div.classList.contains('hidden'); }
+    public set hidden(value) {
+        if (value)
+            this.div.classList.add('hidden');
+        else
+            this.div.classList.remove('hidden');
+    }
 
     public get disabled(): boolean { return this.div.classList.contains('disabled'); }
     public set disabled(value: boolean) {
