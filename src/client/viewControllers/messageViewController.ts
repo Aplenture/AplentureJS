@@ -35,6 +35,10 @@ export class MessageViewController extends ViewController {
         super.init();
     }
 
+    public focus(): void {
+        this.doneButton.focus();
+    }
+
     public push(message: Message): Promise<void> {
         this.stack.push(message);
 

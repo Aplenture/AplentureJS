@@ -17,6 +17,8 @@ export class StackViewController extends ViewController {
         this.appendChild(next);
 
         await next.update();
+
+        this.focus();
     }
 
     public pop() {
