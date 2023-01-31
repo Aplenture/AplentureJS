@@ -12,10 +12,10 @@ export class View {
 
     private _parent: View;
 
-    constructor(...classes: readonly string[]) {
+    constructor(...classes: string[]) {
+        classes.push('view');
         classes.forEach(c => this.div.classList.add(c));
-        
-        this.div.classList.add('view');
+
         this.div.id = classes.join('_');
         this.div.addEventListener('mousedown', event => event.detail > 1 && event.preventDefault(), false);
         this.div.addEventListener('resize', () => View.onResize.emit(this));
