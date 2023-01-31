@@ -2,6 +2,7 @@ import { Event } from "../../core/utils/event";
 
 export class View {
     public static readonly onClick = new Event<View, void>();
+    public static readonly onResize = new Event<View, void>();
 
     public propaginateClickEvents = false;
 
@@ -16,6 +17,7 @@ export class View {
 
         this.div.id = classes.join('_');
         this.div.addEventListener('mousedown', event => event.detail > 1 && event.preventDefault(), false);
+        this.div.addEventListener('resize', () => View.onResize.emit(this));
         this.div.addEventListener('click', event => {
             View.onClick.emit(this);
 
@@ -27,6 +29,9 @@ export class View {
     public get id(): string { return this.div.id; }
     public get parent(): View { return this._parent; }
     public get children(): readonly View[] { return this._children; }
+
+    public get width(): number { return this.div.offsetWidth };
+    public get height(): number { return this.div.offsetHeight };
 
     public get description(): string { return this.div.title; }
     public set description(value: string) { this.div.title = value; }
@@ -90,14 +95,15 @@ export class View {
         this.div.classList.remove(value);
     }
 
-    public appendChild(child: View) {
+    public appendChild(child: View): number {
         if (child.parent)
             child.parent.removeChild(child);
 
         child._parent = this;
 
         this.div.appendChild(child.div);
-        this._children.push(child);
+
+        return this._children.push(child);
     }
 
     public removeChild(child: View) {
@@ -105,11 +111,18 @@ export class View {
             if (node !== child.div)
                 return;
 
-            this.div.removeChild(child.div);
-            this._children.splice(index, 1);
-
-            child._parent = null;
+            this.removeChildAtIndex(index);
         });
+    }
+
+    public removeChildAtIndex(index: number) {
+        if (index >= this._children.length)
+            return;
+
+        this._children[index]._parent = null;
+        this._children.splice(index, 1);
+
+        this.div.removeChild(this.div.childNodes[index]);
     }
 
     public removeAllChildren() {

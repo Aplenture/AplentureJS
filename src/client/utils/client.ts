@@ -8,6 +8,7 @@ import { Localization } from "../../core/utils/localization";
 import { PopupViewController } from "../viewControllers/popupViewController";
 import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
+import { Window } from "./window";
 
 export abstract class Client<TConfig extends ClientConfig> {
     public readonly rootViewController = new ViewController('root');
@@ -22,14 +23,13 @@ export abstract class Client<TConfig extends ClientConfig> {
         this.session = new Session(this.messageViewController, config);
     }
 
-    public get title(): string { return document.title; }
-    public set title(value: string) { document.title = value; }
-
     public async init(config: TConfig) {
         if (config.debug) {
             Localization.onMissingTranslation.on(key => console.warn(`missing translation for key '${key}'`));
             (window as any).app = this;
         }
+
+        Window.init();
 
         window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push({
             title: '#_error',
@@ -63,7 +63,7 @@ export abstract class Client<TConfig extends ClientConfig> {
         if (document.readyState === 'complete')
             await this.handleLoaded(config);
         else
-            window.addEventListener('load', () => this.handleLoaded(config));
+            window.addEventListener('load', () => this.handleLoaded(config), { once: true });
     }
 
     protected abstract setup(confg: TConfig): Promise<void>;

@@ -3,6 +3,8 @@ import { View } from "./view";
 export class ViewController {
     public readonly view: View;
 
+    public title: string;
+
     private readonly _children: ViewController[] = [];
 
     private _parent: ViewController;
@@ -27,26 +29,36 @@ export class ViewController {
         this._children.forEach(child => child.focus());
     }
 
-    public appendChild(child: ViewController) {
+    public appendChild(child: ViewController): number {
         if (child._parent)
             child._parent.removeChild(child);
 
         child._parent = this;
 
         this.view.appendChild(child.view);
-        this._children.push(child);
+
+        return this._children.push(child);
     }
 
-    public removeChild(child: ViewController) {
+    public removeChild(child: ViewController): number {
         const index = this._children.indexOf(child);
 
         if (0 > index)
             return;
 
-        child._parent = null;
+        this.removeChildAtIndex(index);
 
-        this.view.removeChild(child.view);
+        return index;
+    }
+
+    public removeChildAtIndex(index: number) {
+        if (index >= this._children.length)
+            return;
+
+        this._children[index]._parent = null;
         this._children.splice(index, 1);
+
+        this.view.removeChildAtIndex(index);
     }
 
     public removeAllChildren() {

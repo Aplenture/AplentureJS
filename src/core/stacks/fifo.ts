@@ -11,6 +11,7 @@ export class Fifo<T> implements Stack<T> {
     private _count = 0;
 
     public get count(): number { return this._count; }
+    public get current(): T { return this._first.element; }
 
     public push(element: T): number {
         const node = { element };

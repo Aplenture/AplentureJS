@@ -15,12 +15,16 @@ export class Container extends View {
         this.contentView.focus();
     }
 
-    public appendChild(controller: View): void {
-        this.contentView.appendChild(controller);
+    public appendChild(child: View): number {
+        return this.contentView.appendChild(child);
     }
 
-    public removeChild(controller: View): void {
-        this.contentView.removeChild(controller);
+    public removeChild(child: View): void {
+        this.contentView.removeChild(child);
+    }
+
+    public removeChildAtIndex(index: number) {
+        this.contentView.removeChildAtIndex(index);
     }
 
     public removeAllChildren(): void {
