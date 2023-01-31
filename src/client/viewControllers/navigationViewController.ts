@@ -104,8 +104,10 @@ export class NavigationViewController extends ViewController {
     }
 
     public updateSizes() {
-        this.menuView.visible = this.contentViewController.view.width >= this.contentViewController.view.height;
-        this.tabBar.visible = this.contentViewController.view.width < this.contentViewController.view.height;
+        const landscaped = this.contentViewController.view.width > this.contentViewController.view.height;
+
+        this.menuView.visible = landscaped;
+        this.tabBar.visible = !landscaped;
     }
 
     protected updateSelected(selected = this._selected) {
