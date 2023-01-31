@@ -33,7 +33,6 @@ export * from "./views/bar";
 export * from "./views/bottomFlexView";
 export * from "./views/button";
 export * from "./views/canvas";
-export * from "./views/container";
 export * from "./views/dropbox";
 export * from "./views/flexView";
 export * from "./views/horizontalFlexView";

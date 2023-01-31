@@ -1,9 +1,8 @@
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
-import { Container } from "../views/container";
 
 export class PopupViewController extends ViewController {
-    public readonly contentView = new Container('content');
+    public readonly contentViewController = new ViewController('content');
 
     public autoHide = true;
 
@@ -12,42 +11,34 @@ export class PopupViewController extends ViewController {
     }
 
     public init(): void {
-        this.view.appendChild(this.contentView);
+        super.appendChild(this.contentViewController);
 
-        this.contentView.propaginateClickEvents = false;
+        this.contentViewController.view.propaginateClickEvents = false;
 
         View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view });
 
         super.init();
     }
 
+    public get children(): readonly ViewController[] { return this.contentViewController.children; }
+
     public focus() {
-        this.contentView.focus();
+        this.contentViewController.focus();
     }
 
     public appendChild(child: ViewController): number {
-        const index = super.appendChild(child);
-
-        this.contentView.appendChild(child.view);
-
-        return index;
+        return this.contentViewController.appendChild(child);
     }
 
     public removeChild(child: ViewController): number {
-        const index = super.removeChild(child);
-
-        this.contentView.appendChild(child.view);
-
-        return index;
+        return this.contentViewController.removeChild(child);
     }
 
     public removeChildAtIndex(index: number) {
-        super.removeChildAtIndex(index);
-        this.contentView.removeChildAtIndex(index);
+        this.contentViewController.removeChildAtIndex(index);
     }
 
     public removeAllChildren(): void {
-        super.removeAllChildren();
-        this.contentView.removeAllChildren();
+        this.contentViewController.removeAllChildren();
     }
 }
