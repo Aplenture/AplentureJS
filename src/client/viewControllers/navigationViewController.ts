@@ -20,7 +20,7 @@ export class NavigationViewController extends ViewController {
         const horizontalFlexView = new HorizontalFlexView();
         const bottomFlexView = new BottomFlexView();
 
-        this.appendChild(this.contentViewController);
+        super.appendChild(this.contentViewController);
 
         bottomFlexView.appendChild(this.contentViewController.view);
         bottomFlexView.appendChild(this.tabBar);
