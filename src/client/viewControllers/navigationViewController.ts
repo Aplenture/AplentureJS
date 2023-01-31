@@ -12,12 +12,17 @@ export class NavigationViewController extends ViewController {
     public readonly menuView = new View('menu');
     public readonly tabBar = new Bar('tab');
 
+    private _selected = 0;
+
     constructor(...classes: string[]) {
         super(...classes, 'navigation');
     }
 
-    public get selected(): number { return this.menuView.children.findIndex(item => item.selected); }
-    public set selected(value: number) { this.updateSelected(value); }
+    public get selected(): number { return this._selected; }
+    public set selected(value: number) {
+        this._selected = value;
+        this.updateSelected(value);
+    }
 
     public init(): void {
         const horizontalFlexView = new HorizontalFlexView();
@@ -69,7 +74,7 @@ export class NavigationViewController extends ViewController {
         View.onClick.on(() => this.selected = index, { sender: menuItem });
         View.onClick.on(() => this.selected = index, { sender: barItem });
 
-        this.updateSelected(this.selected || index);
+        this.updateSelected();
 
         return index;
     }
@@ -100,7 +105,7 @@ export class NavigationViewController extends ViewController {
         this.tabBar.visible = this.contentViewController.view.width < this.contentViewController.view.height;
     }
 
-    protected updateSelected(selected: number) {
+    protected updateSelected(selected = this._selected) {
         this.contentViewController.children.forEach((controller, index) => controller.view.visible = index == selected);
         this.menuView.children.forEach((view, index) => view.selected = index == selected);
         this.tabBar.children.forEach((view, index) => view.selected = index == selected);
