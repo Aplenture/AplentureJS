@@ -5,7 +5,7 @@ import { StackViewController } from "./stackViewController";
 export class PopupViewController extends StackViewController {
     public readonly contentViewController = new ViewController('content');
 
-    public autoHide = true;
+    public autoHide = false;
 
     constructor(...classes: readonly string[]) {
         super(...classes, 'popup');
