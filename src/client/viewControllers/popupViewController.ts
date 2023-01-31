@@ -14,6 +14,8 @@ export class PopupViewController extends ViewController {
     public init(): void {
         this.view.appendChild(this.contentView);
 
+        this.contentView.propaginateClickEvents = false;
+
         View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view });
 
         super.init();

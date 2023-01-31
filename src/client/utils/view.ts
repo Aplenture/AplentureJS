@@ -4,7 +4,7 @@ export class View {
     public static readonly onClick = new Event<View, void>();
     public static readonly onResize = new Event<View, void>();
 
-    public propaginateClickEvents = false;
+    public propaginateClickEvents = true;
 
     protected readonly div = document.createElement('div');
 
