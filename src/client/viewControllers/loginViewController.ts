@@ -6,7 +6,7 @@ import { TextField } from "../views/textField";
 import { TitleBar } from "../views/titleBar";
 import { MessageViewController } from "./messageViewController";
 
-export class LoginController extends ViewController {
+export class LoginViewController extends ViewController {
     public readonly titleBar = new TitleBar();
     public readonly loginButton = new Button('login');
 

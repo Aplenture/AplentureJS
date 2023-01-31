@@ -21,7 +21,7 @@ export * from "./utils/view";
 export * from "./utils/viewController";
 export * from "./utils/window";
 
-export * from "./viewControllers/loginController";
+export * from "./viewControllers/loginViewController";
 export * from "./viewControllers/messageViewController";
 export * from "./viewControllers/navigationViewController";
 export * from "./viewControllers/popupViewController";
