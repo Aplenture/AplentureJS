@@ -1,6 +1,6 @@
+import { TextAlignment } from "../enums/textAlignment";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
-import { Window } from "../utils/window";
 import { Bar } from "../views/bar";
 import { BottomFlexView } from "../views/bottomFlexView";
 import { Label } from "../views/label";
@@ -62,7 +62,10 @@ export class NavigationViewController extends ViewController {
         this.tabBar.appendChild(barItem);
 
         menuLabel.text = child.title || '#_missing_title';
+        menuLabel.textAlignment = TextAlignment.Center;
+        
         barLabel.text = child.title || '#_missing_title';
+        barLabel.textAlignment = TextAlignment.Center;
 
         menuItem.appendChild(menuLabel);
         menuItem.clickable = true;
