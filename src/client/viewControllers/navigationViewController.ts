@@ -16,6 +16,9 @@ export class NavigationViewController extends ViewController {
         super(...classes, 'navigation');
     }
 
+    public get selected(): number { return this.menuView.children.findIndex(item => item.selected); }
+    public set selected(value: number) { this.updateSelected(value); }
+
     public init(): void {
         const horizontalFlexView = new HorizontalFlexView();
         const bottomFlexView = new BottomFlexView();
@@ -55,20 +58,18 @@ export class NavigationViewController extends ViewController {
         this.tabBar.appendChild(barItem);
 
         menuLabel.text = child.title || '#_missing_title';
+        barLabel.text = child.title || '#_missing_title';
 
         menuItem.appendChild(menuLabel);
         menuItem.clickable = true;
 
-        barLabel.text = child.title || '#_missing_title';
-
         barItem.appendChild(barLabel);
         barItem.clickable = true;
 
-        View.onClick.on(() => this.showViewControllerAtIndex(index), { sender: menuItem });
-        View.onClick.on(() => this.showViewControllerAtIndex(index), { sender: barItem });
+        View.onClick.on(() => this.selected = index, { sender: menuItem });
+        View.onClick.on(() => this.selected = index, { sender: barItem });
 
-        if (0 == index)
-            this.showViewControllerAtIndex(index);
+        this.updateSelected(this.selected || index);
 
         return index;
     }
@@ -99,9 +100,9 @@ export class NavigationViewController extends ViewController {
         this.tabBar.visible = this.contentViewController.view.width < this.contentViewController.view.height;
     }
 
-    public showViewControllerAtIndex(index: number) {
-        this.contentViewController.children.forEach((controller, controllerIndex) => controller.view.visible = controllerIndex == index);
-        this.menuView.children.forEach((view, viewIndex) => view.selected = viewIndex == index);
-        this.tabBar.children.forEach((view, viewIndex) => view.selected = viewIndex == index);
+    protected updateSelected(selected: number) {
+        this.contentViewController.children.forEach((controller, index) => controller.view.visible = index == selected);
+        this.menuView.children.forEach((view, index) => view.selected = index == selected);
+        this.tabBar.children.forEach((view, index) => view.selected = index == selected);
     }
 }
