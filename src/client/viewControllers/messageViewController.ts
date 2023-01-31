@@ -28,8 +28,9 @@ export class MessageViewController extends ViewController {
         this.view.appendChild(this.doneButton);
 
         this.doneButton.text = '#_done';
+        this.doneButton.tabIndex = 1;
 
-        View.onEnterKey.on(() => this.pop(), { sender: this.view });
+        View.onEnterKey.on(() => this.pop(), { sender: this.doneButton });
         Button.onClick.on(() => this.pop(), { sender: this.doneButton });
 
         super.init();

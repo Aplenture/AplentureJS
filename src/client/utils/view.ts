@@ -41,8 +41,10 @@ export class View {
     public get id(): string { return this.div.id; }
     public get parent(): View { return this._parent; }
     public get children(): readonly View[] { return this._children; }
-
     public get hasFocus(): boolean { return document.activeElement == this.div; }
+
+    public get tabIndex(): number { return this.div.tabIndex; }
+    public set tabIndex(value: number) { this.div.tabIndex = value; }
 
     public get width(): number { return this.div.offsetWidth };
     public get height(): number { return this.div.offsetHeight };
