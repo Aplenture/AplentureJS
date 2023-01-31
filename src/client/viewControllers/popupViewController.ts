@@ -20,4 +20,34 @@ export class PopupViewController extends ViewController {
 
         super.init();
     }
+
+    public focus() {
+        this.contentView.focus();
+    }
+
+    public appendChild(child: ViewController): number {
+        const index = super.appendChild(child);
+
+        this.contentView.appendChild(child.view);
+
+        return index;
+    }
+
+    public removeChild(child: ViewController): number {
+        const index = super.removeChild(child);
+
+        this.contentView.appendChild(child.view);
+
+        return index;
+    }
+
+    public removeChildAtIndex(index: number) {
+        super.removeChildAtIndex(index);
+        this.contentView.removeChildAtIndex(index);
+    }
+
+    public removeAllChildren(): void {
+        super.removeAllChildren();
+        this.contentView.removeAllChildren();
+    }
 }
