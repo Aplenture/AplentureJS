@@ -64,8 +64,11 @@ export class NavigationViewController extends ViewController {
         barItem.appendChild(barLabel);
         barItem.clickable = true;
 
-        View.onClick.on((_, item) => this.onMenuItemClicked(index, item), { sender: menuItem });
-        View.onClick.on((_, item) => this.onMenuItemClicked(index, item), { sender: barItem });
+        View.onClick.on(() => this.showViewControllerAtIndex(index), { sender: menuItem });
+        View.onClick.on(() => this.showViewControllerAtIndex(index), { sender: barItem });
+
+        if (0 == index)
+            this.showViewControllerAtIndex(index);
 
         return index;
     }
@@ -96,7 +99,7 @@ export class NavigationViewController extends ViewController {
         this.tabBar.visible = this.contentViewController.view.width < this.contentViewController.view.height;
     }
 
-    protected onMenuItemClicked(index: number, item: View) {
+    public showViewControllerAtIndex(index: number) {
         this.contentViewController.children.forEach((controller, controllerIndex) => controller.view.visible = controllerIndex == index);
         this.menuView.children.forEach((view, viewIndex) => view.selected = viewIndex == index);
         this.tabBar.children.forEach((view, viewIndex) => view.selected = viewIndex == index);
