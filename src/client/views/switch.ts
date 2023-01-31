@@ -27,6 +27,8 @@ export class Switch extends View {
         this.div.appendChild(label);
     }
 
+    public get hasFocus(): boolean { return document.activeElement == this.input; }
+
     public get title(): string { return this.label.innerText; }
     public set title(value: string) { this.label.innerText = Localization.translate(value); }
     

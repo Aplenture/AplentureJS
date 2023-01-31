@@ -2,7 +2,6 @@ import { Event } from "../../core";
 
 export abstract class Window {
     public static readonly onResize = new Event<Window, void>();
-    public static readonly onEnterKey = new Event<Window, void>();
 
     private static initialized = false;
 
@@ -19,11 +18,5 @@ export abstract class Window {
         this.initialized = true;
 
         window.addEventListener('resize', () => this.onResize.emit(this));
-        window.addEventListener("keydown", event => {
-            if (event.key != 'Enter')
-                return;
-
-            this.onEnterKey.emit(this);
-        });
     }
 }

@@ -1,4 +1,5 @@
 import { Session } from "../utils/session";
+import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Button } from "../views/button";
 import { Switch } from "../views/switch";
@@ -30,8 +31,8 @@ export class LoginViewController extends ViewController {
         this.view.appendChild(this.keepLoginSwitch);
         this.view.appendChild(this.loginButton);
 
-        TextField.onReturn.on(() => this.login(), { sender: this.usernameTextfield });
-        TextField.onReturn.on(() => this.login(), { sender: this.passwordTextfield });
+        View.onEnterKey.on(() => this.login(), { sender: this.usernameTextfield });
+        View.onEnterKey.on(() => this.login(), { sender: this.passwordTextfield });
         Button.onClick.on(() => this.login(), { sender: this.loginButton });
 
         this.titleBar.title = '#_login';

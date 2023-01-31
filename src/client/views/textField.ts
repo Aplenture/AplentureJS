@@ -8,7 +8,6 @@ export enum TextFieldType {
 }
 
 export class TextField extends View {
-    public static readonly onReturn = new Event<TextField, void>();
     public static readonly onChange = new Event<TextField, string>();
 
     protected readonly label = document.createElement('label');
@@ -21,17 +20,10 @@ export class TextField extends View {
         this.div.appendChild(this.input);
 
         this.input.type = 'text';
-
-        this.input.addEventListener("keydown", event => {
-            if (event.key != 'Enter')
-                return;
-
-            event.preventDefault();
-            TextField.onReturn.emit(this);
-        });
-
         this.input.addEventListener("input", (event: InputEvent) => TextField.onChange.emit(this, event.data));
     }
+
+    public get hasFocus(): boolean { return document.activeElement == this.input; }
 
     public get type(): TextFieldType { return this.input.type as any; }
     public set type(value: TextFieldType) { this.input.type = value; }

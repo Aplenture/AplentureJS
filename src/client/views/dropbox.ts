@@ -40,6 +40,8 @@ export class Dropbox extends View {
         });
     }
 
+    public get hasFocus(): boolean { return document.activeElement == this.select; }
+
     public get selectedIndex(): number { return this.select.selectedIndex; }
     public set selectedIndex(value: number) { this.select.selectedIndex = value; }
 

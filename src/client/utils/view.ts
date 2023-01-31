@@ -2,6 +2,7 @@ import { Event } from "../../core/utils/event";
 
 export class View {
     public static readonly onClick = new Event<View, void>();
+    public static readonly onEnterKey = new Event<View, void>();
 
     public propaginateClickEvents = true;
 
@@ -17,17 +18,31 @@ export class View {
 
         this.div.id = classes.join('_');
         this.div.addEventListener('mousedown', event => event.detail > 1 && event.preventDefault(), false);
+
         this.div.addEventListener('click', event => {
             View.onClick.emit(this);
 
             if (!this.propaginateClickEvents)
                 event.stopPropagation();
         });
+
+        this.div.addEventListener("keydown", event => {
+            if (event.key != 'Enter')
+                return;
+
+            if (!this.hasFocus)
+                return;
+
+            event.preventDefault();
+            View.onEnterKey.emit(this);
+        });
     }
 
     public get id(): string { return this.div.id; }
     public get parent(): View { return this._parent; }
     public get children(): readonly View[] { return this._children; }
+
+    public get hasFocus(): boolean { return document.activeElement == this.div; }
 
     public get width(): number { return this.div.offsetWidth };
     public get height(): number { return this.div.offsetHeight };
