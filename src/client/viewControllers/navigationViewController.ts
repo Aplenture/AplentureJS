@@ -52,14 +52,7 @@ export class NavigationViewController extends ViewController {
     }
 
     public appendChild(child: ViewController): number {
-        const index = this.contentViewController.appendChild(child);
-
-        this.menuView.addItem(child.title || '#_missing_title', (index) => this.selected = index);
-        this.tabBar.addItem(child.title || '#_missing_title', (index) => this.selected = index);
-
-        this.updateSelected();
-
-        return index;
+        return this.addItem(child.title || '#_missing_title', (index) => this.selected = index);
     }
 
     public removeChild(child: ViewController): number {
@@ -88,6 +81,21 @@ export class NavigationViewController extends ViewController {
 
         this.menuView.visible = landscaped;
         this.tabBar.visible = !landscaped;
+    }
+
+    public addItem(title: string, onClicked: (index: number) => void): number {
+        const index = this.menuView.addItem(title, onClicked);
+
+        this.tabBar.addItem(title, onClicked);
+        this.updateSelected();
+
+        return index;
+    }
+
+    public removeItem(title: string) {
+        this.menuView.removeItem(title);
+        this.tabBar.removeItem(title);
+        this.updateSelected();
     }
 
     protected updateSelected(selected = this._selected) {
