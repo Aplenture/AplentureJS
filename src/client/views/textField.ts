@@ -15,7 +15,7 @@ export class TextField extends View {
     protected readonly input = document.createElement('input');
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'textField');
+        super(...classes, 'text_field');
 
         this.div.appendChild(this.label);
         this.div.appendChild(this.input);
