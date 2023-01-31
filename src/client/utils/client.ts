@@ -9,18 +9,21 @@ import { PopupViewController } from "../viewControllers/popupViewController";
 import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
 import { Window } from "./window";
+import { LoginViewController } from "../viewControllers/loginViewController";
 
 export abstract class Client<TConfig extends ClientConfig> {
     public readonly rootViewController = new ViewController('root');
-    public readonly messageViewController: MessageViewController;
+    public readonly messageViewController = new MessageViewController('root');
+    public readonly loginViewController: LoginViewController;
+    public readonly popupViewController = new PopupViewController('root');
 
     public readonly router: Router;
     public readonly session: Session;
 
     constructor(config: TConfig) {
-        this.messageViewController = new MessageViewController();
         this.router = new Router(config);
         this.session = new Session(this.messageViewController, config);
+        this.loginViewController = new LoginViewController(this.session, this.messageViewController, 'root');
     }
 
     public async init(config: TConfig) {
@@ -38,10 +41,8 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         await Client.loadTranslation(config.defaultLanguage || Localization.language);
 
-        const messagePopupViewController = new PopupViewController('message');
-
-        MessageViewController.onMessage.on(() => messagePopupViewController.view.visible = this.messageViewController.parent == messagePopupViewController, { sender: this.messageViewController });
-        MessageViewController.onDone.on(() => messagePopupViewController.view.visible = false, { sender: this.messageViewController });
+        MessageViewController.onMessage.on(() => !this.messageViewController.parent && this.popupViewController.push(this.messageViewController), { sender: this.messageViewController });
+        MessageViewController.onDone.on(() => this.popupViewController.pop(), { sender: this.messageViewController });
 
         Router.onRouteChanged.on((route, router) => route.isPrivate && !this.session.access && router.changeRoute(config.unauthorizedRoute), { sender: this.router });
         Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultLanguage), { sender: this.session });
@@ -53,10 +54,13 @@ export abstract class Client<TConfig extends ClientConfig> {
             request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
         });
 
-        messagePopupViewController.appendChild(this.messageViewController);
-        messagePopupViewController.view.visible = false;
+        this.rootViewController.appendChild(this.popupViewController);
 
-        this.rootViewController.appendChild(messagePopupViewController);
+        this.messageViewController.init();
+        await this.messageViewController.update();
+
+        this.loginViewController.init();
+        await this.loginViewController.update();
 
         document.body.appendChild((this.rootViewController.view as any).div);
 
