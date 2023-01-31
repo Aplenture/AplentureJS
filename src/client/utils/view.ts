@@ -115,6 +115,9 @@ export class View {
     }
 
     public removeChildAtIndex(index: number) {
+        if (index < 0)
+            return;
+
         if (index >= this._children.length)
             return;
 

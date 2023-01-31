@@ -52,6 +52,9 @@ export class ViewController {
     }
 
     public removeChildAtIndex(index: number) {
+        if (index < 0)
+            return;
+
         if (index >= this._children.length)
             return;
 
