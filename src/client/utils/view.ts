@@ -2,7 +2,6 @@ import { Event } from "../../core/utils/event";
 
 export class View {
     public static readonly onClick = new Event<View, void>();
-    public static readonly onResize = new Event<View, void>();
 
     public propaginateClickEvents = true;
 
@@ -18,7 +17,6 @@ export class View {
 
         this.div.id = classes.join('_');
         this.div.addEventListener('mousedown', event => event.detail > 1 && event.preventDefault(), false);
-        this.div.addEventListener('resize', () => View.onResize.emit(this));
         this.div.addEventListener('click', event => {
             View.onClick.emit(this);
 
