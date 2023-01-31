@@ -13,6 +13,8 @@ export class View {
     private _parent: View;
 
     constructor(...classes: readonly string[]) {
+        this.div.classList.add('view');
+
         classes.forEach(c => this.div.classList.add(c));
 
         this.div.id = classes.join('_');
