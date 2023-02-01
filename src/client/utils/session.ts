@@ -12,6 +12,8 @@ const KEY_ACCESS = 'session.access';
 
 export class Session {
     public static readonly onAccessChanged = new Event<Session, Access>();
+    public static readonly onLogin = new Event<Session, Access>();
+    public static readonly onLogout = new Event<Session, void>();
 
     private readonly logoutRequest: BoolRequest<{ session: string }>;
     private readonly hasAccessRequest: BoolRequest<{
@@ -40,6 +42,7 @@ export class Session {
     }
 
     public get access(): Access { return this._access; }
+    public get hasAccess(): boolean { return !!this._access; }
 
     public async init() {
         const serializedAccess = window.sessionStorage.getItem(KEY_ACCESS)
@@ -50,7 +53,7 @@ export class Session {
 
         const access = Access.fromHex(serializedAccess);
 
-        if (!(await this.hasAccess(access))) {
+        if (!(await this.testAccess(access))) {
             window.localStorage.removeItem(KEY_ACCESS);
             window.sessionStorage.removeItem(KEY_ACCESS);
             return;
@@ -105,6 +108,8 @@ export class Session {
 
             this.updateAccess(access, keepLogin);
 
+            Session.onLogin.emit(this, access);
+
             return access;
         } catch (error) {
             this.messageViewController.push({ text: error.message, title: '#_error' });
@@ -122,6 +127,8 @@ export class Session {
 
             this.resetAccess();
 
+            Session.onLogout.emit(this);
+
             return true;
         } catch (error) {
             await this.messageViewController.push({ text: error.message, title: '#_error' });
@@ -130,7 +137,7 @@ export class Session {
         }
     }
 
-    private async hasAccess(access = this._access): Promise<boolean> {
+    private async testAccess(access = this._access): Promise<boolean> {
         const timestamp = Date.now();
 
         try {
