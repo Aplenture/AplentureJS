@@ -61,7 +61,8 @@ export class Session {
 
         this._access = access;
 
-        Session.onAccessChanged.emit(this, this._access);
+        Session.onLogin.emit(this, access);
+        Session.onAccessChanged.emit(this, access);
     }
 
     public updateAccess(access: Access, keepLogin = false) {
