@@ -17,8 +17,6 @@ export abstract class Client<TConfig extends ClientConfig> {
     public readonly loginViewController: LoginViewController;
     public readonly popupViewController = new PopupViewController('root');
 
-    public static window(): Window { return Window; }
-
     public readonly router: Router;
     public readonly session: Session;
 
@@ -27,6 +25,8 @@ export abstract class Client<TConfig extends ClientConfig> {
         this.session = new Session(this.messageViewController, config);
         this.loginViewController = new LoginViewController(this.session, this.messageViewController, 'root');
     }
+
+    public get window(): Window { return Window; }
 
     public async init(config: TConfig) {
         if (config.debug) {
