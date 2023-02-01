@@ -50,7 +50,7 @@ export abstract class Client<TConfig extends ClientConfig> {
             if (!request.isPrivate) return;
             if (!this.session.access) throw new Error('#_error_no_access');
 
-            request.setHeader(RequestHeader.APIKey, this.session.access.id);
+            request.setHeader(RequestHeader.APIKey, this.session.access.api);
             request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
         });
 

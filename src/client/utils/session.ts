@@ -27,7 +27,7 @@ export class Session {
         readonly keepLogin?: boolean,
         readonly label?: string
     }, {
-        readonly session: string,
+        readonly api: string,
         readonly secret: string
     }>;
 
@@ -101,7 +101,7 @@ export class Session {
                 label
             });
 
-            const access = new Access(response.session, response.secret, label);
+            const access = new Access(response.api, response.secret, label);
 
             this.updateAccess(access, keepLogin);
 
@@ -118,7 +118,7 @@ export class Session {
             return true;
 
         try {
-            await this.logoutRequest.send({ session: this._access.id });
+            await this.logoutRequest.send({ session: this._access.api });
 
             this.resetAccess();
 
@@ -135,7 +135,7 @@ export class Session {
 
         try {
             return await this.hasAccessRequest.send({
-                session: access.id,
+                session: access.api,
                 signature: access.sign(timestamp.toString()),
                 timestamp
             });
