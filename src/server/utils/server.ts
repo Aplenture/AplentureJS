@@ -27,6 +27,8 @@ const DEFAULT_TIME_WINDOW = 10000;
 const DEFAULT_PORT_HTTP = 80;
 const DEFAULT_PORT_HTTPS = 443;
 
+const MESSAGE_STOP = "stop";
+
 export class Server {
     public static readonly onMessage = new Event<Server, string>();
     public static readonly onError = new Event<Server, Error>();
@@ -49,7 +51,7 @@ export class Server {
         Server.onMessage.emit(this, "init");
     }
 
-    public start(...configs: readonly HTTPConfig[]) {
+    public start(...configs: readonly HTTPConfig[]): Promise<void> {
         configs.forEach(config => {
             const isHTTPS = config.protocol == Protocol.HTTPS;
             const allowedOrigins = config.headers[ResponseHeader.AllowOrigin]
@@ -79,13 +81,15 @@ export class Server {
 
             Server.onMessage.emit(this, `start ${config.protocol} ${Object.keys(config).map(key => `--${key} ${config[key]}`).join(' ')}`);
         });
+
+        return new Promise(resolve => Server.onMessage.on(() => resolve(), { sender: this, args: MESSAGE_STOP }));
     }
 
     public stop() {
         this.servers.forEach(server => server.close());
         this.servers.splice(0, this.servers.length);
 
-        Server.onMessage.emit(this, "stop");
+        Server.onMessage.emit(this, MESSAGE_STOP);
     }
 
     public addCommand(command: string, _constructor: new (...args: any[]) => ServerCommand<any, any, any>, ...args: any[]): void {
