@@ -17,6 +17,8 @@ export abstract class Client<TConfig extends ClientConfig> {
     public readonly loginViewController: LoginViewController;
     public readonly popupViewController = new PopupViewController('root');
 
+    public static window(): Window { return Window; }
+
     public readonly router: Router;
     public readonly session: Session;
 

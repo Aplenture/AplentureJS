@@ -29,7 +29,6 @@ export abstract class Window {
         this.initialized = true;
 
         window.addEventListener('resize', () => this.onResize.emit(this));
-        (window as any).window = this;
 
         View.onClick.on((_, view) => this._debug && console.log(`clicked view '${view.id}'`));
         View.onEnterKey.on((_, view) => this._debug && console.log(`clicked view '${view.id}'`));
