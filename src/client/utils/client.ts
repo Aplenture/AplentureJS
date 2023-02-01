@@ -47,7 +47,7 @@ export abstract class Client<TConfig extends ClientConfig> {
         MessageViewController.onDone.on(() => this.popupViewController.pop(), { sender: this.messageViewController });
 
         Router.onRouteChanged.on((route, router) => route.isPrivate && !this.session.access && router.changeRoute(config.unauthorizedRoute), { sender: this.router });
-        Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultLanguage), { sender: this.session });
+        Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultRoute), { sender: this.session });
         Request.onSending.on((params, request) => {
             if (!request.isPrivate) return;
             if (!this.session.access) throw new Error('#_error_no_access');
