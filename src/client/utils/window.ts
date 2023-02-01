@@ -16,7 +16,7 @@ export abstract class Window {
 
     public static get debug(): boolean { return this._debug; }
     public static set debug(value: boolean) {
-        this._debug;
+        this._debug = value;
         this.onDebugChanged.emit(this, value);
     }
 
