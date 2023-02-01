@@ -32,7 +32,7 @@ export abstract class Client<TConfig extends ClientConfig> {
             (window as any).app = this;
         }
 
-        Window.init();
+        Window.init(config.debug);
 
         window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push({
             title: '#_error',
