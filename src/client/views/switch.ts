@@ -3,7 +3,7 @@ import { Localization } from "../../core/utils/localization";
 import { View } from "../utils/view";
 
 export class Switch extends View {
-    public static readonly onChange = new Event<Switch, boolean>();
+    public static readonly onChange = new Event<Switch, boolean>('Switch.onChange');
 
     protected readonly label = document.createElement('label');
     protected readonly input = document.createElement('input');

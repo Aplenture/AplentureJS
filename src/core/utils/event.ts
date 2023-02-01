@@ -11,7 +11,11 @@ interface Options<TSender, TArgs> {
 export type EventHandler<TSender, TArgs> = (input: TArgs, sender: TSender) => void;
 
 export class Event<TSender, TArgs> {
+    public static onEmit = new Event<Event<any, any>, { readonly sender: any, readonly args: any }>('Event.onEmit');
+
     private listeners: Listener<TSender, TArgs>[] = [];
+
+    constructor(public readonly name: string) { }
 
     public get length(): number { return this.listeners.length; }
 
@@ -33,6 +37,9 @@ export class Event<TSender, TArgs> {
     }
 
     public emit(sender: TSender, args: TArgs): void {
+        if (Event.onEmit != this as any)
+            Event.onEmit.emit(this, { sender, args });
+
         this.listeners.forEach(listener => {
             if (listener.off)
                 return;

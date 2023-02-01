@@ -2,8 +2,8 @@ import { Event } from "../../core";
 import { View } from "./view";
 
 export abstract class Window {
-    public static readonly onResize = new Event<Window, void>();
-    public static readonly onDebugChanged = new Event<Window, boolean>();
+    public static readonly onResize = new Event<Window, void>('Window.onResize');
+    public static readonly onDebugChanged = new Event<Window, boolean>('Window.onDebugChanged');
 
     private static initialized = false;
     private static _debug = false;
@@ -30,7 +30,8 @@ export abstract class Window {
 
         window.addEventListener('resize', () => this.onResize.emit(this));
 
-        View.onClick.on((_, view) => this._debug && console.log(`clicked view '${view.id}'`));
-        View.onEnterKey.on((_, view) => this._debug && console.log(`clicked view '${view.id}'`));
+        Event.onEmit.on((args, sender) => this._debug && console.log(sender.name, args));
+        View.onClick.on((_, sender) => this._debug && console.log(`clicked view '${sender.id}'`));
+        View.onEnterKey.on((_, sender) => this._debug && console.log(`clicked view '${sender.id}'`));
     }
 }

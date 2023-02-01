@@ -11,9 +11,9 @@ import { MessageViewController } from "../viewControllers/messageViewController"
 const KEY_ACCESS = 'session.access';
 
 export class Session {
-    public static readonly onAccessChanged = new Event<Session, Access>();
-    public static readonly onLogin = new Event<Session, Access>();
-    public static readonly onLogout = new Event<Session, void>();
+    public static readonly onAccessChanged = new Event<Session, Access>('Session.onAccessChanged');
+    public static readonly onLogin = new Event<Session, Access>('Session.onLogin');
+    public static readonly onLogout = new Event<Session, void>('Session.onLogout');
 
     private readonly logoutRequest: BoolRequest<{ api: string }>;
     private readonly hasAccessRequest: BoolRequest<{

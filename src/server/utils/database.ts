@@ -10,7 +10,7 @@ type Type = string | number
 type Entry = NodeJS.ReadOnlyDict<any>;
 
 export class Database {
-    public static readonly onMessage = new Event<Database, string>();
+    public static readonly onMessage = new Event<Database, string>('Database.onMessage');
 
     private pool: MySQL.Pool;
 

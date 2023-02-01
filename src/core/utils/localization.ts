@@ -1,7 +1,7 @@
 import { Event } from "./event";
 
 export abstract class Localization {
-    public static readonly onMissingTranslation = new Event<Localization, string>();
+    public static readonly onMissingTranslation = new Event<Localization, string>('Localization.onMissingTranslation');
 
     public static language = 'en';
     public static dictionary: NodeJS.ReadOnlyDict<string> = {}

@@ -3,7 +3,7 @@ import { Event } from "../src";
 
 describe("Event", () => {
     it("emits message", () => {
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.on(message => expect(message).equals("hello world"));
         evnt.emit(null, "hello world");
@@ -11,7 +11,7 @@ describe("Event", () => {
 
     it("emits sender", () => {
         const sender = {};
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.on((message, tmp) => expect(tmp).equals(sender));
         evnt.emit(sender, "hello world");
@@ -20,7 +20,7 @@ describe("Event", () => {
     it("calls multiple times", () => {
         let counter = 0;
 
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.on(() => counter++);
 
@@ -33,7 +33,7 @@ describe("Event", () => {
     it("calls once", () => {
         let counter = 0;
 
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.once(() => counter++);
 
@@ -46,7 +46,7 @@ describe("Event", () => {
     it("removes receiver", () => {
         let counter = 0;
 
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
         const callback = () => counter++;
 
         evnt.on(callback);
@@ -59,7 +59,7 @@ describe("Event", () => {
     it("calls every sender", () => {
         let counter = 0;
 
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.on(() => counter++);
 
@@ -72,7 +72,7 @@ describe("Event", () => {
     it("calls equal sender only", () => {
         let counter = 0;
 
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.on(() => counter++, { sender: 1 });
 
@@ -85,7 +85,7 @@ describe("Event", () => {
     it("calls equal args only", () => {
         let counter = 0;
 
-        const evnt = new Event<any, any>();
+        const evnt = new Event<any, any>('test');
 
         evnt.on(() => counter++, { args: 1 });
 

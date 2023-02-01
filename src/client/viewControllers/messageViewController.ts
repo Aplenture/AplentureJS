@@ -7,8 +7,8 @@ import { Button } from "../views/button";
 import { Label } from "../views/label";
 
 export class MessageViewController extends ViewController {
-    public static readonly onMessage = new Event<MessageViewController, Message>();
-    public static readonly onDone = new Event<MessageViewController, void>();
+    public static readonly onMessage = new Event<MessageViewController, Message>('MessageViewController.onMessage');
+    public static readonly onDone = new Event<MessageViewController, void>('MessageViewController.onDone');
 
     public readonly titleLabel = new Label('title');
     public readonly textLabel = new Label('text');

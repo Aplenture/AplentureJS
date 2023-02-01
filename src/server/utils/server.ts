@@ -30,8 +30,8 @@ const DEFAULT_PORT_HTTPS = 443;
 const MESSAGE_STOP = "stop";
 
 export class Server {
-    public static readonly onMessage = new Event<Server, string>();
-    public static readonly onError = new Event<Server, Error>();
+    public static readonly onMessage = new Event<Server, string>('Server.onMessage');
+    public static readonly onError = new Event<Server, Error>('Server.onError');
 
     private readonly commander = new Commander();
     private readonly servers: HTTP.Server[] = [];

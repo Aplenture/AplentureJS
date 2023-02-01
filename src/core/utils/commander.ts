@@ -11,7 +11,7 @@ const MAX_LENGTH_RESULT = 30;
 export const COMMAND_HELP = 'help';
 
 export class Commander {
-    public static readonly onMessage = new Event<Commander, string>();
+    public static readonly onMessage = new Event<Commander, string>('Commander.onMessage');
 
     private readonly _commands: NodeJS.Dict<Singleton<Command<any, any, any, any>>> = {};
 

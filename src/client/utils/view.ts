@@ -1,8 +1,8 @@
 import { Event } from "../../core/utils/event";
 
 export class View {
-    public static readonly onClick = new Event<View, void>();
-    public static readonly onEnterKey = new Event<View, void>();
+    public static readonly onClick = new Event<View, void>('View.onClick');
+    public static readonly onEnterKey = new Event<View, void>('View.onEnterKey');
 
     public propaginateClickEvents = true;
 

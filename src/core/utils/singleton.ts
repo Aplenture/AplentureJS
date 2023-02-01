@@ -1,7 +1,7 @@
 import { Event } from "./event";
 
 export class Singleton<T> {
-    public static onInstantiated = new Event<Singleton<any>, any>();
+    public static onInstantiated = new Event<Singleton<any>, any>('Singleton.onInstantiated');
 
     private readonly args: any[];
 

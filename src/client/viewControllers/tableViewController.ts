@@ -5,8 +5,8 @@ import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 
 export class TableViewController<TCell extends View> extends ViewController {
-    public static readonly onSelected = new Event<TableViewController<any>, number>();
-    public static readonly onDeselected = new Event<TableViewController<any>, number>();
+    public static readonly onSelected = new Event<TableViewController<any>, number>('TableViewController.onSelected');
+    public static readonly onDeselected = new Event<TableViewController<any>, number>('TableViewController.onDeselected');
 
     private _header: View;
 

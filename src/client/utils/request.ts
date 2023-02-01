@@ -11,7 +11,7 @@ export interface RequestOptions {
 }
 
 export abstract class Request<TParams, TResponse> {
-    public static readonly onSending = new Event<Request<any, any>, string>();
+    public static readonly onSending = new Event<Request<any, any>, string>('Request.onSending');
 
     public readonly type: RequestMethod;
     public readonly isPrivate: boolean;

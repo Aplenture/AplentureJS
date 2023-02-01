@@ -3,7 +3,7 @@ import { Localization } from "../../core/utils/localization";
 import { View } from "../utils/view";
 
 export class Dropbox extends View {
-    public static readonly onSelected = new Event<Dropbox, number>();
+    public static readonly onSelected = new Event<Dropbox, number>('Dropbox.onSelected');
 
     protected readonly label = document.createElement('label');
     protected readonly select = document.createElement('select');

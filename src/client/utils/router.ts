@@ -3,7 +3,7 @@ import { Route } from "../models/route";
 import { RouterConfig } from "../models/routerConfig";
 
 export class Router {
-    public static readonly onRouteChanged = new Event<Router, Route>();
+    public static readonly onRouteChanged = new Event<Router, Route>('Router.onRouteChanged');
 
     private readonly routes: Route[] = [];
 
