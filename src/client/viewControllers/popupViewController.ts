@@ -40,7 +40,12 @@ export class PopupViewController extends StackViewController {
     }
 
     public removeChild(child: ViewController): number {
-        return this.contentViewController.removeChild(child);
+        const index = this.contentViewController.removeChild(child);
+
+        if (0 == this.contentViewController.children.length)
+            this.view.visible = false;
+
+        return index;
     }
 
     public removeChildAtIndex(index: number) {
@@ -52,5 +57,6 @@ export class PopupViewController extends StackViewController {
 
     public removeAllChildren(): void {
         this.contentViewController.removeAllChildren();
+        this.view.visible = false;
     }
 }

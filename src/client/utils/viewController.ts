@@ -30,6 +30,9 @@ export class ViewController {
     }
 
     public appendChild(child: ViewController): number {
+        if (!child)
+            return;
+
         if (child._parent)
             child._parent.removeChild(child);
 

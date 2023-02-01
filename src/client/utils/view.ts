@@ -111,6 +111,9 @@ export class View {
     }
 
     public appendChild(child: View): number {
+        if (!child)
+            return;
+
         if (child.parent)
             child.parent.removeChild(child);
 
