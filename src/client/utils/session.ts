@@ -15,7 +15,7 @@ export class Session {
     public static readonly onLogin = new Event<Session, Access>();
     public static readonly onLogout = new Event<Session, void>();
 
-    private readonly logoutRequest: BoolRequest<{ session: string }>;
+    private readonly logoutRequest: BoolRequest<{ api: string }>;
     private readonly hasAccessRequest: BoolRequest<{
         readonly api: string,
         readonly signature: string,
@@ -124,7 +124,7 @@ export class Session {
             return true;
 
         try {
-            await this.logoutRequest.send({ session: this._access.api });
+            await this.logoutRequest.send({ api: this._access.api });
 
             this.resetAccess();
 

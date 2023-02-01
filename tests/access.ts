@@ -4,11 +4,11 @@ import { Access } from "../src";
 describe("Access", () => {
     describe("Serialization", () => {
         const tests = [
-            { session: new Access('hello', 'world'), hex: '05hello05world' },
-            { session: new Access('world', 'hello', 'label'), hex: '05world05hellolabel' }
+            { access: new Access('hello', 'world'), hex: '05hello05world' },
+            { access: new Access('world', 'hello', 'label'), hex: '05world05hellolabel' }
         ];
 
-        it("serializes to hex", () => tests.forEach(test => expect(test.session.toHex()).equals(test.hex)));
-        it("deserializes from hex", () => tests.forEach(test => expect(Access.fromHex(test.hex)).deep.equals(test.session)));
+        it("serializes to hex", () => tests.forEach(test => expect(test.access.toHex()).equals(test.hex)));
+        it("deserializes from hex", () => tests.forEach(test => expect(Access.fromHex(test.hex)).deep.equals(test.access)));
     });
 });

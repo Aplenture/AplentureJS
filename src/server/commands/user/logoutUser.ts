@@ -7,7 +7,7 @@ import { Response } from "../../utils/response";
 import { ServerCommand } from "../../utils/serverCommand";
 
 interface Args {
-    readonly session: string;
+    readonly api: string;
 }
 
 interface Context {
@@ -20,11 +20,11 @@ export class LogoutUser extends ServerCommand<any, Context, Args> {
     public readonly isPrivate = true;
     public readonly description = "Closes the access."
     public readonly property = new CommandArgs<Args>(
-        new StringProperty("session", "Session from access to close.")
+        new StringProperty("api", "From access to close.")
     );
 
     public async execute(args: Args): Promise<Response> {
-        const access = await this.context.repositories.AccessRepository.getByAPI(args.session);
+        const access = await this.context.repositories.AccessRepository.getByAPI(args.api);
 
         if (!access)
             throw new UnauthorizedError('#_login_invalid');
