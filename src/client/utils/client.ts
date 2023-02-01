@@ -36,7 +36,7 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push({
             title: '#_error',
-            text: event.reason
+            text: '#_something_went_wrong'
         }) : alert(event.reason));
 
         await Client.loadTranslation(config.defaultLanguage || Localization.language);
