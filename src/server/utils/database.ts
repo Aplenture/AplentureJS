@@ -111,13 +111,11 @@ export class Database {
     public async query(query: string, values: readonly Type[] = []): Promise<any> {
         const stopwatch = new Stopwatch();
 
+        stopwatch.start();
+
         query = Database.escapeQuery(query, values);
 
-        Database.onMessage.emit(this, `${this.name}.db << ${query}`);
-
         const connection = await this.pool.getConnection();
-
-        stopwatch.start();
 
         const result = await connection.query({
             sql: query,
@@ -135,20 +133,19 @@ export class Database {
         if (Array.isArray(result))
             result.forEach(entry => Database.decodeEntry(entry));
 
-        Database.onMessage.emit(this, `${this.name}.db >> ${query} >> ${formatDuration(stopwatch.duration, {
-            seconds: true,
-            milliseconds: true
-        })}`);
+        Database.onMessage.emit(this, `executed ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
 
         return result;
     }
 
     public fetch(query: string, callback: (result: Entry, index: number) => Promise<any>, values: readonly Type[] = []): Promise<void> {
+        const stopwatch = new Stopwatch();
+
+        stopwatch.start();
+
         query = Database.escapeQuery(query, values);
 
         let index = 0;
-
-        Database.onMessage.emit(this, "database << " + query);
 
         return new Promise<void>(async (resolve, reject) => {
             const connection = await this.pool.getConnection();
@@ -168,6 +165,7 @@ export class Database {
             stream.on("end", () => {
                 connection.release();
                 resolve();
+                Database.onMessage.emit(this, `fetched ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
             });
 
             stream.on("data", async entry => {

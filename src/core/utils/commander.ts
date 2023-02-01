@@ -55,8 +55,6 @@ export class Commander {
 
         command = command.toLowerCase();
 
-        Commander.onMessage.emit(this, "commander << " + commandLine);
-
         if (!this._commands[command])
             throw new Error(`Unknown command '${command}'. Type '${COMMAND_HELP}' for help.`);
 
@@ -70,21 +68,11 @@ export class Commander {
             const result = await instance.execute(args);
             stopwatch.stop();
 
-            let shortResult: string = result.toString();
-
-            const maxResultLength = Math.min(
-                Math.max(0, shortResult.indexOf('\n')),
-                MAX_LENGTH_RESULT
-            );
-
-            if (shortResult.length > maxResultLength)
-                shortResult = shortResult.substring(0, maxResultLength) + '[...]';
-
-            Commander.onMessage.emit(this, `commander >> ${commandLine} >> ${shortResult} (${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })})`);
+            Commander.onMessage.emit(this, `executed ${commandLine} in (${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })})`);
 
             return result as TRes;
         } catch (error) {
-            Commander.onMessage.emit(this, `commander >> ${commandLine} >> ${error.stack}`);
+            Commander.onMessage.emit(this, `executed ${commandLine} >> ${error.stack}`);
 
             throw error;
         }
