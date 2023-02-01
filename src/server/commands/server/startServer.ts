@@ -14,16 +14,15 @@ interface Context {
     }
 }
 
-export class StartServer extends Command<Config, Context, any, string> {
+export class StartServer extends Command<Config, Context, any, void> {
     public readonly description = "Starts a server";
     public readonly property = null;
 
-    public async execute(): Promise<string> {
+    public execute(): Promise<void> {
         const server = new Server(this.context.repositories.AccessRepository, this.config);
 
         server.init();
-        server.start(...this.config.servers);
 
-        return "server started";
+        return server.start(...this.config.servers);
     }
 }
