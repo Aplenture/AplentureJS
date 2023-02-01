@@ -16,6 +16,8 @@ export class TextField extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'text_field');
 
+        this.propaginateClickEvents = false;
+
         this.div.appendChild(this.label);
         this.div.appendChild(this.input);
 

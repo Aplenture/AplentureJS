@@ -13,6 +13,8 @@ export class Dropbox extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'dropbox');
 
+        this.propaginateClickEvents = false;
+
         this.div.appendChild(this.label);
         this.div.appendChild(this.select);
 
