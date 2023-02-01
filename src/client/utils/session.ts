@@ -17,7 +17,7 @@ export class Session {
 
     private readonly logoutRequest: BoolRequest<{ session: string }>;
     private readonly hasAccessRequest: BoolRequest<{
-        readonly session: string,
+        readonly api: string,
         readonly signature: string,
         readonly timestamp: number
     }>;
@@ -142,7 +142,7 @@ export class Session {
 
         try {
             return await this.hasAccessRequest.send({
-                session: access.api,
+                api: access.api,
                 signature: access.sign(timestamp.toString()),
                 timestamp
             });

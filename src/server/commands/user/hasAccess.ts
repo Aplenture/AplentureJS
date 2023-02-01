@@ -9,7 +9,7 @@ import { Server } from "../../utils/server";
 import { ServerCommand } from "../../utils/serverCommand";
 
 interface Args {
-    readonly session: string;
+    readonly api: string;
     readonly signature: string;
     readonly timestamp: number;
 }
@@ -24,13 +24,13 @@ export class HasAccess extends ServerCommand<void, Context, Args> {
     public readonly isPrivate = false;
     public readonly description = "Returns whether access is valid."
     public readonly property = new CommandArgs<Args>(
-        new StringProperty("sesion", "Access session."),
+        new StringProperty("api", "From Access."),
         new StringProperty("signature", "Signatured timestamp."),
         new NumberProperty("timestamp", "Validation timestamp.")
     );
 
     public async execute(args: Args): Promise<Response> {
-        const access = await this.context.repositories.AccessRepository.getByAPI(args.session);
+        const access = await this.context.repositories.AccessRepository.getByAPI(args.api);
         const time = Date.now();
 
         if (!Server.validateAccess(access, time))
