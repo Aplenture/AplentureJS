@@ -174,9 +174,13 @@ export class Server {
                 if (!Server.validateSignature(signature, query, access.secret))
                     throw new UnauthorizedError(ErrorMessage.InvalidSignature);
 
-                // overwrite security critical arguments
+                // overwrite security arguments
                 args.account = access.account;
                 args.api = api;
+            } else {
+                // delete security arguments
+                delete args.account;
+                delete args.api;
             }
 
             const result: Response = await this.commander.execute(command, args);
