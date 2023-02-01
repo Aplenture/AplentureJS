@@ -61,7 +61,6 @@ export class Session {
 
         this._access = access;
 
-        Session.onLogin.emit(this, access);
         Session.onAccessChanged.emit(this, access);
     }
 
