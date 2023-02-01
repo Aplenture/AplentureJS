@@ -38,7 +38,7 @@ export class Session {
     constructor(public readonly messageViewController: MessageViewController, config: SessionConfig) {
         this.hasAccessRequest = new BoolRequest(config.hasAccessURL);
         this.loginRequest = new JSONRequest(config.loginURL);
-        this.logoutRequest = new BoolRequest(config.logoutURL);
+        this.logoutRequest = new BoolRequest(config.logoutURL, { isPrivate: true });
     }
 
     public get access(): Access { return this._access; }
