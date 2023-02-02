@@ -38,7 +38,7 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push({
             title: '#_error',
-            text: '#_something_went_wrong'
+            text: event.reason || '#_something_went_wrong'
         }) : alert(event.reason));
 
         await Client.loadTranslation(config.defaultLanguage || Localization.language);
@@ -72,10 +72,10 @@ export abstract class Client<TConfig extends ClientConfig> {
             window.addEventListener('load', () => this.handleLoaded(config), { once: true });
     }
 
-    protected abstract setup(confg: TConfig): Promise<void>;
+    protected abstract setup(config: TConfig): Promise<void>;
 
-    protected async handleLoaded(confg: TConfig) {
-        await this.setup(confg);
+    protected async handleLoaded(config: TConfig) {
+        await this.setup(config);
 
         this.rootViewController.init();
         await this.rootViewController.update();

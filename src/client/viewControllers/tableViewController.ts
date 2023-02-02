@@ -18,7 +18,7 @@ export class TableViewController<TCell extends View> extends ViewController {
     private _selectionMode = TableSelectionMode.None;
 
     constructor(...classes: string[]) {
-        super(...classes);
+        super(...classes, 'table');
     }
 
     public get header(): View { return this._header; }
