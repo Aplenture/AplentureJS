@@ -52,7 +52,7 @@ export class NavigationViewController extends ViewController {
     }
 
     public appendChild(child: ViewController, title = child.title || '#_missing_title'): number {
-        super.appendChild(child);
+        this.contentViewController.appendChild(child);
 
         child.view.visible = false;
         
