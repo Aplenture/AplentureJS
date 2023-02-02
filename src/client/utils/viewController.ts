@@ -4,6 +4,7 @@ export class ViewController {
     public readonly view: View;
 
     public title: string;
+    public index: number = null;
 
     private readonly _children: ViewController[] = [];
 

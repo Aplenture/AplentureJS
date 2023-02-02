@@ -4,6 +4,7 @@ export class View {
     public static readonly onClick = new Event<View, void>('View.onClick');
     public static readonly onEnterKey = new Event<View, void>('View.onEnterKey');
 
+    public index: number = null;
     public propaginateClickEvents = true;
 
     protected readonly div = document.createElement('div');
