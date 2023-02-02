@@ -52,7 +52,7 @@ export class Router {
     }
 
     public changeRoute(name: string, index: number = null) {
-        this._route = this.findRoute(name);
+        this._route = this.findRoute(name, index);
 
         window.history.pushState({}, this._route.name, index ? `/${this._route.name}/${index}` : `/${this._route.name}`);
 
