@@ -8,6 +8,9 @@ export class TitledLabel extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'titled', 'label');
 
+        this.title = '#_title';
+        this.text = '#_text';
+
         this.div.appendChild(this.titleLabel);
         this.div.appendChild(this.valueLabel);
     }
