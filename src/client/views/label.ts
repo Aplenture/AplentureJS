@@ -3,7 +3,7 @@ import { TextAlignment } from "../enums/textAlignment";
 import { View } from "../utils/view";
 
 export class Label extends View {
-    protected readonly label = document.createElement('label');
+    protected readonly label = document.createElement('span');
 
     constructor(...classes: readonly string[]) {
         super(...classes, 'label');

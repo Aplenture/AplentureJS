@@ -10,7 +10,7 @@ export enum TextFieldType {
 export class TextField extends View {
     public static readonly onChange = new Event<TextField, string>('TextField.onChange');
 
-    protected readonly label = document.createElement('label');
+    protected readonly label = document.createElement('span');
     protected readonly input = document.createElement('input');
 
     constructor(...classes: readonly string[]) {

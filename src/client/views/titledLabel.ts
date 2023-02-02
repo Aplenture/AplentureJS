@@ -2,8 +2,8 @@ import { Localization } from "../../core/utils/localization";
 import { View } from "../utils/view";
 
 export class TitledLabel extends View {
-    protected readonly titleLabel = document.createElement('label');
-    protected readonly valueLabel = document.createElement('label');
+    protected readonly titleLabel = document.createElement('span');
+    protected readonly valueLabel = document.createElement('span');
 
     constructor(...classes: readonly string[]) {
         super(...classes, 'titled', 'label');

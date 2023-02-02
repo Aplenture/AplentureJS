@@ -5,13 +5,13 @@ import { View } from "../utils/view";
 export class Switch extends View {
     public static readonly onChange = new Event<Switch, boolean>('Switch.onChange');
 
-    protected readonly label = document.createElement('label');
+    protected readonly label = document.createElement('span');
     protected readonly input = document.createElement('input');
 
     constructor(...classes: readonly string[]) {
         super(...classes, 'switch');
 
-        const label = document.createElement('label');
+        const label = document.createElement('span');
         const span1 = document.createElement('span');
         const span2 = document.createElement('span');
 
