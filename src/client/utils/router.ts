@@ -1,3 +1,4 @@
+import { Lifo } from "../../core";
 import { Event, EventHandler } from "../../core/utils/event";
 import { Route } from "../models/route";
 import { RouterConfig } from "../models/routerConfig";
@@ -10,6 +11,7 @@ export class Router {
     private readonly defaultRoute: string;
 
     private _route: Route = null;
+    private history = new Lifo<string>();
 
     constructor(config: RouterConfig) {
         this.defaultRoute = config.defaultRoute;
@@ -19,7 +21,7 @@ export class Router {
 
     public get route(): Route { return this._route; }
     public get index(): number { return this._route && this._route.index; }
-    public get historyLength(): number { return window.history.length; }
+    public get historyLength(): number { return this.history.count; }
 
     public init() {
         const parts = window.location.pathname
@@ -53,14 +55,18 @@ export class Router {
     }
 
     public changeRoute(name: string, index: number = null) {
+        const routeString = `/${this._route.name}/${index}`;
+        
         this._route = this.findRoute(name, index);
 
-        window.history.pushState({}, this._route.name, index ? `/${this._route.name}/${index}` : `/${this._route.name}`);
+        this.history.push(routeString);
+        window.history.pushState({}, this._route.name, index ? routeString : `/${this._route.name}`);
 
         Router.onRouteChanged.emit(this, this._route);
     }
 
     public back() {
+        this.history.pop();
         window.history.back();
     }
 
