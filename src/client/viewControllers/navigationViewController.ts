@@ -1,9 +1,6 @@
-import { TextAlignment } from "../enums/textAlignment";
-import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Window } from "../utils/window";
 import { BottomFlexView } from "../views/bottomFlexView";
-import { Label } from "../views/label";
 import { LeftFlexView } from "../views/leftFlexView";
 import { MenuView } from "../views/menuView";
 import { TabBar } from "../views/tabBar";
@@ -45,14 +42,17 @@ export class NavigationViewController extends ViewController {
         Window.onResize.on(this.onResizeHanlder);
 
         super.init();
-
-        this.updateSizes();
     }
 
     public deinit(): void {
         Window.onResize.off(this.onResizeHanlder);
 
         super.deinit();
+    }
+
+    protected onAppended(): void {
+        this.updateSizes();
+        super.onAppended();
     }
 
     public focus() {
@@ -63,7 +63,7 @@ export class NavigationViewController extends ViewController {
         this.contentViewController.appendChild(child);
 
         child.view.visible = false;
-        
+
         return this.addItem(title, (index) => this.selected = index);
     }
 
