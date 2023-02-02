@@ -8,6 +8,8 @@ export class TableViewController<TCell extends View> extends ViewController {
     public static readonly onSelected = new Event<TableViewController<any>, number>('TableViewController.onSelected');
     public static readonly onDeselected = new Event<TableViewController<any>, number>('TableViewController.onDeselected');
 
+    public source: TableViewControllerSource<TCell>;
+
     private _header: View;
 
     private readonly _cells: TCell[] = [];
@@ -15,7 +17,7 @@ export class TableViewController<TCell extends View> extends ViewController {
 
     private _selectionMode = TableSelectionMode.None;
 
-    constructor(public source: TableViewControllerSource<TCell>, ...classes: string[]) {
+    constructor(...classes: string[]) {
         super(...classes);
     }
 
@@ -45,9 +47,9 @@ export class TableViewController<TCell extends View> extends ViewController {
     }
 
     public async render(): Promise<void> {
-        const numCategories = this.source.numberOfCategories && this.source.numberOfCategories() || 1;
+        const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
 
-        this._header = this.source.createHeader();
+        this._header = this.source.createHeader(this);
 
         this._cells.splice(0, this._cells.length);
 
@@ -57,8 +59,8 @@ export class TableViewController<TCell extends View> extends ViewController {
         this.view.appendChild(this._header);
 
         for (let i = 0; i < numCategories; ++i) {
-            const numCells = this.source.numberOfCells(i);
-            const category = this.source.createCategory && this.source.createCategory(i);
+            const numCells = this.source.numberOfCells(this, i);
+            const category = this.source.createCategory && this.source.createCategory(this, i);
 
             if (category) {
                 if (!category.hasClass('category'))
@@ -73,7 +75,7 @@ export class TableViewController<TCell extends View> extends ViewController {
                 if (!cell.hasClass('cell'))
                     cell.addClass('cell');
 
-                this.source.updateCell(cell, j, i);
+                this.source.updateCell(this, cell, j, i);
 
                 this.view.appendChild(cell);
                 this._cells.push(cell);
@@ -131,7 +133,7 @@ export class TableViewController<TCell extends View> extends ViewController {
     }
 
     private reuseCell(category: number): TCell {
-        const cell = this.source.createCell(category);
+        const cell = this.source.createCell(this, category);
 
         cell.clickable = this._selectionMode != TableSelectionMode.None;
 
