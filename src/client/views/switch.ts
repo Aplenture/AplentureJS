@@ -11,7 +11,7 @@ export class Switch extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'switch');
 
-        const label = document.createElement('span');
+        const label = document.createElement('label');
         const span1 = document.createElement('span');
         const span2 = document.createElement('span');
 
