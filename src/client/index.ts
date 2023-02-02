@@ -1,6 +1,7 @@
 export * from "./enums/tableSelectionMode";
 export * from "./enums/textAlignment";
 
+export * from "./interfaces/tableViewControllerDataDelegate";
 export * from "./interfaces/tableViewControllerDataSource";
 
 export * from "./models/clientConfig";

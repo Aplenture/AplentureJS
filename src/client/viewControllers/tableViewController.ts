@@ -1,14 +1,12 @@
-import { Event } from "../../core/utils/event";
 import { TableSelectionMode } from "../enums/tableSelectionMode";
+import { TableViewControllerDelegate } from "../interfaces/tableViewControllerDataDelegate";
 import { TableViewControllerSource } from "../interfaces/tableViewControllerDataSource";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 
 export class TableViewController<TCell extends View> extends ViewController {
-    public static readonly onSelected = new Event<TableViewController<any>, number>('TableViewController.onSelected');
-    public static readonly onDeselected = new Event<TableViewController<any>, number>('TableViewController.onDeselected');
-
     public source: TableViewControllerSource<TCell>;
+    public delegate: TableViewControllerDelegate<TCell>;
 
     private _header: View;
 
@@ -85,10 +83,13 @@ export class TableViewController<TCell extends View> extends ViewController {
         if (!this._selectedRows.length)
             return;
 
-        this._cells.forEach(child => child.selected = false);
-
-        this._selectedRows.forEach(index => TableViewController.onDeselected.emit(this, index));
         this._selectedRows.splice(0, this._selectedRows.length);
+        this._cells.forEach(cell => {
+            cell.selected = false;
+
+            if (this.delegate)
+                this.delegate.deselectedCell(this, cell);
+        });
     }
 
     public deselectRow(row: number): void {
@@ -99,7 +100,9 @@ export class TableViewController<TCell extends View> extends ViewController {
 
         this._cells[row].selected = false;
         this._selectedRows.splice(index, 1);
-        TableViewController.onDeselected.emit(this, row);
+
+        if (this.delegate)
+            this.delegate.deselectedCell(this, this._cells[row]);
     }
 
     public selectRow(row: number): void {
@@ -119,7 +122,8 @@ export class TableViewController<TCell extends View> extends ViewController {
                 this._selectedRows.push(row);
         }
 
-        TableViewController.onSelected.emit(this, row);
+        if (this.delegate)
+            this.delegate.selectedCell(this, this._cells[row]);
     }
 
     public cellIndex(cell: TCell): number {
