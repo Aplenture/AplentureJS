@@ -16,6 +16,8 @@ export class NavigationViewController extends ViewController {
 
     private _selected = 0;
 
+    private readonly onResizeHanlder = () => this.updateSizes();
+
     constructor(...classes: string[]) {
         super(...classes, 'navigation');
     }
@@ -40,11 +42,17 @@ export class NavigationViewController extends ViewController {
 
         this.view.appendChild(leftFlexView);
 
-        Window.onResize.on(() => this.updateSizes());
+        Window.onResize.on(this.onResizeHanlder);
 
         super.init();
 
         this.updateSizes();
+    }
+
+    public deinit(): void {
+        Window.onResize.off(this.onResizeHanlder);
+
+        super.deinit();
     }
 
     public focus() {
