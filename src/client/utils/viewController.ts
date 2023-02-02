@@ -20,8 +20,8 @@ export class ViewController {
         this._children.forEach(child => child.init());
     }
 
-    public async update(): Promise<void> {
-        await Promise.all(this._children.map(child => child.update()));
+    public deinit() {
+        this._children.forEach(child => child.deinit());
     }
 
     public focus() {

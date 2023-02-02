@@ -59,10 +59,7 @@ export abstract class Client<TConfig extends ClientConfig> {
         this.rootViewController.appendChild(this.popupViewController);
 
         this.messageViewController.init();
-        await this.messageViewController.update();
-
         this.loginViewController.init();
-        await this.loginViewController.update();
 
         document.body.appendChild((this.rootViewController.view as any).div);
 
@@ -76,10 +73,7 @@ export abstract class Client<TConfig extends ClientConfig> {
 
     protected async handleLoaded(config: TConfig) {
         await this.setup(config);
-
         this.rootViewController.init();
-        await this.rootViewController.update();
-
         await this.session.init();
         this.router.init();
     }

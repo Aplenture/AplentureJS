@@ -16,8 +16,6 @@ export class StackViewController extends ViewController {
         this.removeChild(current);
         this.appendChild(next);
 
-        await next.update();
-
         this.focus();
     }
 

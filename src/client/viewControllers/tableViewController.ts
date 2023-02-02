@@ -40,12 +40,6 @@ export class TableViewController<TCell extends View> extends ViewController {
             this.view.removeClass('alternatingBackgroundColor');
     }
 
-    public async update(): Promise<void> {
-        this.render();
-
-        await super.update();
-    }
-
     public async render(): Promise<void> {
         const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
 
