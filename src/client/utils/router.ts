@@ -19,6 +19,7 @@ export class Router {
 
     public get route(): Route { return this._route; }
     public get index(): number { return this._route && this._route.index; }
+    public get historyLength(): number { return window.history.length; }
 
     public init() {
         const parts = window.location.pathname
@@ -57,6 +58,10 @@ export class Router {
         window.history.pushState({}, this._route.name, index ? `/${this._route.name}/${index}` : `/${this._route.name}`);
 
         Router.onRouteChanged.emit(this, this._route);
+    }
+
+    public back() {
+        window.history.back();
     }
 
     private findRoute(name: string, index?: number) {
