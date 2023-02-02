@@ -51,8 +51,12 @@ export class NavigationViewController extends ViewController {
         this.contentViewController.focus();
     }
 
-    public appendChild(child: ViewController): number {
-        return this.addItem(child.title || '#_missing_title', (index) => this.selected = index);
+    public appendChild(child: ViewController, title = child.title || '#_missing_title'): number {
+        super.appendChild(child);
+
+        child.view.visible = false;
+        
+        return this.addItem(title, (index) => this.selected = index);
     }
 
     public removeChild(child: ViewController): number {
