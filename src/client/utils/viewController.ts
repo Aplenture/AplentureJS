@@ -40,6 +40,8 @@ export class ViewController {
 
         this.view.appendChild(child.view);
 
+        child.onAppended();
+
         return this._children.push(child) - 1;
     }
 
@@ -61,17 +63,22 @@ export class ViewController {
         if (index >= this._children.length)
             return;
 
-        this._children[index]._parent = null;
-        this._children.splice(index, 1);
+        const child = this._children[index];
 
+        this._children.splice(index, 1);
         this.view.removeChildAtIndex(index);
+
+        child._parent = null;
+        child.onDeppended();
     }
 
     public removeAllChildren() {
         this.view.removeAllChildren();
 
         this._children.forEach(child => child._parent = null);
-        this._children.splice(0, this._children.length);
+        this._children
+            .splice(0, this._children.length)
+            .forEach(child => child.onDeppended());
     }
 
     public removeFromParent() {
@@ -79,5 +86,13 @@ export class ViewController {
             return;
 
         this._parent.removeChild(this);
+    }
+
+    protected onAppended() {
+        this._children.forEach(child => child.onAppended());
+    }
+
+    protected onDeppended() {
+        this._children.forEach(child => child.onDeppended());
     }
 }
