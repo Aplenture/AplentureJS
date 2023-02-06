@@ -1,5 +1,4 @@
 import { ViewController } from "../utils/viewController";
-import { Window } from "../utils/window";
 import { BottomFlexView } from "../views/bottomFlexView";
 import { LeftFlexView } from "../views/leftFlexView";
 import { MenuView } from "../views/menuView";
@@ -12,8 +11,6 @@ export class NavigationViewController extends ViewController {
     public readonly tabBar = new TabBar();
 
     private _selected = 0;
-
-    private readonly onResizeHanlder = () => this.updateSizes();
 
     constructor(...classes: string[]) {
         super(...classes, 'navigation');
@@ -39,20 +36,7 @@ export class NavigationViewController extends ViewController {
 
         this.view.appendChild(leftFlexView);
 
-        Window.onResize.on(this.onResizeHanlder);
-
         super.init();
-    }
-
-    public deinit(): void {
-        Window.onResize.off(this.onResizeHanlder);
-
-        super.deinit();
-    }
-
-    protected onAppended(): void {
-        this.updateSizes();
-        super.onAppended();
     }
 
     public focus() {
@@ -86,13 +70,6 @@ export class NavigationViewController extends ViewController {
         this.contentViewController.removeAllChildren();
         this.menuView.removeAllChildren();
         this.tabBar.removeAllChildren();
-    }
-
-    public updateSizes() {
-        const landscaped = this.contentViewController.view.width > this.contentViewController.view.height;
-
-        this.menuView.visible = landscaped;
-        this.tabBar.visible = !landscaped;
     }
 
     public addItem(title: string, onClicked: (index: number) => void): number {
