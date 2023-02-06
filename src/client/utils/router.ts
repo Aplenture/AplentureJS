@@ -55,14 +55,21 @@ export class Router {
     }
 
     public changeRoute(name: string, index: number = null) {
-        const routeString = `/${this._route.name}/${index}`;
-        
-        this._route = this.findRoute(name, index);
+        const route = this.findRoute(name, index);
+
+        if (route && route.name == name && route.index == index)
+            return;
+
+        const routeString = route.index
+            ? `/${route.name}/${index}`
+            : `/${route.name}`;
+
+        this._route = route;
 
         this.history.push(routeString);
-        window.history.pushState({}, this._route.name, index ? routeString : `/${this._route.name}`);
+        window.history.pushState({}, route.name, routeString);
 
-        Router.onRouteChanged.emit(this, this._route);
+        Router.onRouteChanged.emit(this, route);
     }
 
     public back() {

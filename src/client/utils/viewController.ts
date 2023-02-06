@@ -18,7 +18,7 @@ export class ViewController {
     public get children(): readonly ViewController[] { return this._children; }
 
     public init() {
-        View.onHiddenChanged.on(value => this.onHiddenChanged(value), { sender: this.view, this: this });
+        View.onHiddenChanged.on(value => this.onHiddenChanged(value), { sender: this.view, listener: this });
 
         this._children.forEach(child => child.init());
     }

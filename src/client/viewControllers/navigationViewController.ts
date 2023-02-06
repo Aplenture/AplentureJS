@@ -37,6 +37,8 @@ export class NavigationViewController extends ViewController {
         this.view.appendChild(leftFlexView);
 
         super.init();
+
+        this.updateSelected();
     }
 
     public focus() {
@@ -76,7 +78,9 @@ export class NavigationViewController extends ViewController {
         const index = this.menuView.addItem(title, onClicked);
 
         this.tabBar.addItem(title, onClicked);
-        this.updateSelected();
+
+        if (this.parent)
+            this.updateSelected();
 
         return index;
     }

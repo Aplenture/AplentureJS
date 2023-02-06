@@ -43,9 +43,9 @@ export class TableViewController<TCell extends View> extends ViewController {
 
         this._header = this.source.createHeader(this);
 
-        this._cells.splice(0, this._cells.length);
-
         this.deselectAllRows();
+
+        this._cells.splice(0, this._cells.length);
 
         this.view.removeAllChildren();
         this.view.appendChild(this._header);

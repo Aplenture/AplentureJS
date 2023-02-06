@@ -62,7 +62,7 @@ describe("Event", () => {
         const evnt = new Event<any, any>('test');
         const callback = () => counter++;
 
-        evnt.on(callback, { this: this });
+        evnt.on(callback, { listener: this });
         evnt.off(this);
         evnt.emit(null, "hello world");
 
