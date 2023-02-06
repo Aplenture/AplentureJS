@@ -47,6 +47,9 @@ export class Commander {
     }
 
     public getCommand<T extends Command<any, any, any, any>>(name: string): T {
+        if (!this.hasCommand(name))
+            throw new Error(`unknown command '${name}'`);
+
         return this._commands[name.toLowerCase()].instance as T;
     }
 

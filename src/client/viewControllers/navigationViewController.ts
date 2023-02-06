@@ -5,7 +5,7 @@ import { MenuView } from "../views/menuView";
 import { TabBar } from "../views/tabBar";
 
 export class NavigationViewController extends ViewController {
-    public readonly contentViewController = new ViewController('content');
+    public readonly contentViewController = new ViewController('navigation', 'content');
 
     public readonly menuView = new MenuView('navigation');
     public readonly tabBar = new TabBar('navigation');
@@ -23,8 +23,8 @@ export class NavigationViewController extends ViewController {
     }
 
     public init(): void {
-        const leftFlexView = new LeftFlexView();
-        const bottomFlexView = new BottomFlexView();
+        const leftFlexView = new LeftFlexView('navigation');
+        const bottomFlexView = new BottomFlexView('navigation');
 
         super.appendChild(this.contentViewController);
 
