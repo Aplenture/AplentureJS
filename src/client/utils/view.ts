@@ -157,9 +157,11 @@ export class View {
     }
 
     public removeAllChildren() {
-        this.div.childNodes.forEach(node => this.div.removeChild(node));
+        this._children.forEach(child => {
+            this.div.removeChild(child.div);
+            child._parent = null;
+        });
 
-        this._children.forEach(child => child._parent = null);
         this._children.splice(0, this._children.length);
     }
 
