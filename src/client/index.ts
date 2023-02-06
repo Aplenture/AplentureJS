@@ -41,6 +41,7 @@ export * from "./views/imageView";
 export * from "./views/label";
 export * from "./views/leftFlexView";
 export * from "./views/rightFlexView";
+export * from "./views/scrollView";
 export * from "./views/switch";
 export * from "./views/textField";
 export * from "./views/titleBar";
