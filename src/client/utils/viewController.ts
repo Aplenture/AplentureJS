@@ -18,15 +18,15 @@ export class ViewController {
     public get children(): readonly ViewController[] { return this._children; }
 
     public init() {
-        View.onHiddenChanged.on(value => this.onHiddenChanged(value), { sender: this.view, listener: this });
-
         this._children.forEach(child => child.init());
     }
 
     public deinit() {
-        View.onHiddenChanged.off(this);
-
         this._children.forEach(child => child.deinit());
+    }
+
+    public async update() {
+        await Promise.all(this._children.map(child => child.update()));
     }
 
     public focus() {
@@ -44,8 +44,6 @@ export class ViewController {
         child._parent = this;
 
         this.view.appendChild(child.view);
-
-        child.onAppended();
 
         return this._children.push(child) - 1;
     }
@@ -74,16 +72,13 @@ export class ViewController {
         this.view.removeChildAtIndex(index);
 
         child._parent = null;
-        child.onDeppended();
     }
 
     public removeAllChildren() {
         this.view.removeAllChildren();
 
         this._children.forEach(child => child._parent = null);
-        this._children
-            .splice(0, this._children.length)
-            .forEach(child => child.onDeppended());
+        this._children.splice(0, this._children.length);
     }
 
     public removeFromParent() {
@@ -91,17 +86,5 @@ export class ViewController {
             return;
 
         this._parent.removeChild(this);
-    }
-
-    protected onAppended() {
-        this._children.forEach(child => child.onAppended());
-    }
-
-    protected onDeppended() {
-        this._children.forEach(child => child.onDeppended());
-    }
-
-    protected onHiddenChanged(value: boolean) {
-        this._children.forEach(child => child.onHiddenChanged(value));
     }
 }
