@@ -16,7 +16,10 @@ export class Router {
     constructor(config: RouterConfig) {
         this.defaultRoute = config.defaultRoute;
 
-        window.addEventListener('popstate', async () => this.init());
+        window.addEventListener('popstate', async () => {
+            this.history.pop();
+            this.init();
+        });
     }
 
     public get route(): Route { return this._route; }
@@ -29,6 +32,9 @@ export class Router {
             .split('/');
 
         this._route = this.findRoute(parts[0], parseInt(parts[1]));
+
+        if (0 == this.history.count && this._route.name != this.defaultRoute)
+            this.history.push(this.defaultRoute);
 
         Router.onRouteChanged.emit(this, this._route);
     }
@@ -73,7 +79,6 @@ export class Router {
     }
 
     public back() {
-        this.history.pop();
         window.history.back();
     }
 
