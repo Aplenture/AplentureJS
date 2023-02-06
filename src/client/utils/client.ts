@@ -78,6 +78,7 @@ export abstract class Client<TConfig extends ClientConfig> {
         this.rootViewController.init();
         await this.session.init();
         this.router.init();
+        await this.rootViewController.update();
     }
 
     private static async loadTranslation(defaultLanguage: string): Promise<void> {

@@ -95,5 +95,9 @@ export class NavigationViewController extends ViewController {
         this.contentViewController.children.forEach((controller, index) => controller.view.visible = index == selected);
         this.menuView.children.forEach((view, index) => view.selected = index == selected);
         this.tabBar.children.forEach((view, index) => view.selected = index == selected);
+
+        this.contentViewController.children
+            .find(controller => controller.view.visible)
+            .update();
     }
 }
