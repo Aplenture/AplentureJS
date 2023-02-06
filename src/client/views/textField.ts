@@ -34,8 +34,14 @@ export class TextField extends View {
     public get title(): string { return this.label.innerText; }
     public set title(value: string) { this.label.innerText = Localization.translate(value); }
 
-    public get text(): string { return this.input.value; }
-    public set text(value: string) { this.input.value = value; }
+    public get value(): string { return this.input.value; }
+    public set value(value: string) { this.input.value = value; }
+
+    public get dateValue(): Date { return this.input.valueAsDate; }
+    public set dateValue(value: Date) { this.input.valueAsDate = value; }
+
+    public get numberValue(): number { return this.input.valueAsNumber; }
+    public set numberValue(value: number) { this.input.valueAsNumber = value; }
 
     public get placeholder(): string { return this.input.placeholder; }
     public set placeholder(value: string) { this.input.placeholder = value; }
@@ -47,7 +53,7 @@ export class TextField extends View {
         this.input.focus();
     }
 
-    public selectRange(start?: number, end = this.text.length) {
+    public selectRange(start?: number, end = this.value.length) {
         this.input.setSelectionRange(start, end);
     }
 }

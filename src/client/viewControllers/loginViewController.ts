@@ -53,13 +53,13 @@ export class LoginViewController extends ViewController {
     }
 
     public clear() {
-        this.usernameTextfield.text = '';
-        this.passwordTextfield.text = '';
+        this.usernameTextfield.value = '';
+        this.passwordTextfield.value = '';
         this.keepLoginSwitch.enabled = false;
     }
 
     private async login() {
-        const username = this.usernameTextfield.text;
+        const username = this.usernameTextfield.value;
 
         if (!username) {
             await this.messageViewController.push('#_username_not_set', '#_error');
@@ -67,7 +67,7 @@ export class LoginViewController extends ViewController {
             return;
         }
 
-        const password = this.passwordTextfield.text;
+        const password = this.passwordTextfield.value;
 
         if (!password) {
             await this.messageViewController.push('#_password_not_set', '#_error');
