@@ -4,7 +4,9 @@ import { View } from "../utils/view";
 
 export enum TextFieldType {
     Text = 'text',
-    Password = 'password'
+    Password = 'password',
+    Date = 'date',
+    DateTimeLocal = 'datetime-local'
 }
 
 export class TextField extends View {
@@ -37,11 +39,15 @@ export class TextField extends View {
     public get value(): string { return this.input.value; }
     public set value(value: string) { this.input.value = value; }
 
-    public get dateValue(): Date { return this.input.valueAsDate; }
-    public set dateValue(value: Date) { this.input.valueAsDate = value; }
+    public get dateValue(): Date { return new Date(this.input.value); }
+    public set dateValue(value: Date) {
+        this.input.value = this.type == TextFieldType.Date
+            ? value.toLocaleDateString('en-ca')
+            : value.toISOString().slice(0, 16);
+    }
 
-    public get numberValue(): number { return this.input.valueAsNumber; }
-    public set numberValue(value: number) { this.input.valueAsNumber = value; }
+    public get numberValue(): number { return Number(this.input.value); }
+    public set numberValue(value: number) { this.input.value = value.toString(); }
 
     public get placeholder(): string { return this.input.placeholder; }
     public set placeholder(value: string) { this.input.placeholder = value; }
