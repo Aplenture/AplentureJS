@@ -57,7 +57,7 @@ export class Router {
     public changeRoute(name: string, index: number = null) {
         const route = this.findRoute(name, index);
 
-        if (route && route.name == name && route.index == index)
+        if (this._route && route.name == this._route.name && route.index == this._route.index)
             return;
 
         const routeString = route.index
