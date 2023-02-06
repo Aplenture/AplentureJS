@@ -43,7 +43,7 @@ describe("Event", () => {
         expect(counter).equals(1);
     });
 
-    it("removes receiver", () => {
+    it("removes receiver by handler", () => {
         let counter = 0;
 
         const evnt = new Event<any, any>('test');
@@ -51,6 +51,19 @@ describe("Event", () => {
 
         evnt.on(callback);
         evnt.off(callback);
+        evnt.emit(null, "hello world");
+
+        expect(counter).equals(0);
+    });
+
+    it("removes receiver by this", () => {
+        let counter = 0;
+
+        const evnt = new Event<any, any>('test');
+        const callback = () => counter++;
+
+        evnt.on(callback, { this: this });
+        evnt.off(this);
         evnt.emit(null, "hello world");
 
         expect(counter).equals(0);

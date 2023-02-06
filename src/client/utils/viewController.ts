@@ -10,8 +10,6 @@ export class ViewController {
 
     private _parent: ViewController;
 
-    private onHiddenChangedHandler = value => this.onHiddenChanged(value);
-
     constructor(...classes: readonly string[]) {
         this.view = new View(...classes, 'controller');
     }
@@ -20,13 +18,13 @@ export class ViewController {
     public get children(): readonly ViewController[] { return this._children; }
 
     public init() {
-        View.onHiddenChanged.on(this.onHiddenChangedHandler, { sender: this.view });
-        
+        View.onHiddenChanged.on(value => this.onHiddenChanged(value), { sender: this.view, this: this });
+
         this._children.forEach(child => child.init());
     }
-    
+
     public deinit() {
-        View.onHiddenChanged.off(this.onHiddenChangedHandler);
+        View.onHiddenChanged.off(this);
 
         this._children.forEach(child => child.deinit());
     }
