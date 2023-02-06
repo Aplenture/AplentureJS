@@ -15,6 +15,8 @@ export class Session {
     public static readonly onLogin = new Event<Session, Access>('Session.onLogin');
     public static readonly onLogout = new Event<Session, void>('Session.onLogout');
 
+    public messageViewController: MessageViewController;
+
     private readonly logoutRequest: BoolRequest<void>;
     private readonly hasAccessRequest: BoolRequest<{
         readonly api: string,
@@ -35,7 +37,7 @@ export class Session {
 
     private _access: Access = null;
 
-    constructor(public readonly messageViewController: MessageViewController, config: SessionConfig) {
+    constructor(config: SessionConfig) {
         this.hasAccessRequest = new BoolRequest(config.hasAccessURL);
         this.loginRequest = new JSONRequest(config.loginURL);
         this.logoutRequest = new BoolRequest(config.logoutURL, { isPrivate: true });
@@ -112,7 +114,7 @@ export class Session {
 
             return access;
         } catch (error) {
-            this.messageViewController.push({ text: error.message, title: '#_error' });
+            this.messageViewController.push(error.message, '#_error');
 
             throw error;
         }
@@ -131,7 +133,7 @@ export class Session {
 
             return true;
         } catch (error) {
-            await this.messageViewController.push({ text: error.message, title: '#_error' });
+            await this.messageViewController.push(error.message, '#_error');
 
             return false;
         }
@@ -147,7 +149,7 @@ export class Session {
                 timestamp
             });
         } catch (error) {
-            await this.messageViewController.push({ text: error.message, title: '#_error' });
+            await this.messageViewController.push(error.message, '#_error');
 
             return false;
         }

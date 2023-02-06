@@ -16,11 +16,10 @@ export class LoginViewController extends ViewController {
 
     public readonly keepLoginSwitch = new Switch('keepLogin');
 
-    constructor(
-        public readonly session: Session,
-        public readonly messageViewController: MessageViewController,
-        ...classes: string[]
-    ) {
+    public session: Session;
+    public messageViewController: MessageViewController;
+
+    constructor(...classes: string[]) {
         super(...classes, 'login');
     }
 
@@ -63,7 +62,7 @@ export class LoginViewController extends ViewController {
         const username = this.usernameTextfield.text;
 
         if (!username) {
-            await this.messageViewController.push({ text: '#_username_not_set', title: '#_error' });
+            await this.messageViewController.push('#_username_not_set', '#_error');
             this.usernameTextfield.focus();
             return;
         }
@@ -71,7 +70,7 @@ export class LoginViewController extends ViewController {
         const password = this.passwordTextfield.text;
 
         if (!password) {
-            await this.messageViewController.push({ text: '#_password_not_set', title: '#_error' });
+            await this.messageViewController.push('#_password_not_set', '#_error');
             this.passwordTextfield.focus();
             return;
         }

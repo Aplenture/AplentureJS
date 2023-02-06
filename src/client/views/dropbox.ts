@@ -5,7 +5,7 @@ import { View } from "../utils/view";
 export class Dropbox extends View {
     public static readonly onSelected = new Event<Dropbox, number>('Dropbox.onSelected');
 
-    protected readonly label = document.createElement('label');
+    protected readonly label = document.createElement('span');
     protected readonly select = document.createElement('select');
 
     private _options: readonly HTMLOptionElement[];

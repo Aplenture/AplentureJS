@@ -22,8 +22,8 @@ export abstract class Client<TConfig extends ClientConfig> {
 
     constructor(config: TConfig) {
         this.router = new Router(config);
-        this.session = new Session(this.messageViewController, config);
-        this.loginViewController = new LoginViewController(this.session, this.messageViewController, 'root');
+        this.session = new Session(config);
+        this.loginViewController = new LoginViewController('root');
     }
 
     public get window(): Window { return Window; }
@@ -36,10 +36,7 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         Window.init(config.debug);
 
-        window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push({
-            title: '#_error',
-            text: event.reason || '#_something_went_wrong'
-        }) : alert(event.reason));
+        window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push('#_error', event.reason || '#_something_went_wrong') : alert(event.reason));
 
         await Client.loadTranslation(config.defaultLanguage || Localization.language);
 
@@ -58,7 +55,12 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         this.rootViewController.appendChild(this.popupViewController);
 
+        this.session.messageViewController = this.messageViewController;
+
         this.messageViewController.init();
+
+        this.loginViewController.session = this.session;
+        this.loginViewController.messageViewController = this.messageViewController;
         this.loginViewController.init();
 
         document.body.appendChild((this.rootViewController.view as any).div);

@@ -40,8 +40,8 @@ export class MessageViewController extends ViewController {
         this.doneButton.focus();
     }
 
-    public push(message: Message): Promise<void> {
-        this.stack.push(message);
+    public push(text: string, title: string): Promise<void> {
+        this.stack.push({ title, text });
 
         if (!this.currentMessage)
             this.pop();

@@ -1,7 +1,6 @@
 interface Listener<TSender, TArgs> extends Options<TSender, TArgs> {
     readonly handler: EventHandler<TSender, TArgs>;
     readonly once?: boolean;
-    readonly listener?: any;
     off?: boolean;
 }
 
