@@ -3,6 +3,7 @@ import { Event } from "../../core/utils/event";
 export class View {
     public static readonly onClick = new Event<View, void>('View.onClick');
     public static readonly onEnterKey = new Event<View, void>('View.onEnterKey');
+    public static readonly onHiddenChanged = new Event<View, boolean>('View.onHiddenChanged');
 
     public index: number = null;
     public propaginateClickEvents = true;
@@ -65,6 +66,8 @@ export class View {
             this.div.classList.add('hidden');
         else
             this.div.classList.remove('hidden');
+
+        View.onHiddenChanged.emit(this, value);
     }
 
     public get disabled(): boolean { return this.div.classList.contains('disabled'); }
