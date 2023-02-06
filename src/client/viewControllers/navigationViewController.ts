@@ -7,8 +7,8 @@ import { TabBar } from "../views/tabBar";
 export class NavigationViewController extends ViewController {
     public readonly contentViewController = new ViewController('content');
 
-    public readonly menuView = new MenuView();
-    public readonly tabBar = new TabBar();
+    public readonly menuView = new MenuView('navigation');
+    public readonly tabBar = new TabBar('navigation');
 
     private _selected = 0;
 
