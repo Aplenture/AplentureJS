@@ -48,6 +48,7 @@ export abstract class Client<TConfig extends ClientConfig> {
         });
 
         this.rootViewController.popupViewController = this.popupViewController;
+        this.rootViewController.appendChild(this.popupViewController);
 
         this.loginViewController.session = this.session;
         this.loginViewController.init();
