@@ -1,20 +1,21 @@
-import { View } from "../utils/view";
+import { Bar } from "../views/bar";
+import { TitleBar } from "../views/titleBar";
 import { ContainerViewController } from "./containerViewController";
 
 export class BodyViewController extends ContainerViewController {
-    public readonly headerView: View;
-    public readonly footerView: View;
+    public readonly titleBar: TitleBar;
+    public readonly footerBar: Bar;
 
     constructor(...classes: string[]) {
         super(...classes, 'body');
 
-        this.headerView = new View(...classes, 'body', 'header');
-        this.footerView = new View(...classes, 'body', 'footer');
+        this.titleBar = new TitleBar(...classes, 'body');
+        this.footerBar = new Bar(...classes, 'body', 'footer');
     }
 
     public init(): void {
-        this.view.appendChild(this.headerView);
+        this.view.appendChild(this.titleBar);
         super.init();
-        this.view.appendChild(this.footerView);
+        this.view.appendChild(this.footerBar);
     }
 }
