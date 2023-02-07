@@ -7,7 +7,7 @@ export class Button extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'button');
 
-        this.clickable = true;
+        this.isClickable = true;
         this.propaginateClickEvents = false;
         this.text = '#_button';
 

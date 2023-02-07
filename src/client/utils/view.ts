@@ -54,15 +54,15 @@ export class View {
     public get description(): string { return this.div.title; }
     public set description(value: string) { this.div.title = value; }
 
-    public get visible(): boolean { return !this.hidden; }
-    public set visible(value: boolean) { this.hidden = !value; }
+    public get isVisible(): boolean { return !this.isHidden; }
+    public set isVisible(value: boolean) { this.isHidden = !value; }
 
-    public get enabled(): boolean { return !this.disabled; }
-    public set enabled(value: boolean) { this.disabled = !value; }
+    public get isEnabled(): boolean { return !this.isDisabled; }
+    public set isEnabled(value: boolean) { this.isDisabled = !value; }
 
-    public get hidden() { return this.div.classList.contains('hidden'); }
-    public set hidden(value) {
-        if (value == this.hidden)
+    public get isHidden() { return this.div.classList.contains('hidden'); }
+    public set isHidden(value) {
+        if (value == this.isHidden)
             return;
 
         if (value)
@@ -73,9 +73,9 @@ export class View {
         View.onHiddenChanged.emit(this, value);
     }
 
-    public get disabled(): boolean { return this.div.classList.contains('disabled'); }
-    public set disabled(value: boolean) {
-        if (value == this.disabled)
+    public get isDisabled(): boolean { return this.div.classList.contains('disabled'); }
+    public set isDisabled(value: boolean) {
+        if (value == this.isDisabled)
             return;
 
         if (value)
@@ -84,9 +84,9 @@ export class View {
             this.div.classList.remove('disabled');
     }
 
-    public get selected(): boolean { return this.div.classList.contains('selected'); }
-    public set selected(value: boolean) {
-        if (value == this.selected)
+    public get isSelected(): boolean { return this.div.classList.contains('selected'); }
+    public set isSelected(value: boolean) {
+        if (value == this.isSelected)
             return;
 
         if (value)
@@ -95,9 +95,9 @@ export class View {
             this.div.classList.remove('selected');
     }
 
-    public get clickable(): boolean { return this.div.classList.contains('clickable'); }
-    public set clickable(value: boolean) {
-        if (value == this.clickable)
+    public get isClickable(): boolean { return this.div.classList.contains('clickable'); }
+    public set isClickable(value: boolean) {
+        if (value == this.isClickable)
             return;
 
         if (value)

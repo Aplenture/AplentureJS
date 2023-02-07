@@ -11,6 +11,15 @@ export class TabBar extends Bar {
         super(...classes, 'tab');
     }
 
+    public get selectedIndex(): number { return this.children.findIndex(child => child.isSelected); }
+    public set selectedIndex(value: number) {
+        if (value == this.selectedIndex)
+            return;
+
+        this.children.forEach((view, index) => view.isSelected = index == value);
+        TabBar.onItemClicked.emit(this, value);
+    }
+
     public addItem(title: string): number {
         const item = new View('item', title);
         const label = new Label();
@@ -26,9 +35,9 @@ export class TabBar extends Bar {
     public appendChild(child: View): number {
         const index = super.appendChild(child);
 
-        child.clickable = true;
+        child.isClickable = true;
 
-        View.onClick.on(() => TabBar.onItemClicked.emit(this, index), { sender: child, listener: this });
+        View.onClick.on(() => this.selectedIndex = index, { sender: child, listener: this });
 
         return index;
     }
@@ -49,9 +58,11 @@ export class TabBar extends Bar {
     }
 
     public removeChild(child: View): number {
-        if (this.children.includes(child))
+        const index = super.removeChild(child);
+
+        if (0 <= index)
             View.onClick.off({ sender: child });
 
-        return super.removeChild(child);
+        return index;
     }
 }

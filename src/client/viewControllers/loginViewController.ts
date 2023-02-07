@@ -53,7 +53,7 @@ export class LoginViewController extends ViewController {
     public clear() {
         this.usernameTextfield.value = '';
         this.passwordTextfield.value = '';
-        this.keepLoginSwitch.enabled = false;
+        this.keepLoginSwitch.isEnabled = false;
     }
 
     private async login() {
@@ -73,7 +73,7 @@ export class LoginViewController extends ViewController {
             return;
         }
 
-        const keepLogin = this.keepLoginSwitch.enabled;
+        const keepLogin = this.keepLoginSwitch.isEnabled;
         const label = navigator.userAgent;
 
         this.session

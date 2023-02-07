@@ -4,20 +4,22 @@ import { View } from "./view";
 export class ViewController {
     public readonly view: View;
 
-    public header: View;
-    public footer: View;
-
-    public popupViewController: PopupViewController;
-
     public title: string;
     public index: number = null;
 
     private readonly _children: ViewController[] = [];
 
     private _parent: ViewController;
+    private _popupViewController: PopupViewController;
 
     constructor(...classes: readonly string[]) {
         this.view = new View(...classes, 'controller');
+    }
+
+    public get popupViewController(): PopupViewController { return this._popupViewController; }
+    public set popupViewController(value: PopupViewController) {
+        this._popupViewController = value;
+        this._children.forEach(child => child.popupViewController = value);
     }
 
     public get parent(): ViewController { return this._parent; }
@@ -48,6 +50,7 @@ export class ViewController {
             child._parent.removeChild(child);
 
         child._parent = this;
+        child.popupViewController = this.popupViewController;
 
         this.view.appendChild(child.view);
 
@@ -55,12 +58,15 @@ export class ViewController {
     }
 
     public removeChild(child: ViewController): number {
-        const index = this._children.indexOf(child);
+        const index = this._children.findIndex(tmp => tmp == child);
 
-        if (0 > index)
-            return -1;
-
-        this.removeChildAtIndex(index);
+        if (0 <= index) {
+            this._children.splice(index, 1);
+            this.view.removeChild(child.view);
+    
+            child._parent = null;
+            child.popupViewController = null;
+        }
 
         return index;
     }
@@ -78,6 +84,7 @@ export class ViewController {
         this.view.removeChildAtIndex(index);
 
         child._parent = null;
+        child.popupViewController = null;
 
         return child;
     }
@@ -85,7 +92,11 @@ export class ViewController {
     public removeAllChildren() {
         this.view.removeAllChildren();
 
-        this._children.forEach(child => child._parent = null);
+        this._children.forEach(child => {
+            child._parent = null;
+            child.popupViewController = null;
+        });
+
         this._children.splice(0, this._children.length);
     }
 

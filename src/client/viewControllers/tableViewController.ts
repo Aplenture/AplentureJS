@@ -11,11 +11,14 @@ export class TableViewController<TCell extends View> extends ViewController {
     private readonly _cells: TCell[] = [];
     private readonly _selectedRows: number[] = [];
 
+    private _header: View;
     private _selectionMode = TableSelectionMode.None;
 
     constructor(...classes: string[]) {
         super(...classes, 'table');
     }
+
+    public get header(): View { return this._header; }
 
     public get cells(): readonly TCell[] { return this._cells; }
     public get selectedRows(): readonly number[] { return this._selectedRows; }
@@ -23,7 +26,7 @@ export class TableViewController<TCell extends View> extends ViewController {
     public get selectionMode(): TableSelectionMode { return this._selectionMode; }
     public set selectionMode(value: TableSelectionMode) {
         this._selectionMode = value;
-        this.cells.forEach(cell => cell.clickable = value != TableSelectionMode.None);
+        this.cells.forEach(cell => cell.isClickable = value != TableSelectionMode.None);
     }
 
     public get alternatingBackgroundColor(): boolean { return this.view.hasClass('alternatingBackgroundColor'); }
@@ -46,14 +49,14 @@ export class TableViewController<TCell extends View> extends ViewController {
     public render() {
         const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
 
-        this.header = this.source.createHeader(this);
+        this._header = this.source.createHeader(this);
 
         this.deselectAllRows();
 
         this._cells.splice(0, this._cells.length);
 
         this.view.removeAllChildren();
-        this.view.appendChild(this.header);
+        this.view.appendChild(this._header);
 
         for (let i = 0; i < numCategories; ++i) {
             const numCells = this.source.numberOfCells(this, i);
@@ -90,7 +93,7 @@ export class TableViewController<TCell extends View> extends ViewController {
 
         this._selectedRows.splice(0, this._selectedRows.length);
         this._cells.forEach(cell => {
-            cell.selected = false;
+            cell.isSelected = false;
 
             if (this.delegate)
                 this.delegate.deselectedCell(this, cell);
@@ -103,7 +106,7 @@ export class TableViewController<TCell extends View> extends ViewController {
         if (- 1 == index)
             return;
 
-        this._cells[row].selected = false;
+        this._cells[row].isSelected = false;
         this._selectedRows.splice(index, 1);
 
         if (this.delegate)
@@ -121,7 +124,7 @@ export class TableViewController<TCell extends View> extends ViewController {
             this.deselectAllRows();
 
         if (this._selectionMode != TableSelectionMode.Clickable) {
-            this._cells[row].selected = true;
+            this._cells[row].isSelected = true;
 
             if (!this._selectedRows.includes(row))
                 this._selectedRows.push(row);
@@ -138,7 +141,7 @@ export class TableViewController<TCell extends View> extends ViewController {
     private reuseCell(category: number): TCell {
         const cell = this.source.createCell(this, category);
 
-        cell.clickable = this._selectionMode != TableSelectionMode.None;
+        cell.isClickable = this._selectionMode != TableSelectionMode.None;
 
         View.onClick.on(() => {
             if (this._selectionMode == TableSelectionMode.None)

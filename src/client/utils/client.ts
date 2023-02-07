@@ -7,13 +7,13 @@ import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
 import { Window } from "./window";
 import { LoginViewController } from "../viewControllers/loginViewController";
-import { RootViewController } from "../viewControllers/rootViewController";
 import { PopupViewController } from "../viewControllers/popupViewController";
+import { ViewController } from "./viewController";
 
 export abstract class Client<TConfig extends ClientConfig> {
-    public readonly rootViewController = new RootViewController();
+    public readonly rootViewController = new ViewController('root');
     public readonly loginViewController = new LoginViewController();
-    public readonly popupViewController: PopupViewController;
+    public readonly popupViewController = new PopupViewController();
 
     public readonly router: Router;
     public readonly session: Session;
@@ -21,7 +21,6 @@ export abstract class Client<TConfig extends ClientConfig> {
     constructor(config: TConfig) {
         this.router = new Router(config);
         this.session = new Session(config);
-        this.popupViewController = this.rootViewController.popupViewController;
     }
 
     public get window(): Window { return Window; }
@@ -47,6 +46,8 @@ export abstract class Client<TConfig extends ClientConfig> {
             request.setHeader(RequestHeader.APIKey, this.session.access.api);
             request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
         });
+
+        this.rootViewController.popupViewController = this.popupViewController;
 
         this.loginViewController.session = this.session;
         this.loginViewController.init();
