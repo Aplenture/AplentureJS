@@ -49,8 +49,6 @@ export class NavigationViewController extends ContainerViewController {
     }
 
     public appendChild(child: ViewController, title = child.title || '#_missing_title'): number {
-        this.removeAllChildren();
-
         const index = super.appendChild(child);
 
         child.view.isVisible = false;
