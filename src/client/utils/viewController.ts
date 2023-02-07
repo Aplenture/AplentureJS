@@ -1,7 +1,13 @@
+import { PopupViewController } from "../viewControllers/popupViewController";
 import { View } from "./view";
 
 export class ViewController {
     public readonly view: View;
+
+    public header: View;
+    public footer: View;
+
+    public popupViewController: PopupViewController;
 
     public title: string;
     public index: number = null;
@@ -36,7 +42,7 @@ export class ViewController {
 
     public appendChild(child: ViewController): number {
         if (!child)
-            return;
+            return -1;
 
         if (child._parent)
             child._parent.removeChild(child);
@@ -52,19 +58,19 @@ export class ViewController {
         const index = this._children.indexOf(child);
 
         if (0 > index)
-            return;
+            return -1;
 
         this.removeChildAtIndex(index);
 
         return index;
     }
 
-    public removeChildAtIndex(index: number) {
+    public removeChildAtIndex(index: number): ViewController {
         if (index < 0)
-            return;
+            return null;
 
         if (index >= this._children.length)
-            return;
+            return null;
 
         const child = this._children[index];
 
@@ -72,6 +78,8 @@ export class ViewController {
         this.view.removeChildAtIndex(index);
 
         child._parent = null;
+
+        return child;
     }
 
     public removeAllChildren() {

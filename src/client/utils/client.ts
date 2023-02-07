@@ -1,21 +1,19 @@
-import { ViewController } from "./viewController";
 import { Router } from "./router";
 import { Session } from "./session";
 import { Request } from "./request";
 import { ClientConfig } from "../models/clientConfig";
-import { MessageViewController } from "../viewControllers/messageViewController";
 import { Localization } from "../../core/utils/localization";
-import { PopupViewController } from "../viewControllers/popupViewController";
 import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
 import { Window } from "./window";
 import { LoginViewController } from "../viewControllers/loginViewController";
+import { RootViewController } from "../viewControllers/rootViewController";
+import { PopupViewController } from "../viewControllers/popupViewController";
 
 export abstract class Client<TConfig extends ClientConfig> {
-    public readonly rootViewController = new ViewController('root');
-    public readonly messageViewController = new MessageViewController('root');
-    public readonly loginViewController: LoginViewController;
-    public readonly popupViewController = new PopupViewController('root');
+    public readonly rootViewController = new RootViewController();
+    public readonly loginViewController = new LoginViewController();
+    public readonly popupViewController: PopupViewController;
 
     public readonly router: Router;
     public readonly session: Session;
@@ -23,7 +21,7 @@ export abstract class Client<TConfig extends ClientConfig> {
     constructor(config: TConfig) {
         this.router = new Router(config);
         this.session = new Session(config);
-        this.loginViewController = new LoginViewController('root');
+        this.popupViewController = this.rootViewController.popupViewController;
     }
 
     public get window(): Window { return Window; }
@@ -36,12 +34,9 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         Window.init(config.debug);
 
-        window.addEventListener('unhandledrejection', event => this.messageViewController ? this.messageViewController.push(event.reason || '#_something_went_wrong', '#_error') : alert(event.reason));
+        window.addEventListener('unhandledrejection', event => this.popupViewController.pushError(event.reason || '#_something_went_wrong'));
 
         await Client.loadTranslation(config.defaultLanguage || Localization.language);
-
-        MessageViewController.onMessage.on(() => !this.messageViewController.parent && this.popupViewController.push(this.messageViewController), { sender: this.messageViewController });
-        MessageViewController.onDone.on(() => this.popupViewController.pop(), { sender: this.messageViewController });
 
         Router.onRouteChanged.on((route, router) => route.isPrivate && !this.session.access && router.changeRoute(config.unauthorizedRoute), { sender: this.router });
         Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultRoute), { sender: this.session });
@@ -53,14 +48,7 @@ export abstract class Client<TConfig extends ClientConfig> {
             request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
         });
 
-        this.rootViewController.appendChild(this.popupViewController);
-
-        this.session.messageViewController = this.messageViewController;
-
-        this.messageViewController.init();
-
         this.loginViewController.session = this.session;
-        this.loginViewController.messageViewController = this.messageViewController;
         this.loginViewController.init();
 
         document.body.appendChild((this.rootViewController.view as any).div);

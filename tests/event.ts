@@ -63,7 +63,7 @@ describe("Event", () => {
         const callback = () => counter++;
 
         evnt.on(callback, { listener: this });
-        evnt.off(this);
+        evnt.off({ listener: this });
         evnt.emit(null, "hello world");
 
         expect(counter).equals(0);

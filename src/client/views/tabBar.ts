@@ -1,37 +1,57 @@
+import { Event } from "../../core";
 import { TextAlignment } from "../enums/textAlignment";
 import { View } from "../utils/view";
 import { Bar } from "./bar";
 import { Label } from "./label";
 
 export class TabBar extends Bar {
+    public static readonly onItemClicked = new Event<TabBar, number>('TabBar.onItemClicked');
+
     constructor(...classes: string[]) {
         super(...classes, 'tab');
     }
 
-    public addItem(title: string, onClicked: (index: number) => void): number {
+    public addItem(title: string): number {
         const item = new View('item', title);
         const label = new Label();
-
-        const index = super.appendChild(item);
 
         label.text = title;
         label.textAlignment = TextAlignment.Center;
 
         item.appendChild(label);
-        item.clickable = true;
 
-        View.onClick.on(() => onClicked(index), { sender: item });
+        return this.appendChild(item);
+    }
+
+    public appendChild(child: View): number {
+        const index = super.appendChild(child);
+
+        child.clickable = true;
+
+        View.onClick.on(() => TabBar.onItemClicked.emit(this, index), { sender: child, listener: this });
 
         return index;
     }
 
-    public removeItem(title: string) {
-        const index = this.children.findIndex(child => child.id.includes('item_' + title));
+    public removeAllChildren() {
+        View.onClick.off({ listener: this });
 
-        super.removeChildAtIndex(index);
+        super.removeAllChildren();
     }
 
-    public appendChild(child: View): number {
-        throw new Error('appendChild is not allowed to call public');
+    public removeChildAtIndex(index: number): View {
+        const child = super.removeChildAtIndex(index);
+
+        if (child)
+            View.onClick.off({ sender: child });
+
+        return child;
+    }
+
+    public removeChild(child: View): number {
+        if (this.children.includes(child))
+            View.onClick.off({ sender: child });
+
+        return super.removeChild(child);
     }
 }

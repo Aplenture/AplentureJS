@@ -5,7 +5,6 @@ import { Button } from "../views/button";
 import { Switch } from "../views/switch";
 import { TextField } from "../views/textField";
 import { TitleBar } from "../views/titleBar";
-import { MessageViewController } from "./messageViewController";
 
 export class LoginViewController extends ViewController {
     public readonly titleBar = new TitleBar();
@@ -17,7 +16,6 @@ export class LoginViewController extends ViewController {
     public readonly keepLoginSwitch = new Switch('keepLogin');
 
     public session: Session;
-    public messageViewController: MessageViewController;
 
     constructor(...classes: string[]) {
         super(...classes, 'login');
@@ -62,7 +60,7 @@ export class LoginViewController extends ViewController {
         const username = this.usernameTextfield.value;
 
         if (!username) {
-            await this.messageViewController.push('#_username_not_set', '#_error');
+            await this.popupViewController.pushMessage('#_username_not_set', '#_login');
             this.usernameTextfield.focus();
             return;
         }
@@ -70,7 +68,7 @@ export class LoginViewController extends ViewController {
         const password = this.passwordTextfield.value;
 
         if (!password) {
-            await this.messageViewController.push('#_password_not_set', '#_error');
+            await this.popupViewController.pushMessage('#_password_not_set', '#_login');
             this.passwordTextfield.focus();
             return;
         }

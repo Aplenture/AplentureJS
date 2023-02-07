@@ -23,9 +23,8 @@ export * from "./utils/viewController";
 export * from "./utils/window";
 
 export * from "./viewControllers/loginViewController";
-export * from "./viewControllers/messageViewController";
-export * from "./viewControllers/navigationViewController";
 export * from "./viewControllers/popupViewController";
+export * from "./viewControllers/rootViewController";
 export * from "./viewControllers/stackViewController";
 export * from "./viewControllers/stopwatchViewController";
 export * from "./viewControllers/tableViewController";

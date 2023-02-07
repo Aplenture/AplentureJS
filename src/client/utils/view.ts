@@ -62,6 +62,9 @@ export class View {
 
     public get hidden() { return this.div.classList.contains('hidden'); }
     public set hidden(value) {
+        if (value == this.hidden)
+            return;
+
         if (value)
             this.div.classList.add('hidden');
         else
@@ -72,6 +75,9 @@ export class View {
 
     public get disabled(): boolean { return this.div.classList.contains('disabled'); }
     public set disabled(value: boolean) {
+        if (value == this.disabled)
+            return;
+
         if (value)
             this.div.classList.add('disabled');
         else
@@ -80,6 +86,9 @@ export class View {
 
     public get selected(): boolean { return this.div.classList.contains('selected'); }
     public set selected(value: boolean) {
+        if (value == this.selected)
+            return;
+
         if (value)
             this.div.classList.add('selected');
         else
@@ -88,6 +97,9 @@ export class View {
 
     public get clickable(): boolean { return this.div.classList.contains('clickable'); }
     public set clickable(value: boolean) {
+        if (value == this.clickable)
+            return;
+
         if (value)
             this.div.classList.add('clickable');
         else
@@ -116,7 +128,7 @@ export class View {
 
     public appendChild(child: View): number {
         if (!child)
-            return;
+            return -1;
 
         if (child.parent)
             child.parent.removeChild(child);
@@ -143,17 +155,21 @@ export class View {
         return result;
     }
 
-    public removeChildAtIndex(index: number) {
+    public removeChildAtIndex(index: number): View {
         if (index < 0)
-            return;
+            return null;
 
         if (index >= this._children.length)
-            return;
+            return null;
 
-        this._children[index]._parent = null;
+        const child = this._children[index];
+
+        child._parent = null;
+
         this._children.splice(index, 1);
-
         this.div.removeChild(this.div.childNodes[index]);
+
+        return child;
     }
 
     public removeAllChildren() {

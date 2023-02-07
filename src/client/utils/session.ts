@@ -6,7 +6,6 @@ import { Event } from "../../core/utils/event";
 import { SessionConfig } from "../models/sessionConfig";
 import { BoolRequest } from "../requests/boolRequest";
 import { JSONRequest } from "../requests/jsonRequest";
-import { MessageViewController } from "../viewControllers/messageViewController";
 
 const KEY_ACCESS = 'session.access';
 
@@ -14,8 +13,6 @@ export class Session {
     public static readonly onAccessChanged = new Event<Session, Access>('Session.onAccessChanged');
     public static readonly onLogin = new Event<Session, Access>('Session.onLogin');
     public static readonly onLogout = new Event<Session, void>('Session.onLogout');
-
-    public messageViewController: MessageViewController;
 
     private readonly logoutRequest: BoolRequest<void>;
     private readonly hasAccessRequest: BoolRequest<{
@@ -97,61 +94,43 @@ export class Session {
         const privateKey = EC.createPrivateKey(password);
         const sign = ECDSA.sign(hash, privateKey).toString();
 
-        try {
-            const response = await this.loginRequest.send({
-                timestamp,
-                username,
-                sign,
-                keepLogin,
-                label
-            });
+        const response = await this.loginRequest.send({
+            timestamp,
+            username,
+            sign,
+            keepLogin,
+            label
+        });
 
-            const access = new Access(response.api, response.secret, label);
+        const access = new Access(response.api, response.secret, label);
 
-            this.updateAccess(access, keepLogin);
+        this.updateAccess(access, keepLogin);
 
-            Session.onLogin.emit(this, access);
+        Session.onLogin.emit(this, access);
 
-            return access;
-        } catch (error) {
-            this.messageViewController.push(error.message, '#_error');
-
-            throw error;
-        }
+        return access;
     }
 
     public async logout(): Promise<boolean> {
         if (!this._access)
             return true;
 
-        try {
-            await this.logoutRequest.send();
+        await this.logoutRequest.send();
 
-            this.resetAccess();
+        this.resetAccess();
 
-            Session.onLogout.emit(this);
+        Session.onLogout.emit(this);
 
-            return true;
-        } catch (error) {
-            await this.messageViewController.push(error.message, '#_error');
-
-            return false;
-        }
+        return true;
     }
 
     private async testAccess(access = this._access): Promise<boolean> {
         const timestamp = Date.now();
 
-        try {
-            return await this.hasAccessRequest.send({
-                api: access.api,
-                signature: access.sign(timestamp.toString()),
-                timestamp
-            });
-        } catch (error) {
-            await this.messageViewController.push(error.message, '#_error');
-
-            return false;
-        }
+        return await this.hasAccessRequest.send({
+            api: access.api,
+            signature: access.sign(timestamp.toString()),
+            timestamp
+        });
     }
 }

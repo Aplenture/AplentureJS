@@ -8,8 +8,6 @@ export class TableViewController<TCell extends View> extends ViewController {
     public source: TableViewControllerSource<TCell>;
     public delegate: TableViewControllerDelegate<TCell>;
 
-    private _header: View;
-
     private readonly _cells: TCell[] = [];
     private readonly _selectedRows: number[] = [];
 
@@ -18,8 +16,6 @@ export class TableViewController<TCell extends View> extends ViewController {
     constructor(...classes: string[]) {
         super(...classes, 'table');
     }
-
-    public get header(): View { return this._header; }
 
     public get cells(): readonly TCell[] { return this._cells; }
     public get selectedRows(): readonly number[] { return this._selectedRows; }
@@ -32,6 +28,9 @@ export class TableViewController<TCell extends View> extends ViewController {
 
     public get alternatingBackgroundColor(): boolean { return this.view.hasClass('alternatingBackgroundColor'); }
     public set alternatingBackgroundColor(value: boolean) {
+        if (value == this.alternatingBackgroundColor)
+            return;
+
         if (value)
             this.view.addClass('alternatingBackgroundColor');
         else
@@ -47,14 +46,14 @@ export class TableViewController<TCell extends View> extends ViewController {
     public render() {
         const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
 
-        this._header = this.source.createHeader(this);
+        this.header = this.source.createHeader(this);
 
         this.deselectAllRows();
 
         this._cells.splice(0, this._cells.length);
 
         this.view.removeAllChildren();
-        this.view.appendChild(this._header);
+        this.view.appendChild(this.header);
 
         for (let i = 0; i < numCategories; ++i) {
             const numCells = this.source.numberOfCells(this, i);

@@ -1,5 +1,7 @@
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
+import { Button } from "../views/button";
+import { Label } from "../views/label";
 import { StackViewController } from "./stackViewController";
 
 export class PopupViewController extends StackViewController {
@@ -28,13 +30,41 @@ export class PopupViewController extends StackViewController {
         this.contentViewController.focus();
     }
 
+    public pushMessage(text: string, title: string): Promise<void> {
+        const viewController = new ViewController('message');
+
+        const titleLabel = new Label('title');
+        const textLabel = new Label('text');
+        const doneButton = new Button('done');
+
+        viewController.view.appendChild(titleLabel);
+        viewController.view.appendChild(textLabel);
+        viewController.view.appendChild(doneButton);
+
+        titleLabel.text = title;
+        textLabel.text = text;
+
+        doneButton.text = '#_done';
+        doneButton.tabIndex = 1;
+
+        View.onEnterKey.on(() => this.pop(), { sender: doneButton, listener: viewController });
+        Button.onClick.on(() => this.pop(), { sender: doneButton, listener: viewController });
+
+        return this.push(viewController).then(() => {
+            View.onEnterKey.off({ listener: viewController });
+            Button.onClick.off({ listener: viewController });
+        });
+    }
+
+    public pushError(error: Error, title = '#_error'): Promise<void> {
+        return this.pushMessage(error.message, title);
+    }
+
     public appendChild(child: ViewController): number {
         const index = this.contentViewController.appendChild(child);
 
-        if (1 == this.contentViewController.children.length) {
-            this.view.visible = true;
-            this.focus();
-        }
+        this.view.visible = true;
+        this.focus();
 
         return index;
     }
@@ -48,11 +78,13 @@ export class PopupViewController extends StackViewController {
         return index;
     }
 
-    public removeChildAtIndex(index: number) {
-        this.contentViewController.removeChildAtIndex(index);
+    public removeChildAtIndex(index: number): ViewController {
+        const child = this.contentViewController.removeChildAtIndex(index);
 
         if (0 == this.contentViewController.children.length)
             this.view.visible = false;
+
+        return child;
     }
 
     public removeAllChildren(): void {

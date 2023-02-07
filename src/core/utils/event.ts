@@ -25,8 +25,20 @@ export class Event<TSender, TArgs> {
         this.listeners.push({ handler, sender: options.sender, args: options.args, listener: options.listener });
     }
 
-    public off(handlerOrListener: EventHandler<TSender, TArgs> | any): void {
-        this.listeners.forEach(listener => listener.off = listener.handler == handlerOrListener || listener.listener == handlerOrListener);
+    public off(handlerOrOptions: EventHandler<TSender, TArgs> | Options<TSender, TArgs>): void {
+        this.listeners.forEach(listener => {
+            if (listener.handler == handlerOrOptions)
+                return listener.off = true;
+
+            if (handlerOrOptions && undefined != (handlerOrOptions as Options<TSender, TArgs>).listener && listener.listener == (handlerOrOptions as Options<TSender, TArgs>).listener)
+                return listener.off = true;
+
+            if (handlerOrOptions && undefined != (handlerOrOptions as Options<TSender, TArgs>).sender && listener.sender == (handlerOrOptions as Options<TSender, TArgs>).sender)
+                return listener.off = true;
+
+            if (handlerOrOptions && undefined != (handlerOrOptions as Options<TSender, TArgs>).args && listener.args == (handlerOrOptions as Options<TSender, TArgs>).args)
+                return listener.off = true;
+        });
     }
 
     public once(handler: EventHandler<TSender, TArgs>, options: Options<TSender, TArgs> = {}): void {
