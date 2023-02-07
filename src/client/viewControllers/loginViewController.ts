@@ -2,7 +2,7 @@ import { Session } from "../utils/session";
 import { View } from "../utils/view";
 import { Button } from "../views/button";
 import { Switch } from "../views/switch";
-import { TextField } from "../views/textField";
+import { TextField, TextFieldType } from "../views/textField";
 import { BodyViewController } from "./bodyViewController";
 
 export class LoginViewController extends BodyViewController {
@@ -38,6 +38,7 @@ export class LoginViewController extends BodyViewController {
 
         this.passwordTextfield.title = '#_password';
         this.passwordTextfield.placeholder = '#_password';
+        this.passwordTextfield.type = TextFieldType.Password;
 
         this.keepLoginSwitch.title = '#_remember_me';
 
