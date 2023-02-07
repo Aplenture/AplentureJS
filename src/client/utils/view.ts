@@ -108,6 +108,7 @@ export class View {
 
     public focus() {
         this.div.focus();
+        this._children.forEach(child => child.focus());
     }
 
     public click() {
