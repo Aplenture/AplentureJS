@@ -1,17 +1,19 @@
 import { ViewController } from "../utils/viewController";
 
 export class ContainerViewController extends ViewController {
-    public readonly contentViewController = new ViewController('content');
+    public readonly contentViewController: ViewController;
 
     constructor(...classes: string[]) {
         super(...classes, 'container');
+
+        this.contentViewController = new ViewController(...classes, 'container', 'content');
     }
 
     public get children(): readonly ViewController[] { return this.contentViewController.children; }
 
     public init(): void {
         super.appendChild(this.contentViewController);
-        
+
         super.init();
     }
 

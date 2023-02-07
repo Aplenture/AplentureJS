@@ -4,11 +4,14 @@ import { TabBar } from "../views/tabBar";
 import { ContainerViewController } from "./containerViewController";
 
 export class NavigationViewController extends ContainerViewController {
-    public readonly menuView = new MenuView();
-    public readonly tabBar = new TabBar();
+    public readonly menuView: MenuView;
+    public readonly tabBar: TabBar;
 
     constructor(...classes: string[]) {
         super(...classes, 'navigation');
+
+        this.menuView = new MenuView(...classes, 'navigation');
+        this.tabBar = new TabBar(...classes, 'navigation');
     }
 
     public get selectedIndex(): number { return this.children.findIndex(child => child.view.isVisible); }
