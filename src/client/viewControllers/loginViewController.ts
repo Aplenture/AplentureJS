@@ -1,13 +1,11 @@
 import { Session } from "../utils/session";
 import { View } from "../utils/view";
-import { ViewController } from "../utils/viewController";
 import { Button } from "../views/button";
 import { Switch } from "../views/switch";
 import { TextField } from "../views/textField";
-import { TitleBar } from "../views/titleBar";
+import { BodyViewController } from "./bodyViewController";
 
-export class LoginViewController extends ViewController {
-    public readonly titleBar = new TitleBar();
+export class LoginViewController extends BodyViewController {
     public readonly loginButton = new Button('login');
 
     public readonly usernameTextfield = new TextField('username');
@@ -22,11 +20,11 @@ export class LoginViewController extends ViewController {
     }
 
     public init() {
-        this.view.appendChild(this.titleBar);
-        this.view.appendChild(this.usernameTextfield);
-        this.view.appendChild(this.passwordTextfield);
-        this.view.appendChild(this.keepLoginSwitch);
-        this.view.appendChild(this.loginButton);
+        this.contentView.appendChild(this.usernameTextfield);
+        this.contentView.appendChild(this.passwordTextfield);
+        this.contentView.appendChild(this.keepLoginSwitch);
+
+        this.footerBar.appendChild(this.loginButton);
 
         View.onEnterKey.on(() => this.login(), { sender: this.usernameTextfield });
         View.onEnterKey.on(() => this.login(), { sender: this.passwordTextfield });
