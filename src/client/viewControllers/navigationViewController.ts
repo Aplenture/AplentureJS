@@ -1,3 +1,4 @@
+import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { MenuView } from "../views/menuView";
 import { TabBar } from "../views/tabBar";
@@ -17,6 +18,7 @@ export class NavigationViewController extends ViewController {
     }
 
     public get children(): readonly ViewController[] { return this.containerViewController.children; }
+    public get contentView(): View { return this.containerViewController.contentViewController.view; }
 
     public get selectedIndex(): number { return this.children.findIndex(child => child.view.isVisible); }
     public set selectedIndex(value: number) {
