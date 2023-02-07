@@ -3,7 +3,9 @@ import { MenuView } from "../views/menuView";
 import { TabBar } from "../views/tabBar";
 import { ContainerViewController } from "./containerViewController";
 
-export class NavigationViewController extends ContainerViewController {
+export class NavigationViewController extends ViewController {
+    public readonly containerViewController = new ContainerViewController();
+
     public readonly menuView: MenuView;
     public readonly tabBar: TabBar;
 
@@ -13,6 +15,8 @@ export class NavigationViewController extends ContainerViewController {
         this.menuView = new MenuView(...classes, 'navigation');
         this.tabBar = new TabBar(...classes, 'navigation');
     }
+
+    public get children(): readonly ViewController[] { return this.containerViewController.children; }
 
     public get selectedIndex(): number { return this.children.findIndex(child => child.view.isVisible); }
     public set selectedIndex(value: number) {
@@ -29,14 +33,19 @@ export class NavigationViewController extends ContainerViewController {
     }
 
     public init(): void {
+        const relativeViewController = new ViewController('relative');
+
         MenuView.onItemClicked.on(index => this.selectedIndex = index, { sender: this.menuView, listener: this });
         TabBar.onItemClicked.on(index => this.selectedIndex = index, { sender: this.tabBar, listener: this });
 
         this.view.appendChild(this.menuView);
 
+        relativeViewController.appendChild(this.containerViewController);
+
+        super.appendChild(relativeViewController);
         super.init();
 
-        this.view.appendChild(this.tabBar);
+        this.containerViewController.view.appendChild(this.tabBar);
 
         this.selectedIndex = 0;
     }
@@ -49,7 +58,7 @@ export class NavigationViewController extends ContainerViewController {
     }
 
     public appendChild(child: ViewController, title = child.title || '#_missing_title'): number {
-        const index = super.appendChild(child);
+        const index = this.containerViewController.appendChild(child);
 
         child.view.isVisible = false;
 
@@ -63,7 +72,7 @@ export class NavigationViewController extends ContainerViewController {
     }
 
     public removeChild(child: ViewController): number {
-        const index = super.removeChild(child);
+        const index = this.containerViewController.removeChild(child);
 
         if (0 <= index) {
             this.menuView.removeChildAtIndex(index);
@@ -74,7 +83,7 @@ export class NavigationViewController extends ContainerViewController {
     }
 
     public removeChildAtIndex(index: number): ViewController {
-        const child = super.removeChildAtIndex(index);
+        const child = this.containerViewController.removeChildAtIndex(index);
 
         if (child) {
             this.menuView.removeChildAtIndex(index);
@@ -85,7 +94,7 @@ export class NavigationViewController extends ContainerViewController {
     }
 
     public removeAllChildren() {
-        this.contentViewController.removeAllChildren();
+        this.containerViewController.removeAllChildren();
         this.menuView.removeAllChildren();
         this.tabBar.removeAllChildren();
     }
