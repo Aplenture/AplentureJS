@@ -80,10 +80,14 @@ export class PopupViewController extends ViewController {
         doneButton.tabIndex = 1;
 
         View.onEnterKey.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
+        View.onEscapeKey.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
+
         Button.onClick.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
 
         return this.pushViewController(viewController).then(() => {
             View.onEnterKey.off({ listener: viewController });
+            View.onEscapeKey.off({ listener: viewController });
+
             Button.onClick.off({ listener: viewController });
         });
     }
@@ -115,11 +119,16 @@ export class PopupViewController extends ViewController {
         View.onEnterKey.on(() => (value = true) || this.popViewController(), { sender: yesButton, listener: viewController });
         View.onEnterKey.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
 
+        View.onEscapeKey.on(() => (value = false) || this.popViewController(), { sender: yesButton, listener: viewController });
+        View.onEscapeKey.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
+
         Button.onClick.on(() => (value = true) || this.popViewController(), { sender: yesButton, listener: viewController });
         Button.onClick.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
 
         return this.pushViewController(viewController).then(() => {
             View.onEnterKey.off({ listener: viewController });
+            View.onEscapeKey.off({ listener: viewController });
+
             Button.onClick.off({ listener: viewController });
 
             return value;
