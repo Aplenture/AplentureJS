@@ -2,6 +2,7 @@ import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Button } from "../views/button";
 import { Label } from "../views/label";
+import { BodyViewController } from "./bodyViewController";
 import { StackViewController } from "./stackViewController";
 
 export class PopupViewController extends ViewController {
@@ -62,17 +63,15 @@ export class PopupViewController extends ViewController {
     }
 
     public static pushMessage(text: string, title: string): Promise<void> {
-        const viewController = new ViewController('message');
+        const viewController = new BodyViewController('message');
 
-        const titleLabel = new Label('title');
         const textLabel = new Label('text');
         const doneButton = new Button('done');
+        
+        viewController.titleBar.title = title;
+        viewController.contentView.appendChild(textLabel);
+        viewController.footerBar.appendChild(doneButton);
 
-        viewController.view.appendChild(titleLabel);
-        viewController.view.appendChild(textLabel);
-        viewController.view.appendChild(doneButton);
-
-        titleLabel.text = title;
         textLabel.text = text;
 
         doneButton.text = '#_done';
@@ -88,21 +87,19 @@ export class PopupViewController extends ViewController {
     }
 
     public static queryBoolean(text: string, title: string): Promise<boolean> {
-        const viewController = new ViewController('message');
+        const viewController = new BodyViewController('message');
 
-        const titleLabel = new Label('title');
         const textLabel = new Label('text');
         const yesButton = new Button('yes');
         const noButton = new Button('no', 'cancel');
 
         let value: boolean;
 
-        viewController.view.appendChild(titleLabel);
-        viewController.view.appendChild(textLabel);
-        viewController.view.appendChild(noButton);
-        viewController.view.appendChild(yesButton);
+        viewController.titleBar.title = title;
+        viewController.contentView.appendChild(textLabel);
+        viewController.footerBar.appendChild(noButton);
+        viewController.footerBar.appendChild(yesButton);
 
-        titleLabel.text = title;
         textLabel.text = text;
 
         yesButton.text = '#_yes';
