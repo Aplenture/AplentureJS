@@ -5,6 +5,8 @@ import { Label } from "../views/label";
 import { StackViewController } from "./stackViewController";
 
 export class PopupViewController extends StackViewController {
+    private static _instance: PopupViewController;
+
     public readonly contentViewController = new ViewController('content');
 
     public autoHide = false;
@@ -13,24 +15,46 @@ export class PopupViewController extends StackViewController {
         super(...classes, 'popup');
     }
 
+    protected static get instance(): PopupViewController {
+        if (!this._instance) {
+            this._instance = new PopupViewController();
+            this._instance.init();
+        }
+
+        return this._instance;
+    }
+
+    public get children(): readonly ViewController[] { return this.contentViewController.children; }
+
     public init(): void {
         super.appendChild(this.contentViewController);
 
-        this.view.isVisible = false;
         this.contentViewController.view.propaginateClickEvents = false;
 
-        View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view });
+        View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view, listener: this });
 
         super.init();
     }
 
-    public get children(): readonly ViewController[] { return this.contentViewController.children; }
+    public deinit() {
+        View.onClick.off({ listener: this });
+
+        super.deinit();
+    }
 
     public focus() {
         this.contentViewController.focus();
     }
 
-    public pushMessage(text: string, title: string): Promise<void> {
+    public static async push(next: ViewController): Promise<void> {
+        return this.instance.push(next);
+    }
+
+    public static pop(): ViewController {
+        return this.instance.pop();
+    }
+
+    public static pushMessage(text: string, title: string): Promise<void> {
         const viewController = new ViewController('message');
 
         const titleLabel = new Label('title');
@@ -56,7 +80,7 @@ export class PopupViewController extends StackViewController {
         });
     }
 
-    public pushError(error: Error, title = '#_error'): Promise<void> {
+    public static pushError(error: Error, title = '#_error'): Promise<void> {
         return this.pushMessage(error.message, title);
     }
 
@@ -64,7 +88,7 @@ export class PopupViewController extends StackViewController {
         const index = this.contentViewController.appendChild(child);
 
         if (0 <= index) {
-            this.view.isVisible = true;
+            document.body.appendChild((this.view as any).div);
             this.focus();
         }
 
@@ -75,7 +99,7 @@ export class PopupViewController extends StackViewController {
         const index = this.contentViewController.removeChild(child);
 
         if (0 == this.children.length)
-            this.view.isVisible = false;
+            document.body.removeChild((this.view as any).div);
 
         return index;
     }
@@ -84,13 +108,13 @@ export class PopupViewController extends StackViewController {
         const child = this.contentViewController.removeChildAtIndex(index);
 
         if (0 == this.children.length)
-            this.view.isVisible = false;
+            document.body.removeChild((this.view as any).div);
 
         return child;
     }
 
     public removeAllChildren(): void {
         this.contentViewController.removeAllChildren();
-        this.view.isVisible = false;
+        document.body.removeChild((this.view as any).div);
     }
 }

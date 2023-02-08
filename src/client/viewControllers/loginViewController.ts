@@ -4,6 +4,7 @@ import { Button } from "../views/button";
 import { Switch } from "../views/switch";
 import { TextField, TextFieldType } from "../views/textField";
 import { BodyViewController } from "./bodyViewController";
+import { PopupViewController } from "./popupViewController";
 
 export class LoginViewController extends BodyViewController {
     public readonly loginButton = new Button('login');
@@ -59,7 +60,7 @@ export class LoginViewController extends BodyViewController {
         const username = this.usernameTextfield.value;
 
         if (!username) {
-            await this.popupViewController.pushMessage('#_username_not_set', '#_login');
+            await PopupViewController.pushMessage('#_username_not_set', '#_login');
             this.usernameTextfield.focus();
             return;
         }
@@ -67,7 +68,7 @@ export class LoginViewController extends BodyViewController {
         const password = this.passwordTextfield.value;
 
         if (!password) {
-            await this.popupViewController.pushMessage('#_password_not_set', '#_login');
+            await PopupViewController.pushMessage('#_password_not_set', '#_login');
             this.passwordTextfield.focus();
             return;
         }
@@ -78,6 +79,7 @@ export class LoginViewController extends BodyViewController {
         this.session
             .login(username, password, keepLogin, label)
             .then(() => this.clear())
+            .then(() => this.removeFromParent())
             .catch(() => this.focus());
     }
 }

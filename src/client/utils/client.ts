@@ -6,14 +6,13 @@ import { Localization } from "../../core/utils/localization";
 import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
 import { Window } from "./window";
+import { ViewController } from "./viewController";
 import { LoginViewController } from "../viewControllers/loginViewController";
 import { PopupViewController } from "../viewControllers/popupViewController";
-import { ViewController } from "./viewController";
 
 export abstract class Client<TConfig extends ClientConfig> {
     public readonly rootViewController = new ViewController('root');
     public readonly loginViewController = new LoginViewController();
-    public readonly popupViewController = new PopupViewController();
 
     public readonly router: Router;
     public readonly session: Session;
@@ -33,7 +32,7 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         Window.init(config.debug);
 
-        window.addEventListener('unhandledrejection', event => this.popupViewController.pushError(event.reason || '#_something_went_wrong'));
+        window.addEventListener('unhandledrejection', event => PopupViewController.pushError(event.reason || '#_something_went_wrong'));
 
         await Client.loadTranslation(config.defaultLanguage || Localization.language);
 
@@ -46,9 +45,6 @@ export abstract class Client<TConfig extends ClientConfig> {
             request.setHeader(RequestHeader.APIKey, this.session.access.api);
             request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
         });
-
-        this.rootViewController.popupViewController = this.popupViewController;
-        this.rootViewController.appendChild(this.popupViewController);
 
         this.loginViewController.session = this.session;
         this.loginViewController.init();
