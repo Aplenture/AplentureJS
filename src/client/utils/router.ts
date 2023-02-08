@@ -11,6 +11,8 @@ export class Router {
     private readonly defaultRoute: string;
 
     private _route: Route = null;
+    private _parameters: URLSearchParams = null;
+
     private history = new Lifo<string>();
 
     constructor(config: RouterConfig) {
@@ -23,15 +25,16 @@ export class Router {
     }
 
     public get route(): Route { return this._route; }
+    public get parameters(): URLSearchParams { return this._parameters; }
+
     public get index(): number { return this._route && this._route.index; }
     public get historyLength(): number { return this.history.count; }
 
     public init() {
-        const parts = window.location.pathname
-            .substring(1)
-            .split('/');
+        const routeParts = window.location.pathname.split('/');
 
-        this._route = this.findRoute(parts[0], parseInt(parts[1]));
+        this._route = this.findRoute(routeParts[1], parseInt(routeParts[2]));
+        this._parameters = new URLSearchParams(window.location.search);
 
         if (0 == this.history.count && this._route.name != this.defaultRoute)
             this.history.push(this.defaultRoute);
