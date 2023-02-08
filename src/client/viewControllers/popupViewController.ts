@@ -71,6 +71,8 @@ export class PopupViewController extends ViewController {
         viewController.titleBar.title = title;
         viewController.contentView.appendChild(textLabel);
         viewController.footerBar.appendChild(doneButton);
+        viewController.init();
+        viewController.update();
 
         textLabel.text = text;
 
@@ -99,6 +101,8 @@ export class PopupViewController extends ViewController {
         viewController.contentView.appendChild(textLabel);
         viewController.footerBar.appendChild(noButton);
         viewController.footerBar.appendChild(yesButton);
+        viewController.init();
+        viewController.update();
 
         textLabel.text = text;
 
