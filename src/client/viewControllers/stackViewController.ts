@@ -34,6 +34,9 @@ export class StackViewController extends ViewController {
         if (current)
             this.removeChild(current);
 
+        if (this.children[0])
+            this.focus();
+
         return current;
     }
 
