@@ -1,13 +1,11 @@
+import { View } from "../utils/view";
 import { Bar } from "./bar";
-import { HorizontalFlexView } from "./horizontalFlexView";
 import { Label } from "./label";
-import { LeftFlexView } from "./leftFlexView";
-import { RightFlexView } from "./rightFlexView";
 
 export class TitleBar extends Bar {
-    public readonly leftView = new LeftFlexView();
-    public readonly middleView = new HorizontalFlexView('middle');
-    public readonly rightView = new RightFlexView();
+    public readonly leftView = new View('left');
+    public readonly middleView = new View('middle');
+    public readonly rightView = new View('right');
     public readonly titleLabel = new Label('title');
 
     constructor(...classes: string[]) {

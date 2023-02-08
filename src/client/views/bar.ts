@@ -1,6 +1,6 @@
-import { HorizontalFlexView } from "./horizontalFlexView";
+import { View } from "../utils/view";
 
-export class Bar extends HorizontalFlexView {
+export class Bar extends View {
     constructor(...classes: string[]) {
         super(...classes, 'bar');
     }
