@@ -12,7 +12,6 @@ import { PopupViewController } from "../viewControllers/popupViewController";
 
 export abstract class Client<TConfig extends ClientConfig> {
     public readonly rootViewController = new ViewController('root');
-    public readonly loginViewController = new LoginViewController();
 
     public readonly router: Router;
     public readonly session: Session;
@@ -46,9 +45,6 @@ export abstract class Client<TConfig extends ClientConfig> {
             request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
         });
 
-        this.loginViewController.session = this.session;
-        this.loginViewController.init();
-
         document.body.appendChild((this.rootViewController.view as any).div);
 
         if (document.readyState === 'complete')
@@ -65,6 +61,16 @@ export abstract class Client<TConfig extends ClientConfig> {
         await this.session.init();
         this.router.init();
         await this.rootViewController.update();
+
+        if (config.loginEnabled && !this.session.hasAccess && this.router.parameters.has('login')) {
+            const viewController = new LoginViewController();
+
+            viewController.session = this.session;
+            viewController.init();
+            viewController.update();
+
+            PopupViewController.push(viewController);
+        }
     }
 
     private static async loadTranslation(defaultLanguage: string): Promise<void> {
