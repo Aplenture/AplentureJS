@@ -10,7 +10,7 @@ export abstract class Property<T> {
     }
 
     public parse(data: any): T {
-        if (this.optional && undefined === data)
+        if (this.optional && (undefined === data || this._default === data))
             return this._default;
 
         return this.parseData(data);
