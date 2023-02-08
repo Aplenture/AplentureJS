@@ -82,8 +82,46 @@ export class PopupViewController extends ViewController {
         Button.onClick.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
 
         return this.pushViewController(viewController).then(() => {
-            View.onEnterKey.off({ sender: doneButton });
-            Button.onClick.off({ sender: doneButton });
+            View.onEnterKey.off({ listener: viewController });
+            Button.onClick.off({ listener: viewController });
+        });
+    }
+
+    public static queryBoolean(text: string, title: string): Promise<boolean> {
+        const viewController = new ViewController('message');
+
+        const titleLabel = new Label('title');
+        const textLabel = new Label('text');
+        const yesButton = new Button('yes');
+        const noButton = new Button('no', 'cancel');
+
+        let value: boolean;
+
+        viewController.view.appendChild(titleLabel);
+        viewController.view.appendChild(textLabel);
+        viewController.view.appendChild(noButton);
+        viewController.view.appendChild(yesButton);
+
+        titleLabel.text = title;
+        textLabel.text = text;
+
+        yesButton.text = '#_yes';
+        yesButton.tabIndex = 1;
+
+        noButton.text = '#_no';
+        noButton.tabIndex = 2;
+
+        View.onEnterKey.on(() => (value = true) || this.popViewController(), { sender: yesButton, listener: viewController });
+        View.onEnterKey.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
+
+        Button.onClick.on(() => (value = true) || this.popViewController(), { sender: yesButton, listener: viewController });
+        Button.onClick.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
+
+        return this.pushViewController(viewController).then(() => {
+            View.onEnterKey.off({ listener: viewController });
+            Button.onClick.off({ listener: viewController });
+
+            return value;
         });
     }
 
