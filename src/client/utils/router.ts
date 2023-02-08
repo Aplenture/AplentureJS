@@ -85,6 +85,10 @@ export class Router {
         window.history.back();
     }
 
+    public reload() {
+        Router.onRouteChanged.emit(this, this._route);
+    }
+
     private findRoute(name: string, index?: number) {
         const route = this.routes.find(route => route.name == name)
             || this.routes.find(route => route.name == this.defaultRoute)
