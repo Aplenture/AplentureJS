@@ -20,6 +20,7 @@ import { parseToString } from "../../core/other/text";
 import { AccessEntity } from "../entities/accessEntity";
 import { createSign } from "../../core/crypto/hash";
 import { Response } from "./response";
+import { HasAccess } from "../commands/user/hasAccess";
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_TIMEOUT = 5000;
@@ -177,7 +178,7 @@ export class Server {
                 // overwrite security arguments
                 args.account = access.account;
                 args.api = api;
-            } else {
+            } else if (instance.constructor.name != HasAccess.name) {
                 // delete security arguments
                 delete args.account;
                 delete args.api;
