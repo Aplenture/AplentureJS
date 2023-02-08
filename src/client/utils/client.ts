@@ -69,7 +69,7 @@ export abstract class Client<TConfig extends ClientConfig> {
             viewController.init();
             viewController.update();
 
-            PopupViewController.push(viewController);
+            PopupViewController.pushViewController(viewController);
         }
     }
 

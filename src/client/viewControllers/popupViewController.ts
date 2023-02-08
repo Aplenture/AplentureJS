@@ -4,10 +4,10 @@ import { Button } from "../views/button";
 import { Label } from "../views/label";
 import { StackViewController } from "./stackViewController";
 
-export class PopupViewController extends StackViewController {
+export class PopupViewController extends ViewController {
     private static _instance: PopupViewController;
 
-    public readonly contentViewController = new ViewController('content');
+    public readonly stacktViewController = new StackViewController();
 
     public autoHide = false;
 
@@ -19,17 +19,18 @@ export class PopupViewController extends StackViewController {
         if (!this._instance) {
             this._instance = new PopupViewController();
             this._instance.init();
+            this._instance.update();
         }
 
         return this._instance;
     }
 
-    public get children(): readonly ViewController[] { return this.contentViewController.children; }
+    public get children(): readonly ViewController[] { return this.stacktViewController.children; }
 
     public init(): void {
-        super.appendChild(this.contentViewController);
+        super.appendChild(this.stacktViewController);
 
-        this.contentViewController.view.propaginateClickEvents = false;
+        this.stacktViewController.view.propaginateClickEvents = false;
 
         View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view, listener: this });
 
@@ -43,15 +44,15 @@ export class PopupViewController extends StackViewController {
     }
 
     public focus() {
-        this.contentViewController.focus();
+        this.stacktViewController.focus();
     }
 
-    public static async push(next: ViewController): Promise<void> {
-        return this.instance.push(next);
+    public static async pushViewController(next: ViewController): Promise<void> {
+        return this.instance.stacktViewController.pushViewController(next);
     }
 
-    public static pop(): ViewController {
-        return this.instance.pop();
+    public static popViewController(): ViewController {
+        return this.instance.stacktViewController.popViewController();
     }
 
     public static pushMessage(text: string, title: string): Promise<void> {
@@ -71,12 +72,12 @@ export class PopupViewController extends StackViewController {
         doneButton.text = '#_done';
         doneButton.tabIndex = 1;
 
-        View.onEnterKey.on(() => this.pop(), { sender: doneButton, listener: viewController });
-        Button.onClick.on(() => this.pop(), { sender: doneButton, listener: viewController });
+        View.onEnterKey.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
+        Button.onClick.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
 
-        return this.push(viewController).then(() => {
-            View.onEnterKey.off({ listener: viewController });
-            Button.onClick.off({ listener: viewController });
+        return this.pushViewController(viewController).then(() => {
+            View.onEnterKey.off({ sender: doneButton });
+            Button.onClick.off({ sender: doneButton });
         });
     }
 
@@ -85,9 +86,9 @@ export class PopupViewController extends StackViewController {
     }
 
     public appendChild(child: ViewController): number {
-        const index = this.contentViewController.appendChild(child);
+        const index = this.stacktViewController.appendChild(child);
 
-        if (0 <= index) {
+        if (0 <= index && !(this.view as any).div.parentNode) {
             document.body.appendChild((this.view as any).div);
             this.focus();
         }
@@ -96,25 +97,27 @@ export class PopupViewController extends StackViewController {
     }
 
     public removeChild(child: ViewController): number {
-        const index = this.contentViewController.removeChild(child);
+        const index = this.stacktViewController.removeChild(child);
 
-        if (0 == this.children.length)
+        if (0 == this.children.length && (this.view as any).div.parentNode)
             document.body.removeChild((this.view as any).div);
 
         return index;
     }
 
     public removeChildAtIndex(index: number): ViewController {
-        const child = this.contentViewController.removeChildAtIndex(index);
+        const child = this.stacktViewController.removeChildAtIndex(index);
 
-        if (0 == this.children.length)
+        if (0 == this.children.length && (this.view as any).div.parentNode)
             document.body.removeChild((this.view as any).div);
 
         return child;
     }
 
     public removeAllChildren(): void {
-        this.contentViewController.removeAllChildren();
-        document.body.removeChild((this.view as any).div);
+        this.stacktViewController.removeAllChildren();
+
+        if ((this.view as any).div.parentNode)
+            document.body.removeChild((this.view as any).div);
     }
 }

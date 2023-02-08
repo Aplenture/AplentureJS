@@ -8,7 +8,11 @@ interface Node<T> {
 export class Fifo<T> implements Stack<T> {
     private _first: Node<T>;
     private _last: Node<T>;
-    private _count = 0;
+    private _count: number;
+
+    constructor() {
+        this.clear();
+    }
 
     public get count(): number { return this._count; }
     public get current(): T { return this._first.element; }
@@ -39,5 +43,11 @@ export class Fifo<T> implements Stack<T> {
         this._count -= 1;
 
         return node.element;
+    }
+
+    public clear(): void {
+        this._first = null;
+        this._last = null;
+        this._count = 0;
     }
 }

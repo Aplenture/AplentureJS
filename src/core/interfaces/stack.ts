@@ -4,4 +4,5 @@ export interface Stack<T> {
 
     push(element: T): number;
     pop(): T;
+    clear(): void;
 }

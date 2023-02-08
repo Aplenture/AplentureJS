@@ -13,4 +13,8 @@ export class Lifo<T> implements Stack<T> {
     public pop(): T {
         return this._elements.pop();
     }
+
+    public clear(): void {
+        this._elements.splice(0, this._elements.length);
+    }
 }

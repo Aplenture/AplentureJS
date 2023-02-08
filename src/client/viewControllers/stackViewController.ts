@@ -5,7 +5,7 @@ export class StackViewController extends ViewController {
     public static readonly onPush = new Event<StackViewController, ViewController>('StackViewController.onPush');
     public static readonly onPop = new Event<StackViewController, ViewController>('StackViewController.onPop');
 
-    private viewControllers = new Lifo<ViewController>();
+    private history = new Lifo<ViewController>();
 
     constructor(...classes: string[]) {
         super(...classes, 'stack');
@@ -17,32 +17,70 @@ export class StackViewController extends ViewController {
         super.deinit();
     }
 
-    public async push(next: ViewController): Promise<void> {
-        const current = this.viewControllers.current;
-
-        this.viewControllers.push(next);
-
-        this.removeChild(current);
-        this.appendChild(next);
+    public async pushViewController(next: ViewController): Promise<void> {
+        if (0 > this.appendChild(next))
+            return Promise.reject();
 
         await this.update();
 
         this.focus();
 
-        StackViewController.onPush.emit(this, next);
-
         return new Promise<void>(resolve => StackViewController.onPop.once(() => resolve(), { sender: this, listener: this, args: next }));
     }
 
-    public pop(): ViewController {
-        const current = this.viewControllers.pop();
-        const previous = this.viewControllers.current;
+    public popViewController(): ViewController {
+        const current = this.children[0];
 
-        this.removeChild(current);
-        this.appendChild(previous);
-
-        StackViewController.onPop.emit(this, current);
+        if (current)
+            this.removeChild(current);
 
         return current;
+    }
+
+    public appendChild(child: ViewController): number {
+        const index = super.appendChild(child);
+
+        if (1 == index) {
+            this.history.push(this.children[0]);
+            super.removeChildAtIndex(0);
+        }
+
+        if (0 <= index)
+            StackViewController.onPush.emit(this, child);
+
+        return index;
+    }
+
+    public removeChild(child: ViewController): number {
+        const index = super.removeChild(child);
+
+        if (0 == index) {
+            super.appendChild(this.history.pop());
+            StackViewController.onPop.emit(this, child);
+        }
+
+        return index;
+    }
+
+    public removeChildAtIndex(index: number): ViewController {
+        const child = super.removeChildAtIndex(index);
+
+        if (child) {
+            super.appendChild(this.history.pop());
+            StackViewController.onPop.emit(this, child);
+        }
+
+        return child;
+    }
+
+    public removeAllChildren(): void {
+        let child = this.children[0];
+
+        super.removeAllChildren();
+
+        while (child) {
+            this.children.forEach(child => StackViewController.onPop.emit(this, child));
+            child = this.history.pop();
+        }
     }
 }
