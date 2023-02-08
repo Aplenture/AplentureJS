@@ -3,6 +3,7 @@ import { Event } from "../../core/utils/event";
 export class View {
     public static readonly onClick = new Event<View, void>('View.onClick');
     public static readonly onEnterKey = new Event<View, void>('View.onEnterKey');
+    public static readonly onEscapeKey = new Event<View, void>('View.onEscapeKey');
     public static readonly onHiddenChanged = new Event<View, boolean>('View.onHiddenChanged');
 
     public index: number = null;
@@ -29,14 +30,20 @@ export class View {
         });
 
         this.div.addEventListener("keydown", event => {
-            if (event.key != 'Enter')
-                return;
-
             if (!this.hasFocus)
                 return;
 
-            event.preventDefault();
-            View.onEnterKey.emit(this);
+            switch (event.key) {
+                case 'Enter':
+                    View.onEnterKey.emit(this);
+                    event.preventDefault();
+                    break;
+
+                case 'Escape':
+                    View.onEscapeKey.emit(this);
+                    event.preventDefault();
+                    break;
+            }
         });
     }
 
