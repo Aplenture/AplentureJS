@@ -34,11 +34,17 @@ export class PopupViewController extends ViewController {
 
         View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view, listener: this });
 
+        StackViewController.onPush.on(() => !(this.view as any).div.parentNode && document.body.appendChild((this.view as any).div), { sender: this.stacktViewController, listener: this });
+        StackViewController.onPop.on(() => 0 == this.children.length && (this.view as any).div.parentNode && document.body.removeChild((this.view as any).div), { sender: this.stacktViewController, listener: this });
+
         super.init();
     }
 
     public deinit() {
         View.onClick.off({ listener: this });
+
+        StackViewController.onPush.off({ listener: this });
+        StackViewController.onPop.off({ listener: this });
 
         super.deinit();
     }
@@ -47,7 +53,7 @@ export class PopupViewController extends ViewController {
         this.stacktViewController.focus();
     }
 
-    public static async pushViewController(next: ViewController): Promise<void> {
+    public static pushViewController(next: ViewController): Promise<void> {
         return this.instance.stacktViewController.pushViewController(next);
     }
 
@@ -83,41 +89,5 @@ export class PopupViewController extends ViewController {
 
     public static pushError(error: Error, title = '#_error'): Promise<void> {
         return this.pushMessage(error.message, title);
-    }
-
-    public appendChild(child: ViewController): number {
-        const index = this.stacktViewController.appendChild(child);
-
-        if (0 <= index && !(this.view as any).div.parentNode) {
-            document.body.appendChild((this.view as any).div);
-            this.focus();
-        }
-
-        return index;
-    }
-
-    public removeChild(child: ViewController): number {
-        const index = this.stacktViewController.removeChild(child);
-
-        if (0 == this.children.length && (this.view as any).div.parentNode)
-            document.body.removeChild((this.view as any).div);
-
-        return index;
-    }
-
-    public removeChildAtIndex(index: number): ViewController {
-        const child = this.stacktViewController.removeChildAtIndex(index);
-
-        if (0 == this.children.length && (this.view as any).div.parentNode)
-            document.body.removeChild((this.view as any).div);
-
-        return child;
-    }
-
-    public removeAllChildren(): void {
-        this.stacktViewController.removeAllChildren();
-
-        if ((this.view as any).div.parentNode)
-            document.body.removeChild((this.view as any).div);
     }
 }
