@@ -3,8 +3,11 @@ import { TableViewControllerDelegate } from "../interfaces/tableViewControllerDa
 import { TableViewControllerSource } from "../interfaces/tableViewControllerDataSource";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
+import { Label } from "../views/label";
 
 export class TableViewController<TCell extends View> extends ViewController {
+    public readonly titleLabel = new Label('title');
+
     public source: TableViewControllerSource<TCell>;
     public delegate: TableViewControllerDelegate<TCell>;
 
@@ -56,6 +59,7 @@ export class TableViewController<TCell extends View> extends ViewController {
         this._cells.splice(0, this._cells.length);
 
         this.view.removeAllChildren();
+        this.view.appendChild(this.titleLabel);
         this.view.appendChild(this._header);
 
         for (let i = 0; i < numCategories; ++i) {
