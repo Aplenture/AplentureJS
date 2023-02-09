@@ -1,11 +1,8 @@
 import { formatDuration } from "../../core/other/time";
 import { Stopwatch } from "../../core/utils/stopwatch";
-import { ViewController } from "../utils/viewController";
-import { Label } from "../views/label";
+import { Label } from "./label";
 
-export class StopwatchViewController extends ViewController {
-    public readonly label = new Label('stopwatch');
-
+export class StopwatchLabel extends Label {
     public readonly options = {
         seconds: true,
         milliseconds: false
@@ -19,14 +16,8 @@ export class StopwatchViewController extends ViewController {
         super(...classes, 'stopwatch');
     }
 
-    public init(): void {
-        this.view.appendChild(this.label);
-
-        super.init();
-    }
-
     public updateTime(duration: number) {
-        this.label.text = formatDuration(duration, this.options);
+        this.text = formatDuration(duration, this.options);
     }
 
     public start(time?: number) {
