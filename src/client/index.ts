@@ -40,6 +40,7 @@ export * from "./views/menuView";
 export * from "./views/stopwatchLabel";
 export * from "./views/switch";
 export * from "./views/tabBar";
+export * from "./views/tableView";
 export * from "./views/textField";
 export * from "./views/titleBar";
 export * from "./views/titledLabel";

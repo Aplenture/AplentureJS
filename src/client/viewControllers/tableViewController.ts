@@ -4,18 +4,16 @@ import { TableViewControllerSource } from "../interfaces/tableViewControllerData
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Label } from "../views/label";
+import { TableView } from "../views/tableView";
 
-export class TableViewController<TCell extends View> extends ViewController {
+export class TableViewController extends ViewController {
     public readonly titleLabel = new Label('title');
+    public readonly tableView = new TableView();
 
-    public source: TableViewControllerSource<TCell>;
-    public delegate: TableViewControllerDelegate<TCell>;
-
-    private readonly _cells: TCell[] = [];
-    private readonly _selectedRows: number[] = [];
+    public source: TableViewControllerSource;
+    public delegate: TableViewControllerDelegate;
 
     private _header: View;
-    private _selectionMode = TableSelectionMode.None;
 
     constructor(...classes: string[]) {
         super(...classes, 'table');
@@ -23,30 +21,28 @@ export class TableViewController<TCell extends View> extends ViewController {
 
     public get header(): View { return this._header; }
 
-    public get cells(): readonly TCell[] { return this._cells; }
-    public get selectedRows(): readonly number[] { return this._selectedRows; }
+    public get selectionMode(): TableSelectionMode { return this.tableView.selectionMode; }
+    public set selectionMode(value: TableSelectionMode) { this.tableView.selectionMode = value; }
 
-    public get selectionMode(): TableSelectionMode { return this._selectionMode; }
-    public set selectionMode(value: TableSelectionMode) {
-        this._selectionMode = value;
-        this.cells.forEach(cell => cell.isClickable = value != TableSelectionMode.None);
-    }
+    public init(): void {
+        this.view.appendChild(this.titleLabel);
+        this.view.appendChild(this.tableView);
 
-    public get alternatingBackgroundColor(): boolean { return this.view.hasClass('alternatingBackgroundColor'); }
-    public set alternatingBackgroundColor(value: boolean) {
-        if (value == this.alternatingBackgroundColor)
-            return;
+        this.titleLabel.text = '#_table_title';
 
-        if (value)
-            this.view.addClass('alternatingBackgroundColor');
-        else
-            this.view.removeClass('alternatingBackgroundColor');
+        super.init();
     }
 
     public update(): Promise<void> {
         this.render();
 
         return super.update();
+    }
+
+    public deinit(): void {
+        View.onClick.off({ listener: this });
+
+        super.deinit();
     }
 
     public render() {
@@ -56,11 +52,8 @@ export class TableViewController<TCell extends View> extends ViewController {
 
         this.deselectAllRows();
 
-        this._cells.splice(0, this._cells.length);
-
-        this.view.removeAllChildren();
-        this.view.appendChild(this.titleLabel);
-        this.view.appendChild(this._header);
+        this.tableView.removeAllChildren();
+        this.tableView.appendChild(this._header);
 
         for (let i = 0; i < numCategories; ++i) {
             const numCells = this.source.numberOfCells(this, i);
@@ -70,7 +63,7 @@ export class TableViewController<TCell extends View> extends ViewController {
                 if (!category.hasClass('category'))
                     category.addClass('category');
 
-                this.view.appendChild(category);
+                this.tableView.appendChild(category);
             }
 
             for (let j = 0; j < numCells; ++j) {
@@ -81,22 +74,23 @@ export class TableViewController<TCell extends View> extends ViewController {
 
                 this.source.updateCell(this, cell, j, i);
 
-                this.view.appendChild(cell);
-                this._cells.push(cell);
+                this.tableView.appendChild(cell);
             }
         }
     }
 
     public isRowSelected(row: number): boolean {
-        return -1 != this._selectedRows.indexOf(row);
+        if (0 > row)
+            return;
+
+        if (row < this.tableView.children.length)
+            return;
+
+        return this.tableView.children[0].isSelected;
     }
 
     public deselectAllRows(): void {
-        if (!this._selectedRows.length)
-            return;
-
-        this._selectedRows.splice(0, this._selectedRows.length);
-        this._cells.forEach(cell => {
+        this.tableView.selectedRows.forEach(cell => {
             cell.isSelected = false;
 
             if (this.delegate)
@@ -105,50 +99,53 @@ export class TableViewController<TCell extends View> extends ViewController {
     }
 
     public deselectRow(row: number): void {
-        const index = this._selectedRows.indexOf(row);
-
-        if (- 1 == index)
+        if (!this.isRowSelected(row))
             return;
 
-        this._cells[row].isSelected = false;
-        this._selectedRows.splice(index, 1);
+        const cell = this.tableView.children[row];
+
+        cell.isSelected = false;
 
         if (this.delegate)
-            this.delegate.deselectedCell(this, this._cells[row]);
+            this.delegate.deselectedCell(this, cell);
     }
 
     public selectRow(row: number): void {
-        if (this._selectionMode == TableSelectionMode.None)
+        if (0 > row)
+            return;
+
+        if (row < this.tableView.children.length)
+            return;
+
+        if (this.selectionMode == TableSelectionMode.None)
             return;
 
         if (this.isRowSelected(row))
             return;
 
-        if (this._selectionMode == TableSelectionMode.Single)
+        const cell = this.tableView.children[row];
+
+        if (this.selectionMode == TableSelectionMode.Single)
             this.deselectAllRows();
 
-        if (this._selectionMode != TableSelectionMode.Clickable) {
-            this._cells[row].isSelected = true;
-
-            if (!this._selectedRows.includes(row))
-                this._selectedRows.push(row);
-        }
+        if (this.selectionMode != TableSelectionMode.Clickable)
+            cell.isSelected = true;
 
         if (this.delegate)
-            this.delegate.selectedCell(this, this._cells[row]);
+            this.delegate.selectedCell(this, cell);
     }
 
-    public cellIndex(cell: TCell): number {
-        return this._cells.indexOf(cell);
+    public cellIndex(cell: View): number {
+        return this.tableView.children.indexOf(cell);
     }
 
-    private reuseCell(category: number): TCell {
+    private reuseCell(category: number): View {
         const cell = this.source.createCell(this, category);
 
-        cell.isClickable = this._selectionMode != TableSelectionMode.None;
+        cell.isClickable = this.selectionMode != TableSelectionMode.None;
 
         View.onClick.on(() => {
-            if (this._selectionMode == TableSelectionMode.None)
+            if (this.selectionMode == TableSelectionMode.None)
                 return;
 
             const row = this.cellIndex(cell);
@@ -157,7 +154,7 @@ export class TableViewController<TCell extends View> extends ViewController {
                 this.deselectRow(row);
             else
                 this.selectRow(row);
-        }, { sender: cell });
+        }, { sender: cell, listener: this });
 
         return cell;
     }
