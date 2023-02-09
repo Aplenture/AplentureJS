@@ -9,19 +9,21 @@ export class TableView extends View {
     }
 
     public get selectedRows(): readonly View[] {
-        return this.children.filter(child => child.isSelected);
+        return this.findCells().filter(child => child.isSelected);
     }
 
     public get selectedRowIndices(): readonly number[] {
-        return this.children
-            .map((row, index) => index)
-            .filter(index => this.children[index].isSelected);
+        const cells = this.findCells();
+
+        return cells
+            .map((_, index) => index)
+            .filter(index => cells[index].isSelected);
     }
 
     public get selectionMode(): TableSelectionMode { return this._selectionMode; }
     public set selectionMode(value: TableSelectionMode) {
         this._selectionMode = value;
-        this.children.forEach(cell => cell.isClickable = value != TableSelectionMode.None);
+        this.findCells().forEach(cell => cell.isClickable = value != TableSelectionMode.None);
     }
 
     public get alternatingBackgroundColor(): boolean { return this.hasClass('alternatingBackgroundColor'); }
@@ -35,29 +37,36 @@ export class TableView extends View {
             this.removeClass('alternatingBackgroundColor');
     }
 
-    public isRowSelected(row: number): boolean { return 0 <= row && row < this.children.length && this.children[0].isSelected; }
+    public appendHeader(view: View) {
+        if (!view.hasClass('header'))
+            view.addClass('header');
 
-    public deselectAllRows(): void {
-        this.children.forEach(child => child.isSelected = false);
+        this.appendChild(view);
     }
 
-    public deselectRow(row: number): void {
-        if (0 > row)
-            return;
+    public appendCategory(view: View) {
+        if (!view.hasClass('category'))
+            view.addClass('category');
 
-        if (row < this.children.length)
-            return;
-
-        this.children[0].isSelected = false;
+        this.appendChild(view);
     }
 
-    public selectRow(row: number): void {
-        if (0 > row)
-            return;
+    public appendCell(view: View) {
+        if (!view.hasClass('cell'))
+            view.addClass('cell');
 
-        if (row < this.children.length)
-            return;
+        this.appendChild(view);
+    }
 
-        this.children[0].isSelected = true;
+    public findHeader(): View {
+        return this.children.find(child => child.hasClass('header'));
+    }
+
+    public findCategories(): readonly View[] {
+        return this.children.filter(child => child.hasClass('category'));
+    }
+
+    public findCells(): readonly View[] {
+        return this.children.filter(child => child.hasClass('cell'));
     }
 }

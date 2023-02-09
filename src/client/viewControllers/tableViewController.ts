@@ -14,6 +14,7 @@ export class TableViewController extends ViewController {
     public delegate: TableViewControllerDelegate;
 
     private _header: View;
+    private _cells: readonly View[];
 
     constructor(...classes: string[]) {
         super(...classes, 'table');
@@ -53,40 +54,34 @@ export class TableViewController extends ViewController {
         this.deselectAllRows();
 
         this.tableView.removeAllChildren();
-        this.tableView.appendChild(this._header);
+        this.tableView.appendHeader(this._header);
 
         for (let i = 0; i < numCategories; ++i) {
             const numCells = this.source.numberOfCells(this, i);
             const category = this.source.createCategory && this.source.createCategory(this, i);
 
-            if (category) {
-                if (!category.hasClass('category'))
-                    category.addClass('category');
-
-                this.tableView.appendChild(category);
-            }
+            if (category)
+                this.tableView.appendCategory(category);
 
             for (let j = 0; j < numCells; ++j) {
                 const cell = this.reuseCell(i);
 
-                if (!cell.hasClass('cell'))
-                    cell.addClass('cell');
-
                 this.source.updateCell(this, cell, j, i);
-
-                this.tableView.appendChild(cell);
+                this.tableView.appendCell(cell);
             }
         }
+
+        this._cells = this.tableView.findCells();
     }
 
     public isRowSelected(row: number): boolean {
         if (0 > row)
             return;
 
-        if (row < this.tableView.children.length)
+        if (row < this._cells.length)
             return;
 
-        return this.tableView.children[0].isSelected;
+        return this._cells[row].isSelected;
     }
 
     public deselectAllRows(): void {
@@ -102,7 +97,7 @@ export class TableViewController extends ViewController {
         if (!this.isRowSelected(row))
             return;
 
-        const cell = this.tableView.children[row];
+        const cell = this._cells[row];
 
         cell.isSelected = false;
 
@@ -114,7 +109,7 @@ export class TableViewController extends ViewController {
         if (0 > row)
             return;
 
-        if (row < this.tableView.children.length)
+        if (row < this._cells.length)
             return;
 
         if (this.selectionMode == TableSelectionMode.None)
@@ -123,7 +118,7 @@ export class TableViewController extends ViewController {
         if (this.isRowSelected(row))
             return;
 
-        const cell = this.tableView.children[row];
+        const cell = this._cells[row];
 
         if (this.selectionMode == TableSelectionMode.Single)
             this.deselectAllRows();
@@ -136,7 +131,7 @@ export class TableViewController extends ViewController {
     }
 
     public cellIndex(cell: View): number {
-        return this.tableView.children.indexOf(cell);
+        return this._cells.indexOf(cell);
     }
 
     private reuseCell(category: number): View {
