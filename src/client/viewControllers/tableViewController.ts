@@ -76,10 +76,10 @@ export class TableViewController extends ViewController {
 
     public isRowSelected(row: number): boolean {
         if (0 > row)
-            return;
+            return false;
 
-        if (row < this._cells.length)
-            return;
+        if (row >= this._cells.length)
+            return false;
 
         return this._cells[row].isSelected;
     }
@@ -109,7 +109,7 @@ export class TableViewController extends ViewController {
         if (0 > row)
             return;
 
-        if (row < this._cells.length)
+        if (row >= this._cells.length)
             return;
 
         if (this.selectionMode == TableSelectionMode.None)
