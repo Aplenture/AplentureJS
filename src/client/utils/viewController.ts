@@ -5,6 +5,7 @@ export class ViewController {
 
     public title: string;
     public index: number = null;
+    public isEditable = true;
 
     private readonly _children: ViewController[] = [];
 

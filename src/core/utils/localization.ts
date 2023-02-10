@@ -14,7 +14,7 @@ export abstract class Localization {
 
         if (!result) {
             this.onMissingTranslation.emit(this, key);
-            return key;
+            result = key;
         }
 
         Object
