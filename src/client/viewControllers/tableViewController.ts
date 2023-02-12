@@ -21,6 +21,7 @@ export class TableViewController extends ViewController {
     }
 
     public get header(): View { return this._header; }
+    public get cells(): readonly View[] { return this._cells; }
 
     public get selectionMode(): TableSelectionMode { return this.tableView.selectionMode; }
     public set selectionMode(value: TableSelectionMode) { this.tableView.selectionMode = value; }
