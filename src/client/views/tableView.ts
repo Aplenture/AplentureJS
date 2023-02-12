@@ -8,6 +8,12 @@ export class TableView extends View {
         super(...classes, 'table');
     }
 
+    public deinit() {
+        this.children.forEach(child => child.deinit());
+
+        super.deinit();
+    }
+
     public get selectedRows(): readonly View[] {
         return this.findCells().filter(child => child.isSelected);
     }

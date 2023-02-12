@@ -32,6 +32,9 @@ export class TableViewController extends ViewController {
 
         this.titleLabel.text = '#_table_title';
 
+        this.titleLabel.init();
+        this.tableView.init();
+
         super.init();
     }
 
@@ -43,6 +46,9 @@ export class TableViewController extends ViewController {
 
     public deinit(): void {
         View.onClick.off({ listener: this });
+
+        this.titleLabel.deinit();
+        this.tableView.deinit();
 
         super.deinit();
     }
