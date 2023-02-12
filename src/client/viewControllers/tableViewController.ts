@@ -14,14 +14,14 @@ export class TableViewController extends ViewController {
     public delegate: TableViewControllerDelegate;
 
     private _header: View;
-    private _cells: readonly View[];
+    private _cells: View[][] = [];
 
     constructor(...classes: string[]) {
         super(...classes, 'table');
     }
 
     public get header(): View { return this._header; }
-    public get cells(): readonly View[] { return this._cells; }
+    public get cells(): readonly View[][] { return this._cells; }
 
     public get selectionMode(): TableSelectionMode { return this.tableView.selectionMode; }
     public set selectionMode(value: TableSelectionMode) { this.tableView.selectionMode = value; }
@@ -57,32 +57,36 @@ export class TableViewController extends ViewController {
         this.tableView.removeAllChildren();
         this.tableView.appendHeader(this._header);
 
-        for (let i = 0; i < numCategories; ++i) {
-            const numCells = this.source.numberOfCells(this, i);
-            const category = this.source.createCategory && this.source.createCategory(this, i);
+        for (let category = 0; category < numCategories; ++category) {
+            const numCells = this.source.numberOfCells(this, category);
+            const categoryView = this.source.createCategory && this.source.createCategory(this, category);
 
-            if (category)
-                this.tableView.appendCategory(category);
+            if (categoryView)
+                this.tableView.appendCategory(categoryView);
 
-            for (let j = 0; j < numCells; ++j) {
-                const cell = this.reuseCell(i);
+            for (let row = 0; row < numCells; ++row) {
+                const cell = this.reuseCell(category, row);
 
-                this.source.updateCell(this, cell, j, i);
+                this.source.updateCell(this, cell, row, category);
                 this.tableView.appendCell(cell);
             }
         }
-
-        this._cells = this.tableView.findCells();
     }
 
-    public isRowSelected(row: number): boolean {
+    public isRowSelected(category: number, row: number): boolean {
+        if (0 > category)
+            return;
+
         if (0 > row)
-            return false;
+            return;
 
-        if (row >= this._cells.length)
-            return false;
+        if (category >= this._cells.length)
+            return;
 
-        return this._cells[row].isSelected;
+        if (row >= this._cells[category].length)
+            return;
+
+        return this._cells[category][row].isSelected;
     }
 
     public deselectAllRows(): void {
@@ -94,11 +98,11 @@ export class TableViewController extends ViewController {
         });
     }
 
-    public deselectRow(row: number): void {
-        if (!this.isRowSelected(row))
+    public deselectRow(category: number, row: number): void {
+        if (!this.isRowSelected(category, row))
             return;
 
-        const cell = this._cells[row];
+        const cell = this._cells[category][row];
 
         cell.isSelected = false;
 
@@ -106,20 +110,26 @@ export class TableViewController extends ViewController {
             this.delegate.deselectedCell(this, cell);
     }
 
-    public selectRow(row: number): void {
-        if (0 > row)
-            return;
-
-        if (row >= this._cells.length)
-            return;
-
+    public selectRow(category: number, row: number): void {
         if (this.selectionMode == TableSelectionMode.None)
             return;
 
-        if (this.isRowSelected(row))
+        if (0 > category)
             return;
 
-        const cell = this._cells[row];
+        if (0 > row)
+            return;
+
+        if (category >= this._cells.length)
+            return;
+
+        if (row >= this._cells[category].length)
+            return;
+
+        if (this.isRowSelected(category, row))
+            return;
+
+        const cell = this._cells[category][row];
 
         if (this.selectionMode == TableSelectionMode.Single)
             this.deselectAllRows();
@@ -131,11 +141,19 @@ export class TableViewController extends ViewController {
             this.delegate.selectedCell(this, cell);
     }
 
-    public cellIndex(cell: View): number {
-        return this._cells.indexOf(cell);
+    private reuseCell(category: number, row: number): View {
+        while (category >= this._cells.length)
+            this._cells.push([]);
+
+        const categoryCells = this._cells[category];
+
+        while (row >= categoryCells.length)
+            categoryCells.push(this.createCell(category, row));
+
+        return categoryCells[row];
     }
 
-    private reuseCell(category: number): View {
+    private createCell(category: number, row: number): View {
         const cell = this.source.createCell(this, category);
 
         cell.isClickable = this.selectionMode != TableSelectionMode.None;
@@ -144,12 +162,10 @@ export class TableViewController extends ViewController {
             if (this.selectionMode == TableSelectionMode.None)
                 return;
 
-            const row = this.cellIndex(cell);
-
-            if (this.isRowSelected(row))
-                this.deselectRow(row);
+            if (this.isRowSelected(category, row))
+                this.deselectRow(category, row);
             else
-                this.selectRow(row);
+                this.selectRow(category, row);
         }, { sender: cell, listener: this });
 
         return cell;
