@@ -24,6 +24,7 @@ export class ViewController {
 
     public deinit() {
         this._children.forEach(child => child.deinit());
+        this.removeAllChildren();
     }
 
     public async update() {

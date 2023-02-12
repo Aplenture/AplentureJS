@@ -114,7 +114,11 @@ export class View {
     }
 
     public init() { }
-    public deinit() { }
+
+    public deinit() {
+        this._children.forEach(child => child.deinit());
+        this.removeAllChildren();
+    }
 
     public focus() {
         this.div.focus();
