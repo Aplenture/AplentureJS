@@ -148,13 +148,17 @@ export class TableViewController extends ViewController {
     }
 
     private reuseCell(category: number, row: number): View {
-        while (category >= this._cells.length)
+        if (category >= this._cells.length)
             this._cells.push([]);
 
         const categoryCells = this._cells[category];
 
-        while (row >= categoryCells.length)
+        if (row >= categoryCells.length)
             categoryCells.push(this.createCell(category, row));
+        else
+            categoryCells[row].deinit();
+
+        categoryCells[row].init();
 
         return categoryCells[row];
     }

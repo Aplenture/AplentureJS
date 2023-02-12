@@ -16,6 +16,15 @@ export class StopwatchLabel extends Label {
         super(...classes, 'stopwatch');
     }
 
+    public deinit() {
+        if (this.stopwatch.isRunning) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+
+        super.deinit();
+    }
+
     public updateTime(duration: number) {
         this.text = formatDuration(duration, this.options);
     }
