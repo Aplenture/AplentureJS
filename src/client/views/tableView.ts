@@ -47,7 +47,11 @@ export class TableView extends View {
         if (!view.hasClass('header'))
             view.addClass('header');
 
+        this.removeChild(this.findHeader());
         this.appendChild(view);
+
+        // reappend children after header
+        this.children.forEach(child => this.appendChild(child));
     }
 
     public appendCategory(view: View) {
