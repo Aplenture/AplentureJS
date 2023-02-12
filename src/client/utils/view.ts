@@ -113,13 +113,6 @@ export class View {
             this.div.classList.remove('clickable');
     }
 
-    public init() { }
-
-    public deinit() {
-        this._children.forEach(child => child.deinit());
-        this.removeAllChildren();
-    }
-
     public focus() {
         this.div.focus();
         this._children.forEach(child => child.focus());

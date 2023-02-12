@@ -37,7 +37,6 @@ export * from "./views/dropbox";
 export * from "./views/imageView";
 export * from "./views/label";
 export * from "./views/menuView";
-export * from "./views/stopwatchLabel";
 export * from "./views/switch";
 export * from "./views/tabBar";
 export * from "./views/tableView";

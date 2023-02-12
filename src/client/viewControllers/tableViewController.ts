@@ -32,9 +32,6 @@ export class TableViewController extends ViewController {
 
         this.titleLabel.text = '#_table_title';
 
-        this.titleLabel.init();
-        this.tableView.init();
-
         super.init();
     }
 
@@ -46,9 +43,6 @@ export class TableViewController extends ViewController {
 
     public deinit(): void {
         View.onClick.off({ listener: this });
-
-        this.titleLabel.deinit();
-        this.tableView.deinit();
 
         super.deinit();
     }
@@ -148,17 +142,13 @@ export class TableViewController extends ViewController {
     }
 
     private reuseCell(category: number, row: number): View {
-        if (category >= this._cells.length)
+        while (category >= this._cells.length)
             this._cells.push([]);
 
         const categoryCells = this._cells[category];
 
-        if (row >= categoryCells.length)
+        while (row >= categoryCells.length)
             categoryCells.push(this.createCell(category, row));
-        else
-            categoryCells[row].deinit();
-
-        categoryCells[row].init();
 
         return categoryCells[row];
     }
