@@ -10,6 +10,8 @@ export class Stopwatch {
 
     private _interval: NodeJS.Timer;
 
+    constructor(public readonly updateDuration = Milliseconds.Second) { }
+
     public get isRunning(): boolean { return this._running; }
     public get duration(): number { return (this._stop || Date.now()) - this._start; }
 
@@ -23,7 +25,7 @@ export class Stopwatch {
         this._running = true;
         this._start = time;
         this._stop = 0;
-        this._interval = setInterval(() => Stopwatch.onUpdate.emit(this), 100);
+        this._interval = setInterval(() => Stopwatch.onUpdate.emit(this), this.updateDuration);
     }
 
     public stop(time = Date.now()) {
