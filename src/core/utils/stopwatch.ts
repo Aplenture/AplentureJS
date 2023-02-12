@@ -2,7 +2,7 @@ import { Milliseconds } from "../other/time";
 import { Event } from "./event";
 
 export class Stopwatch {
-    public static readonly onUpdate = new Event<void, Stopwatch>('Stopwatch.onUpdate');
+    public static readonly onUpdate = new Event<Stopwatch, void>('Stopwatch.onUpdate');
 
     private _running = false;
     private _start = 0;
@@ -23,7 +23,7 @@ export class Stopwatch {
         this._running = true;
         this._start = time;
         this._stop = 0;
-        this._interval = setInterval(() => Stopwatch.onUpdate.emit(null, this), 100);
+        this._interval = setInterval(() => Stopwatch.onUpdate.emit(this), 100);
     }
 
     public stop(time = Date.now()) {
