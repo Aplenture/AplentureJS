@@ -8,7 +8,7 @@ export class Label extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'label');
 
-        this.text = '#_label';
+        this.label.innerText = 'label';
 
         this.div.appendChild(this.label);
     }

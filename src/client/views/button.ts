@@ -9,7 +9,7 @@ export class Button extends View {
 
         this.isClickable = true;
         this.propaginateClickEvents = false;
-        this.text = '#_button';
+        this.text = 'button';
 
         this.appendChild(this.label);
     }

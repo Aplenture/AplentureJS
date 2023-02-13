@@ -18,6 +18,8 @@ export class TableViewController extends ViewController {
 
     constructor(...classes: string[]) {
         super(...classes, 'table');
+
+        this.titleLabel.text = 'table title';
     }
 
     public get header(): View { return this._header; }
@@ -29,8 +31,6 @@ export class TableViewController extends ViewController {
     public init(): void {
         this.view.appendChild(this.titleLabel);
         this.view.appendChild(this.tableView);
-
-        this.titleLabel.text = '#_table_title';
 
         super.init();
     }

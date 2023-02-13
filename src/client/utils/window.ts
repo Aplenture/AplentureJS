@@ -1,4 +1,4 @@
-import { Event } from "../../core";
+import { Event, Localization } from "../../core";
 import { View } from "./view";
 
 export abstract class Window {
@@ -33,5 +33,6 @@ export abstract class Window {
         Event.onEmit.on((args, sender) => this._debug && console.log(sender.name, args));
         View.onClick.on((_, sender) => this._debug && console.log(`clicked view '${sender.id}'`));
         View.onEnterKey.on((_, sender) => this._debug && console.log(`clicked view '${sender.id}'`));
+        Localization.onMissingTranslation.on(key => this._debug && console.warn(`missing translation for key '${key}'`));
     }
 }

@@ -24,16 +24,13 @@ export abstract class Client<TConfig extends ClientConfig> {
     public get window(): Window { return Window; }
 
     public async init(config: TConfig) {
-        if (config.debug) {
-            Localization.onMissingTranslation.on(key => console.warn(`missing translation for key '${key}'`));
-            (window as any).app = this;
-        }
+        (window as any).app = this;
 
         Window.init(config.debug);
 
         window.addEventListener('unhandledrejection', event => PopupViewController.pushError(event.reason || '#_something_went_wrong'));
 
-        await Client.loadTranslation(config.defaultLanguage || Localization.language);
+        await Client.loadTranslation(config.defaultLanguage);
 
         Router.onRouteChanged.on((route, router) => route.isPrivate && !this.session.access && router.changeRoute(config.unauthorizedRoute), { sender: this.router });
         Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultRoute), { sender: this.session });

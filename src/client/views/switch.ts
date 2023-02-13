@@ -25,6 +25,8 @@ export class Switch extends View {
 
         this.div.appendChild(this.label);
         this.div.appendChild(label);
+
+        this.label.innerText = 'switch title';
     }
 
     public get hasFocus(): boolean { return document.activeElement == this.input; }

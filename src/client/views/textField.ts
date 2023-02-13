@@ -26,6 +26,8 @@ export class TextField extends View {
 
         this.input.type = 'text';
         this.input.addEventListener("input", (event: InputEvent) => TextField.onChange.emit(this, event.data));
+
+        this.label.innerText = 'text field title';
     }
 
     public get hasFocus(): boolean { return document.activeElement == this.input; }
