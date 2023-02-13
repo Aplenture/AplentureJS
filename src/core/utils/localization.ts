@@ -19,7 +19,7 @@ export abstract class Localization {
         this._dictionary = Object.assign({}, dictionary);
     }
 
-    public static translate(key = '', values: NodeJS.ReadOnlyDict<string> = {}): string {
+    public static translate(key = '', values?: NodeJS.ReadOnlyDict<string>): string {
         if (!key)
             return '';
 
@@ -31,7 +31,7 @@ export abstract class Localization {
             result = key;
         }
 
-        Object
+        if (values) Object
             .keys(values)
             .forEach(key => result = result.replace(key, values[key]));
 
