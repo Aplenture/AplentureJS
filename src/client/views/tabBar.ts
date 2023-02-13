@@ -1,5 +1,4 @@
 import { Event } from "../../core";
-import { TextAlignment } from "../enums/textAlignment";
 import { View } from "../utils/view";
 import { Bar } from "./bar";
 import { Label } from "./label";
@@ -25,7 +24,6 @@ export class TabBar extends Bar {
         const label = new Label();
 
         label.text = title;
-        label.textAlignment = TextAlignment.Center;
 
         item.appendChild(label);
 
