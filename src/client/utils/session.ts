@@ -11,6 +11,8 @@ const KEY_ACCESS = 'session.access';
 
 export class Session {
     public static readonly onAccessChanged = new Event<Session, Access>('Session.onAccessChanged');
+    public static readonly onLogin = new Event<Session, Access>('Session.onLogin');
+    public static readonly onLogout = new Event<Session, void>('Session.onLogout');
 
     private readonly logoutRequest: BoolRequest<void>;
     private readonly hasAccessRequest: BoolRequest<{
@@ -104,6 +106,8 @@ export class Session {
 
         this.updateAccess(access, keepLogin);
 
+        Session.onLogin.emit(this, access);
+
         return access;
     }
 
@@ -114,6 +118,8 @@ export class Session {
         await this.logoutRequest.send();
 
         this.resetAccess();
+
+        Session.onLogout.emit(this);
 
         return true;
     }
