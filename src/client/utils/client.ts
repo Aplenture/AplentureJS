@@ -59,7 +59,7 @@ export abstract class Client<TConfig extends ClientConfig> {
         this.router.init();
         await this.rootViewController.update();
 
-        if (config.loginEnabled && !this.session.hasAccess && this.router.parameters.has('login')) {
+        if (config.loginEnabled && !this.session.hasAccess && this.router.route.has('login')) {
             const viewController = new LoginViewController();
 
             viewController.session = this.session;

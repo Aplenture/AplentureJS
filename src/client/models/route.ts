@@ -1,5 +1,46 @@
-export interface Route {
-    readonly name: string;
-    readonly isPrivate?: boolean;
-    readonly index?: number;
+export class Route {
+    private _parameters: URLSearchParams = null;
+
+    constructor(
+        public readonly name: string,
+        public readonly isPrivate?: boolean,
+        public readonly index?: number
+    ) { }
+
+    public init() {
+        this._parameters = new URLSearchParams(window.location.search);
+    }
+
+    public has(key: string): boolean {
+        return this._parameters.has(key);
+    }
+
+    public get(key: string): string {
+        return this._parameters.get(key);
+    }
+
+    public getNumber(key: string): number {
+        return Number(this._parameters.get(key));
+    }
+
+    public getBoolean(key: string): boolean {
+        return Boolean(this._parameters.get(key));
+    }
+
+    public set(key: string, value: any) {
+        this._parameters.set(key, value.toString());
+
+        window.history.replaceState({}, this.name, this.toString());
+    }
+
+    public toString(): string {
+        let result = '/' + this.name;
+
+        if (this.index)
+            result += '/' + this.index;
+
+        result += this._parameters;
+
+        return result;
+    }
 }

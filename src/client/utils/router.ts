@@ -2,12 +2,9 @@ import { Lifo } from "../../core";
 import { Event, EventHandler } from "../../core/utils/event";
 import { Route } from "../models/route";
 import { RouterConfig } from "../models/routerConfig";
-import { SearchParamters } from "./searchParameters";
 
 export class Router {
     public static readonly onRouteChanged = new Event<Router, Route>('Router.onRouteChanged');
-
-    public readonly parameters = new SearchParamters();
 
     private readonly routes: Route[] = [];
     private readonly defaultRoute: string;
@@ -33,8 +30,6 @@ export class Router {
     public init() {
         const routeParts = window.location.pathname.split('/');
 
-        this.parameters.init();
-
         this._route = this.findRoute(routeParts[1], parseInt(routeParts[2]));
 
         if (0 == this.history.count && this._route.name != this.defaultRoute)
@@ -44,7 +39,7 @@ export class Router {
     }
 
     public addRoute(name: string, onRouteChanged: EventHandler<Router, Route>, isPrivate = false) {
-        const route = { name, isPrivate };
+        const route = new Route(name, isPrivate);
 
         this.routes.push(route);
 
@@ -70,14 +65,12 @@ export class Router {
         if (this._route && route.name == this._route.name && route.index == this._route.index)
             return;
 
-        const routeString = route.index
-            ? `/${route.name}/${index}`
-            : `/${route.name}`;
-
-        this._route = route;
+        const routeString = route.toString();
 
         this.history.push(routeString);
         window.history.pushState({}, route.name, routeString);
+
+        this._route = route;
 
         Router.onRouteChanged.emit(this, route);
     }
@@ -101,6 +94,8 @@ export class Router {
         (route as any).index = index && !isNaN(index)
             ? index
             : null;
+
+        route.init();
 
         return route;
     }
