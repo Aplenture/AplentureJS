@@ -77,11 +77,13 @@ export abstract class Client<TConfig extends ClientConfig> {
         const request = new JSONRequest<void, NodeJS.ReadOnlyDict<string>>();
 
         try {
-            Localization.dictionary = await request.send(null, `/${window.navigator.language}.json`);
-            Localization.language = window.navigator.language;
+            Localization.init(window.navigator.language, await request.send(null, `/${window.navigator.language}.json`));
         } catch (e) {
-            Localization.dictionary = await request.send(null, `/${defaultLanguage}.json`);
-            Localization.language = defaultLanguage;
+            try {
+                Localization.init(defaultLanguage, await request.send(null, `/${defaultLanguage}.json`));
+            } catch (e) {
+                Localization.init(window.navigator.language);
+            }
         }
     }
 }
