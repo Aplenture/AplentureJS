@@ -1,3 +1,4 @@
+import { Event } from "../../core";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { MenuView } from "../views/menuView";
@@ -5,6 +6,8 @@ import { TabBar } from "../views/tabBar";
 import { ContainerViewController } from "./containerViewController";
 
 export class NavigationViewController extends ViewController {
+    public static readonly onSelected = new Event<NavigationViewController, number>('NavigationViewController.onSelected');
+
     public readonly containerViewController = new ContainerViewController();
 
     public readonly menuView: MenuView;
@@ -38,8 +41,11 @@ export class NavigationViewController extends ViewController {
         const relativeViewController = new ViewController('relative');
 
         MenuView.onItemClicked.on(index => this.selectedIndex = index, { sender: this.menuView, listener: this });
-        TabBar.onItemClicked.on(index => this.selectedIndex = index, { sender: this.tabBar, listener: this });
+        MenuView.onItemClicked.on(index => NavigationViewController.onSelected.emit(this, index), { sender: this.menuView, listener: this });
 
+        TabBar.onItemClicked.on(index => this.selectedIndex = index, { sender: this.tabBar, listener: this });
+        TabBar.onItemClicked.on(index => NavigationViewController.onSelected.emit(this, index), { sender: this.menuView, listener: this });
+        
         this.view.appendChild(this.menuView);
 
         relativeViewController.appendChild(this.containerViewController);
