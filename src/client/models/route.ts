@@ -39,7 +39,10 @@ export class Route {
         if (this.index)
             result += '/' + this.index;
 
-        result += this._parameters;
+        const parameters = this._parameters.toString();
+
+        if (parameters)
+            result += '?' + this._parameters;
 
         return result;
     }
