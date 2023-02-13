@@ -16,6 +16,7 @@ export * from "./requests/textRequest";
 export * from "./utils/client";
 export * from "./utils/request";
 export * from "./utils/router";
+export * from "./utils/searchParameters";
 export * from "./utils/session";
 export * from "./utils/view";
 export * from "./utils/viewController";

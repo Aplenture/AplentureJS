@@ -2,16 +2,17 @@ import { Lifo } from "../../core";
 import { Event, EventHandler } from "../../core/utils/event";
 import { Route } from "../models/route";
 import { RouterConfig } from "../models/routerConfig";
+import { SearchParamters } from "./searchParameters";
 
 export class Router {
     public static readonly onRouteChanged = new Event<Router, Route>('Router.onRouteChanged');
 
-    private readonly routes: Route[] = [];
+    public readonly parameters = new SearchParamters();
 
+    private readonly routes: Route[] = [];
     private readonly defaultRoute: string;
 
     private _route: Route = null;
-    private _parameters: URLSearchParams = null;
 
     private history = new Lifo<string>();
 
@@ -25,7 +26,6 @@ export class Router {
     }
 
     public get route(): Route { return this._route; }
-    public get parameters(): URLSearchParams { return this._parameters; }
 
     public get index(): number { return this._route && this._route.index; }
     public get historyLength(): number { return this.history.count; }
@@ -33,8 +33,9 @@ export class Router {
     public init() {
         const routeParts = window.location.pathname.split('/');
 
+        this.parameters.init();
+
         this._route = this.findRoute(routeParts[1], parseInt(routeParts[2]));
-        this._parameters = new URLSearchParams(window.location.search);
 
         if (0 == this.history.count && this._route.name != this.defaultRoute)
             this.history.push(this.defaultRoute);
