@@ -21,6 +21,8 @@ export class StackViewController extends ViewController {
         if (0 > this.appendChild(next))
             return Promise.reject();
 
+        next.view.isVisible = true;
+
         await this.update();
 
         this.focus();

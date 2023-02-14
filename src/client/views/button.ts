@@ -15,4 +15,15 @@ export class Button extends View {
 
     public get text(): string { return this.label.text; }
     public set text(value: string) { this.label.text = value; }
+
+    public get isRed(): boolean { return this.hasClass('red'); }
+    public set isRed(value: boolean) {
+        if (value == this.isRed)
+            return;
+
+        if (value)
+            this.addClass('red');
+        else
+            this.removeClass('red');
+    }
 }
