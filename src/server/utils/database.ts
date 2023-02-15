@@ -163,6 +163,7 @@ export class Database {
             });
 
             stream.on("end", () => {
+                stopwatch.stop();
                 connection.release();
                 resolve();
                 Database.onMessage.emit(this, `fetched ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
