@@ -1,14 +1,9 @@
 import { Milliseconds } from "../other/time";
-import { Event } from "./event";
 
 export class Stopwatch {
-    public static readonly onUpdate = new Event<Stopwatch, void>('Stopwatch.onUpdate');
-
     private _running = false;
     private _start = 0;
     private _stop = 0;
-
-    private _interval: NodeJS.Timer;
 
     constructor(public readonly updateDuration = Milliseconds.Second) { }
 
@@ -25,15 +20,11 @@ export class Stopwatch {
         this._running = true;
         this._start = time;
         this._stop = 0;
-        this._interval = setInterval(() => Stopwatch.onUpdate.emit(this), this.updateDuration);
     }
 
     public stop(time = Date.now()) {
         if (!this._running) throw new Error("stopwatch is not running");
 
-        clearInterval(this._interval);
-
-        this._interval = null;
         this._running = false;
         this._stop = time;
     }
