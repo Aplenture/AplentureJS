@@ -35,6 +35,10 @@ export abstract class Request<TParams, TResponse> {
     public get isRunning(): boolean { return this._running; }
 
     public send(params: TParams, url = this.url): Promise<TResponse> {
+        for (const key in params)
+            if (undefined === params[key])
+                delete params[key];
+
         if (this._running)
             throw new Error('request is running already');
 
