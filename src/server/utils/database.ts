@@ -128,8 +128,7 @@ export class Database {
         stopwatch.stop();
         connection.release();
 
-        if (result.meta)
-            delete result.meta;
+        // delete result.meta;
 
         if (Array.isArray(result))
             result.forEach(entry => Database.decodeEntry(entry));
