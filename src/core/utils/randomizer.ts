@@ -28,7 +28,7 @@ export class Randomizer {
         return result;
     }
 
-    public shuffle<T>(items: readonly T[], reverse: boolean): T[] {
+    public shuffle<T>(items: readonly T[], reverse = false): T[] {
         const result = shuffle(items, this._currentSeed);
 
         this.increaseSeed(items.length);
