@@ -50,12 +50,14 @@ export class TableViewController extends ViewController {
     public render() {
         const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
 
-        this._header = this.source.createHeader(this);
+        this._header = this.source.createHeader && this.source.createHeader(this);
 
         this.deselectAllRows();
 
         this.tableView.removeAllChildren();
-        this.tableView.appendHeader(this._header);
+
+        if (this._header)
+            this.tableView.appendHeader(this._header);
 
         for (let category = 0; category < numCategories; ++category) {
             const numCells = this.source.numberOfCells(this, category);
