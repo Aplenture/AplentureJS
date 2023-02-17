@@ -32,12 +32,18 @@ export class Session {
         readonly secret: string
     }>;
 
+    private readonly changePasswordRequest: BoolRequest<{
+        readonly old: string;
+        readonly new: string;
+    }>;
+
     private _access: Access = null;
 
     constructor(config: SessionConfig) {
         this.hasAccessRequest = new BoolRequest(config.hasAccessURL);
         this.loginRequest = new JSONRequest(config.loginURL);
         this.logoutRequest = new BoolRequest(config.logoutURL, { isPrivate: true });
+        this.changePasswordRequest = new BoolRequest(config.changePasswordURL, { isPrivate: true });
     }
 
     public get access(): Access { return this._access; }
@@ -109,6 +115,21 @@ export class Session {
         Session.onLogin.emit(this, access);
 
         return access;
+    }
+
+    public async changePassword(oldPassword: string, newPassword: string): Promise<boolean> {
+        const oldPrivateKey = EC.createPrivateKey(oldPassword);
+        const oldPublickey = EC.secp256k1.createPublicKey(oldPrivateKey).toString();
+
+        const newPrivateKey = EC.createPrivateKey(newPassword);
+        const newPublickey = EC.secp256k1.createPublicKey(newPrivateKey).toString();
+
+        await this.changePasswordRequest.send({
+            old: oldPublickey,
+            new: newPublickey
+        });
+
+        return true;
     }
 
     public async logout(): Promise<boolean> {

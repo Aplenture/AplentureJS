@@ -9,8 +9,8 @@ import { ServerCommand } from "../../utils/serverCommand";
 
 interface Args {
     readonly account: number;
-    readonly publickey_old: string;
-    readonly publickey_new: string;
+    readonly old: string;
+    readonly new: string;
 }
 
 interface Context {
@@ -24,17 +24,17 @@ export class ChangeUserPassword extends ServerCommand<void, Context, Args> {
     public readonly description = "Changes the account password."
     public readonly property = new CommandArgs<Args>(
         new NumberProperty("account", "Where to change the password."),
-        new StringProperty("publickkey_old", "Of current password."),
-        new StringProperty("publickkey_new", "Of new password.")
+        new StringProperty("old", "Of current password."),
+        new StringProperty("new", "Of new password.")
     );
 
     public async execute(args: Args): Promise<Response> {
         const account = await this.context.repositories.AccountRepository.getByID(args.account);
 
-        if (account.key != args.publickey_old)
+        if (account.key != args.old)
             throw new ForbiddenError('#_wrong_public_key');
 
-        await this.context.repositories.AccountRepository.changePassword(args.account, args.publickey_new);
+        await this.context.repositories.AccountRepository.changePassword(args.account, args.new);
 
         return new OKResponse();
     }
