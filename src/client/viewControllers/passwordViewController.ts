@@ -16,6 +16,8 @@ export class PasswordViewController extends BodyViewController {
 
     constructor(...classes: string[]) {
         super(...classes, 'password-view-controller');
+
+        this.title = '#_password';
     }
 
     public init(): void {
