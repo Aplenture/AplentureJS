@@ -32,7 +32,7 @@ export class ChangeUserPassword extends ServerCommand<void, Context, Args> {
         const account = await this.context.repositories.AccountRepository.getByID(args.account);
 
         if (account.key != args.old)
-            throw new ForbiddenError('#_wrong_public_key');
+            throw new ForbiddenError('#_wrong_old_password');
 
         await this.context.repositories.AccountRepository.changePassword(args.account, args.new);
 

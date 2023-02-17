@@ -28,6 +28,7 @@ export class PasswordViewController extends BodyViewController {
         this.footerBar.appendChild(this.changePasswordButton);
 
         this.titleBar.title = '#_change_password';
+        this.changePasswordButton.text = '#_change_password';
 
         this.currentPasswordTextField.title = '#_current_password';
         this.currentPasswordTextField.type = TextFieldType.Password;
@@ -39,7 +40,10 @@ export class PasswordViewController extends BodyViewController {
         this.repeatPasswordTextField.type = TextFieldType.Password;
 
         View.onClick.on(() => this.changePassword(), { sender: this.changePasswordButton, listener: this });
-        View.onEnterKey.on(() => this.changePassword(), { sender: this.view, listener: this });
+
+        View.onEnterKey.on(() => this.changePassword(), { sender: this.currentPasswordTextField, listener: this });
+        View.onEnterKey.on(() => this.changePassword(), { sender: this.newPasswordTextField, listener: this });
+        View.onEnterKey.on(() => this.changePassword(), { sender: this.repeatPasswordTextField, listener: this });
 
         super.init();
     }
@@ -93,6 +97,10 @@ export class PasswordViewController extends BodyViewController {
             return;
         }
 
-        await this.session.changePassword(this.currentPasswordTextField.value, this.newPasswordTextField.value);
+        if (await this.session.changePassword(this.currentPasswordTextField.value, this.newPasswordTextField.value)) {
+            await PopupViewController.pushMessage('#_password_changed', '#_change_password');
+            this.clear();
+            this.focus();
+        }
     }
 }

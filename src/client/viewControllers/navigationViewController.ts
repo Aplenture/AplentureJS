@@ -71,6 +71,13 @@ export class NavigationViewController extends ViewController {
         super.deinit();
     }
 
+    public focus(): void {
+        const selectedViewController = this.selectedViewController;
+
+        if (selectedViewController)
+            selectedViewController.focus();
+    }
+
     public enableViewController(index: number, enabled = true) {
         if (0 > index)
             return;
