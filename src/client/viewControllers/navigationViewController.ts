@@ -23,6 +23,8 @@ export class NavigationViewController extends ViewController {
     public get children(): readonly ViewController[] { return this.containerViewController.children; }
     public get contentView(): View { return this.containerViewController.contentViewController.view; }
 
+    public get selectedViewController(): ViewController { return this.children.find(child => child.view.isVisible); }
+
     public get selectedIndex(): number { return this.children.findIndex(child => child.view.isVisible); }
     public set selectedIndex(value: number) {
         if (value == this.selectedIndex)
@@ -32,6 +34,11 @@ export class NavigationViewController extends ViewController {
 
         this.menuView.selectedIndex = value;
         this.tabBar.selectedIndex = value;
+
+        const selectedViewController = this.selectedViewController;
+
+        if (selectedViewController)
+            selectedViewController.focus();
     }
 
     public init(): void {
