@@ -40,7 +40,7 @@ export abstract class Request<TParams, TResponse> {
                 delete params[key];
 
         if (this._running)
-            throw new Error('request is running already');
+            throw new Error(`request '${this.url}' is running already`);
 
         this._running = true;
 
