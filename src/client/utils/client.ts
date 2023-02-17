@@ -9,8 +9,11 @@ import { Window } from "./window";
 import { ViewController } from "./viewController";
 import { LoginViewController } from "../viewControllers/loginViewController";
 import { PopupViewController } from "../viewControllers/popupViewController";
+import { Event } from "../../core";
 
 export abstract class Client<TConfig extends ClientConfig> {
+    public static readonly onLoaded = new Event<Client<any>, void>('Client.onLoaded');
+
     public readonly rootViewController = new ViewController('root');
 
     public readonly router: Router;
@@ -68,6 +71,8 @@ export abstract class Client<TConfig extends ClientConfig> {
 
             PopupViewController.pushViewController(viewController);
         }
+
+        Client.onLoaded.emit(this);
     }
 
     private static async loadTranslation(defaultLanguage: string): Promise<void> {
