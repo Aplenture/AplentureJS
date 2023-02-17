@@ -32,9 +32,6 @@ export class NavigationViewController extends ViewController {
 
         this.menuView.selectedIndex = value;
         this.tabBar.selectedIndex = value;
-
-        if (0 <= value && value < this.children.length)
-            this.children[value].update();
     }
 
     public init(): void {
@@ -42,10 +39,12 @@ export class NavigationViewController extends ViewController {
 
         MenuView.onItemClicked.on(index => this.selectedIndex = index, { sender: this.menuView, listener: this });
         MenuView.onItemClicked.on(index => NavigationViewController.onSelected.emit(this, index), { sender: this.menuView, listener: this });
+        MenuView.onItemClicked.on(() => this.update(), { sender: this.menuView, listener: this });
 
         TabBar.onItemClicked.on(index => this.selectedIndex = index, { sender: this.tabBar, listener: this });
         TabBar.onItemClicked.on(index => NavigationViewController.onSelected.emit(this, index), { sender: this.menuView, listener: this });
-        
+        TabBar.onItemClicked.on(() => this.update(), { sender: this.menuView, listener: this });
+
         this.view.appendChild(this.menuView);
 
         relativeViewController.appendChild(this.containerViewController);
