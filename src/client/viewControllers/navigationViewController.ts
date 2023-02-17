@@ -65,6 +65,21 @@ export class NavigationViewController extends ViewController {
         super.deinit();
     }
 
+    public enableViewController(index: number, enabled = true) {
+        if (0 > index)
+            return;
+
+        if (index >= this.children.length)
+            return;
+
+        this.menuView.children[index].isDisabled = !enabled;
+        this.tabBar.children[index].isDisabled = !enabled;
+    }
+
+    public disableViewController(index: number) {
+        this.enableViewController(index, false);
+    }
+
     public appendChild(child: ViewController, title = child.title || '#_missing_title'): number {
         const index = this.containerViewController.appendChild(child);
 
