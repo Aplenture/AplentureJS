@@ -95,7 +95,7 @@ export class TableViewController extends ViewController {
         this.tableView.selectedRows.forEach(cell => {
             cell.isSelected = false;
 
-            if (this.delegate)
+            if (this.delegate && this.delegate.deselectedCell)
                 this.delegate.deselectedCell(this, cell);
         });
     }
@@ -108,7 +108,7 @@ export class TableViewController extends ViewController {
 
         cell.isSelected = false;
 
-        if (this.delegate)
+        if (this.delegate && this.delegate.deselectedCell)
             this.delegate.deselectedCell(this, cell);
     }
 
@@ -139,7 +139,7 @@ export class TableViewController extends ViewController {
         if (this.selectionMode != TableSelectionMode.Clickable)
             cell.isSelected = true;
 
-        if (this.delegate)
+        if (this.delegate && this.delegate.selectedCell)
             this.delegate.selectedCell(this, cell);
     }
 
