@@ -33,7 +33,7 @@ export abstract class Client<TConfig extends ClientConfig> {
 
         window.addEventListener('unhandledrejection', event => PopupViewController.pushError(event.reason || '#_something_went_wrong'));
 
-        await Client.loadTranslation(config.defaultLanguage);
+        await Client.loadTranslation(config.localizationPath, config.defaultLanguage);
 
         Router.onRouteChanged.on((route, router) => route.isPrivate && !this.session.access && router.changeRoute(config.unauthorizedRoute), { sender: this.router });
         Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultRoute), { sender: this.session });
@@ -75,14 +75,14 @@ export abstract class Client<TConfig extends ClientConfig> {
         Client.onLoaded.emit(this);
     }
 
-    private static async loadTranslation(defaultLanguage: string): Promise<void> {
+    private static async loadTranslation(path: string, defaultLanguage: string): Promise<void> {
         const request = new JSONRequest<void, NodeJS.ReadOnlyDict<string>>();
 
         try {
-            Localization.init(window.navigator.language, await request.send(null, `/${window.navigator.language}.json`));
+            Localization.init(window.navigator.language, await request.send(null, path + `${window.navigator.language}.json`));
         } catch (e) {
             try {
-                Localization.init(defaultLanguage, await request.send(null, `/${defaultLanguage}.json`));
+                Localization.init(defaultLanguage, await request.send(null, path + `${defaultLanguage}.json`));
             } catch (e) {
                 Localization.init(window.navigator.language);
             }

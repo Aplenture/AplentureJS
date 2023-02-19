@@ -1,3 +1,4 @@
+import { Localization } from "../../core";
 import { Event } from "../../core/utils/event";
 
 export class View {
@@ -48,8 +49,10 @@ export class View {
     }
 
     public get id(): string { return this.div.id; }
+
     public get parent(): View { return this._parent; }
     public get children(): readonly View[] { return this._children; }
+
     public get hasFocus(): boolean { return document.activeElement == this.div; }
 
     public get tabIndex(): number { return this.div.tabIndex; }
@@ -59,7 +62,7 @@ export class View {
     public get height(): number { return this.div.offsetHeight };
 
     public get description(): string { return this.div.title; }
-    public set description(value: string) { this.div.title = value; }
+    public set description(value: string) { this.div.title = Localization.translate(value); }
 
     public get isVisible(): boolean { return !this.isHidden; }
     public set isVisible(value: boolean) { this.isHidden = !value; }

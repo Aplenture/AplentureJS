@@ -1,6 +1,5 @@
 import { CommandArgs } from "../../../core/properties/commandArgs";
 import { StringProperty } from "../../../core/properties/stringProperty";
-import { UnauthorizedError } from "../../../core/utils/error";
 import { AccessRepository } from "../../repositories/accessRepository";
 import { OKResponse } from "../../responses/okResponse";
 import { Response } from "../../utils/response";
@@ -27,7 +26,7 @@ export class LogoutUser extends ServerCommand<any, Context, Args> {
         const access = await this.context.repositories.AccessRepository.getByAPI(args.api);
 
         if (!access)
-            throw new UnauthorizedError('#_login_invalid');
+            throw new Error('missing access');
 
         await this.context.repositories.AccessRepository.delete(access.id);
 
