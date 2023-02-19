@@ -25,17 +25,14 @@ export class Dropbox extends View {
     public get title(): string { return this.label.innerText; }
     public set title(value: string) { this.label.innerText = Localization.translate(value); }
 
-    public get options(): readonly string[] {
-        return this._options.map(option => option.text);
-    }
-
+    public get options(): readonly string[] { return this._options.map(option => option.text); }
     public set options(value: readonly string[]) {
         this.select.innerText = '';
 
         this._options = value.map(text => {
             const element = document.createElement('option');
 
-            element.text = text;
+            element.text = Localization.translate(text);
 
             this.select.appendChild(element);
 

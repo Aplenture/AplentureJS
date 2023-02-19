@@ -2,10 +2,10 @@ import { expect } from "chai";
 import { Localization } from "../src";
 
 describe("Localization", () => {
-    Localization.init("", { "hello": "world" });
+    Localization.init("", { "#_hello": "world" });
 
-    it("returns translation", () => expect(Localization.translate("hello")).equals("world"));
-    it("replaces values", () => expect(Localization.translate("hello", { "w": "A" })).equals("Aorld"));
+    it("returns translation", () => expect(Localization.translate("#_hello")).equals("world"));
+    it("replaces values", () => expect(Localization.translate("#_hello", { "w": "A" })).equals("Aorld"));
 
     it("emits missing translation", () => {
         Localization.onMissingTranslation.on(key => expect(key).equals("test"));
@@ -16,7 +16,7 @@ describe("Localization", () => {
         let emittedKey = "";
 
         Localization.onMissingTranslation.on(key => emittedKey = key);
-        Localization.translate("hello");
+        Localization.translate("#_hello");
 
         expect(emittedKey).equals("");
     });

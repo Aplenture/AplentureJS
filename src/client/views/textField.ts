@@ -52,7 +52,7 @@ export class TextField extends View {
     public set numberValue(value: number) { this.input.value = value.toString(); }
 
     public get placeholder(): string { return this.input.placeholder; }
-    public set placeholder(value: string) { this.input.placeholder = value; }
+    public set placeholder(value: string) { this.input.placeholder = Localization.translate(value); }
 
     public get selectionStart() { return this.input.selectionStart; }
     public get selectionRange() { return this.input.selectionEnd - this.input.selectionStart; }
