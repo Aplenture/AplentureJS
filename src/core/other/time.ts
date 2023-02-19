@@ -60,10 +60,10 @@ export function formatTime(date = new Date(), options: FormatDateOptions = {}) {
     if (hours.length < 2)
         hours = '0' + hours;
 
-    let result = `${hours}${seperator}${minutes}${seperator}`;
+    let result = `${hours}${seperator}${minutes}`;
 
     if (options.seconds)
-        result += seconds;
+        result += seperator + seconds;
 
     return result;
 }
