@@ -8,8 +8,8 @@ export class TitledLabel extends View {
     constructor(...classes: readonly string[]) {
         super(...classes, 'titled', 'label');
 
-        this.titleLabel.innerText = 'label title';
-        this.valueLabel.innerText = 'label text';
+        this.titleLabel.innerText = '_label_title_';
+        this.valueLabel.innerText = '_label_text_';
 
         this.div.appendChild(this.titleLabel);
         this.div.appendChild(this.valueLabel);

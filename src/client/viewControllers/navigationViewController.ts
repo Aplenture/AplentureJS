@@ -93,7 +93,7 @@ export class NavigationViewController extends ViewController {
         this.enableViewController(index, false);
     }
 
-    public appendChild(child: ViewController, title = child.title || '#_missing_title'): number {
+    public appendChild(child: ViewController, title = child.title || '_missing_title_'): number {
         const index = this.containerViewController.appendChild(child);
 
         child.view.isVisible = false;

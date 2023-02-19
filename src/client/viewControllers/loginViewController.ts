@@ -42,6 +42,7 @@ export class LoginViewController extends BodyViewController {
         this.passwordTextfield.type = TextFieldType.Password;
 
         this.keepLoginSwitch.title = '#_remember_me';
+        this.keepLoginSwitch.description = '#_remember_me_description';
 
         super.init();
     }

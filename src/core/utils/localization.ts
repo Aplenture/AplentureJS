@@ -23,6 +23,9 @@ export abstract class Localization {
         if (!this._initialized)
             throw new Error('localization is not initialized');
 
+        if (0 != key.indexOf('#_'))
+            return key;
+
         if (!key)
             return '';
 

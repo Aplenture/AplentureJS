@@ -26,14 +26,14 @@ export class Switch extends View {
         this.div.appendChild(this.label);
         this.div.appendChild(label);
 
-        this.label.innerText = 'switch title';
+        this.label.innerText = '_switch_title_';
     }
 
     public get hasFocus(): boolean { return document.activeElement == this.input; }
 
     public get title(): string { return this.label.innerText; }
     public set title(value: string) { this.label.innerText = Localization.translate(value); }
-    
+
     public get isEnabled(): boolean { return this.input.checked; }
     public set isEnabled(value: boolean) { this.input.checked = value; }
 
