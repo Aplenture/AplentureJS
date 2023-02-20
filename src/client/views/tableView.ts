@@ -6,6 +6,8 @@ export class TableView extends View {
 
     constructor(...classes: string[]) {
         super(...classes, 'table-view');
+
+        this.alternatingBackgroundColor = true;
     }
 
     public get selectedRows(): readonly View[] {
