@@ -33,6 +33,12 @@ export class Route {
         window.history.replaceState({}, this.name, this.toString());
     }
 
+    public delete(key: string) {
+        this._parameters.delete(key);
+
+        window.history.replaceState({}, this.name, this.toString());
+    }
+
     public toString(): string {
         let result = '/' + this.name;
 
