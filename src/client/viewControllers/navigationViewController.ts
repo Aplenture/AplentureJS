@@ -49,8 +49,8 @@ export class NavigationViewController extends ViewController {
         MenuView.onItemClicked.on(() => this.update(), { sender: this.menuView, listener: this });
 
         TabBar.onItemClicked.on(index => this.selectedIndex = index, { sender: this.tabBar, listener: this });
-        TabBar.onItemClicked.on(index => NavigationViewController.onSelected.emit(this, index), { sender: this.menuView, listener: this });
-        TabBar.onItemClicked.on(() => this.update(), { sender: this.menuView, listener: this });
+        TabBar.onItemClicked.on(index => NavigationViewController.onSelected.emit(this, index), { sender: this.tabBar, listener: this });
+        TabBar.onItemClicked.on(() => this.update(), { sender: this.tabBar, listener: this });
 
         this.view.appendChild(this.menuView);
 
