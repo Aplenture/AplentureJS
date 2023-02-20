@@ -5,7 +5,7 @@ export class Button extends View {
     public readonly label = new Label();
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'button');
+        super(...classes, 'button-view');
 
         this.isClickable = true;
         this.propaginateClickEvents = false;

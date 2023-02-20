@@ -4,7 +4,7 @@ export class ImageView extends View {
     protected readonly image = document.createElement('img');
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'image');
+        super(...classes, 'image-view');
 
         this.div.appendChild(this.image);
     }

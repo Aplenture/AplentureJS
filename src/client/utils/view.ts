@@ -20,7 +20,6 @@ export class View {
         classes.push('view');
         classes.forEach(c => this.div.classList.add(c));
 
-        this.div.id = classes.join('_');
         this.div.addEventListener('mousedown', event => event.detail > 1 && event.preventDefault(), false);
 
         this.div.addEventListener('click', event => {
@@ -49,6 +48,7 @@ export class View {
     }
 
     public get id(): string { return this.div.id; }
+    public set id(value: string) { this.div.id = value; }
 
     public get parent(): View { return this._parent; }
     public get children(): readonly View[] { return this._children; }

@@ -9,7 +9,7 @@ export class TitleBar extends Bar {
     public readonly titleLabel = new Label('title');
 
     constructor(...classes: string[]) {
-        super(...classes, 'title');
+        super(...classes, 'title-bar-view');
 
         this.appendChild(this.leftView);
         this.appendChild(this.middleView);

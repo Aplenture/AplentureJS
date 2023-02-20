@@ -17,7 +17,7 @@ export class LoginViewController extends BodyViewController {
     public session: Session;
 
     constructor(...classes: string[]) {
-        super(...classes, 'login');
+        super(...classes, 'login-view-controller');
     }
 
     public init() {

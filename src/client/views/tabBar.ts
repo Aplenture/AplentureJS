@@ -7,7 +7,7 @@ export class TabBar extends Bar {
     public static readonly onItemClicked = new Event<TabBar, number>('TabBar.onItemClicked');
 
     constructor(...classes: string[]) {
-        super(...classes, 'tab');
+        super(...classes, 'tab-bar-view');
     }
 
     public get selectedIndex(): number { return this.children.findIndex(child => child.isSelected); }

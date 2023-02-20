@@ -6,7 +6,7 @@ export class MenuView extends View {
     public static readonly onItemClicked = new Event<MenuView, number>('MenuView.onItemClicked');
 
     constructor(...classes: string[]) {
-        super(...classes, 'menu');
+        super(...classes, 'menu-view');
     }
 
     public get selectedIndex(): number { return this.children.findIndex(child => child.isSelected); }

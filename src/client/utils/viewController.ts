@@ -12,7 +12,7 @@ export class ViewController {
     private _parent: ViewController;
 
     constructor(...classes: readonly string[]) {
-        this.view = new View(...classes, 'controller');
+        this.view = new View(...classes, 'view-controller');
     }
 
     public get parent(): ViewController { return this._parent; }

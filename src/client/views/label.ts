@@ -5,7 +5,7 @@ export class Label extends View {
     protected readonly label = document.createElement('span');
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'label');
+        super(...classes, 'label-view');
 
         this.label.innerText = '_label_';
 

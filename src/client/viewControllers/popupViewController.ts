@@ -13,7 +13,7 @@ export class PopupViewController extends ViewController {
     public autoHide = false;
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'popup');
+        super(...classes, 'popup-view-controller');
     }
 
     protected static get instance(): PopupViewController {

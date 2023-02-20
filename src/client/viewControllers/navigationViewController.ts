@@ -14,10 +14,10 @@ export class NavigationViewController extends ViewController {
     public readonly tabBar: TabBar;
 
     constructor(...classes: string[]) {
-        super(...classes, 'navigation');
+        super(...classes, 'navigation-view-controller');
 
-        this.menuView = new MenuView(...classes, 'navigation');
-        this.tabBar = new TabBar(...classes, 'navigation');
+        this.menuView = new MenuView(...classes, 'navigation-menu-view');
+        this.tabBar = new TabBar(...classes, 'navigation-tab-bar');
     }
 
     public get children(): readonly ViewController[] { return this.containerViewController.children; }

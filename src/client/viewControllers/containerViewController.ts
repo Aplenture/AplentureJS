@@ -4,7 +4,7 @@ export class ContainerViewController extends ViewController {
     public readonly contentViewController = new ViewController('content');
 
     constructor(...classes: string[]) {
-        super(...classes, 'container');
+        super(...classes, 'container-view-controller');
     }
 
     public get children(): readonly ViewController[] { return this.contentViewController.children; }

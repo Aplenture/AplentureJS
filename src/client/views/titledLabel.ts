@@ -6,7 +6,7 @@ export class TitledLabel extends View {
     protected readonly valueLabel = document.createElement('span');
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'titled', 'label');
+        super(...classes, 'titled-label-view');
 
         this.titleLabel.innerText = '_label_title_';
         this.valueLabel.innerText = '_label_text_';

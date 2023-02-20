@@ -9,7 +9,7 @@ export class Switch extends View {
     protected readonly input = document.createElement('input');
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'switch');
+        super(...classes, 'switch-view');
 
         const label = document.createElement('label');
         const span1 = document.createElement('span');

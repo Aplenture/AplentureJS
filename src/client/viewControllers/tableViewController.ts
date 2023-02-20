@@ -17,7 +17,7 @@ export class TableViewController extends ViewController {
     private _cells: View[][] = [];
 
     constructor(...classes: string[]) {
-        super(...classes, 'table');
+        super(...classes, 'table-view-controller');
 
         this.titleLabel.text = 'table title';
     }

@@ -8,7 +8,7 @@ export class StackViewController extends ViewController {
     private history = new Lifo<ViewController>();
 
     constructor(...classes: string[]) {
-        super(...classes, 'stack');
+        super(...classes, 'stack-view-controller');
     }
 
     public deinit(): void {

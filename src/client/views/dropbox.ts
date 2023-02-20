@@ -11,7 +11,7 @@ export class Dropbox extends View {
     private _options: readonly HTMLOptionElement[];
 
     constructor(...classes: readonly string[]) {
-        super(...classes, 'dropbox');
+        super(...classes, 'dropbox-view');
 
         this.propaginateClickEvents = false;
         this.title = '_dropbox_title_';

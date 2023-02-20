@@ -5,7 +5,7 @@ export class TableView extends View {
     private _selectionMode = TableSelectionMode.None;
 
     constructor(...classes: string[]) {
-        super(...classes, 'table');
+        super(...classes, 'table-view');
     }
 
     public get selectedRows(): readonly View[] {
