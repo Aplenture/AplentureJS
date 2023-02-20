@@ -15,7 +15,6 @@ export class MenuView extends View {
             return;
 
         this.children.forEach((view, index) => view.isSelected = index == value);
-        MenuView.onItemClicked.emit(this, value);
     }
 
     public addItem(title: string): number {
@@ -35,6 +34,7 @@ export class MenuView extends View {
         child.isClickable = true;
 
         View.onClick.on(() => this.selectedIndex = index, { sender: child, listener: this });
+        View.onClick.on(() => MenuView.onItemClicked.emit(this, index), { sender: child, listener: this });
 
         return index;
     }

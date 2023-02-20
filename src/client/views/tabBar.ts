@@ -16,7 +16,6 @@ export class TabBar extends Bar {
             return;
 
         this.children.forEach((view, index) => view.isSelected = index == value);
-        TabBar.onItemClicked.emit(this, value);
     }
 
     public addItem(title: string): number {
@@ -36,6 +35,7 @@ export class TabBar extends Bar {
         child.isClickable = true;
 
         View.onClick.on(() => this.selectedIndex = index, { sender: child, listener: this });
+        View.onClick.on(() => TabBar.onItemClicked.emit(this, index), { sender: child, listener: this });
 
         return index;
     }
