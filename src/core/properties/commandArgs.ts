@@ -6,7 +6,7 @@ export class CommandArgs<T extends NodeJS.ReadOnlyDict<any>> extends Property<T>
     constructor(...properties: readonly Property<any>[]) {
         const maxNameLength = Math.max(...properties.map(property => property.name.length));
 
-        super("", properties.map(property => '  ' + property.name + ' '.repeat(maxNameLength - property.name.length) + ' - ' + (property.optional ? '(optional)' : '') + property.description).join("\n"),);
+        super("", properties.map(property => '  ' + property.name + ' '.repeat(maxNameLength - property.name.length) + ' - ' + (property.optional ? '(optional) ' : '') + property.description).join("\n"),);
 
         this.properties = properties;
     }

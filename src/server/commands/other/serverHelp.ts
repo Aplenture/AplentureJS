@@ -1,11 +1,12 @@
-import { Command } from "../../../core/utils/command";
+import { Command } from "../../../core";
 import { Singleton } from "../../../core/utils/singleton";
 import { ServerConfig } from "../../models/serverConfig";
 import { TextResponse } from "../../responses/textResponse";
 import { Response } from "../../utils/response";
+import { ServerCommand } from "../../utils/serverCommand";
 
 interface Context {
-    readonly commands: NodeJS.ReadOnlyDict<Singleton<Command<any, any, any, any>>>;
+    readonly commands: NodeJS.ReadOnlyDict<Singleton<ServerCommand<any, any, any>>>;
 }
 
 export class ServerHelp extends Command<ServerConfig, Context, any, Response> {
@@ -26,8 +27,17 @@ export class ServerHelp extends Command<ServerConfig, Context, any, Response> {
         }
 
         result += '\n';
-        result += 'Commands:\n';
+        result += 'Public Commands:\n';
         result += commands
+            .filter(command => !this.context.commands[command].instance.isPrivate)
+            .map(command => `  ${command}${' '.repeat(maxCommandNameLength - command.length)} - ${this.context.commands[command].instance.description}`)
+            .join('\n');
+
+        result += '\n';
+        result += '\n';
+        result += 'Private Commands:\n';
+        result += commands
+            .filter(command => this.context.commands[command].instance.isPrivate)
             .map(command => `  ${command}${' '.repeat(maxCommandNameLength - command.length)} - ${this.context.commands[command].instance.description}`)
             .join('\n');
 
