@@ -3,7 +3,7 @@ import * as hTTPS from "https";
 import * as HTTP from "http";
 import { ServerCommand } from "./serverCommand";
 import { Event } from "../../core/utils/event";
-import { Commander } from "../../core/utils/commander";
+import { Commander, COMMAND_HELP } from "../../core/utils/commander";
 import { AccessRepository } from "../repositories/accessRepository";
 import { ServerConfig } from "../models/serverConfig";
 import { ServerHelp } from "../commands/other/serverHelp";
@@ -43,7 +43,7 @@ export class Server {
         public readonly access: AccessRepository,
         public readonly config: ServerConfig
     ) {
-        this.commander.addCommand('help', ServerHelp, config, { commands: this.commander.commands });
+        this.commander.addCommand(COMMAND_HELP, ServerHelp, config, { commands: this.commander.commands });
 
         Commander.onMessage.on(message => Server.onMessage.emit(this, message), { sender: this.commander });
     }
@@ -54,6 +54,9 @@ export class Server {
 
     public start(...configs: readonly HTTPConfig[]): Promise<void> {
         configs.forEach(config => {
+            if (!config.enabled)
+                return;
+
             const isHTTPS = config.protocol == Protocol.HTTPS;
             const allowedOrigins = config.headers[ResponseHeader.AllowOrigin]
                 ? (config.headers[ResponseHeader.AllowOrigin] as string).split(',')
@@ -154,7 +157,7 @@ export class Server {
         Server.onMessage.emit(this, `'${ip}' requested '${request.url}'`);
 
         try {
-            const instance = this.commander.getCommand<ServerCommand<any, any, any>>(command);
+            const instance = this.commander.getCommand<ServerCommand<any, any, any>>(command || COMMAND_HELP);
 
             if (!instance)
                 throw new BadRequestError(ErrorMessage.InvalidRoute);
@@ -184,7 +187,7 @@ export class Server {
                 delete args.api;
             }
 
-            const result: Response = await this.commander.execute(command, args);
+            const result: Response = await this.commander.execute(command || COMMAND_HELP, args);
 
             responseHeaders[ResponseHeader.ContentType] = result.type;
 

@@ -20,8 +20,11 @@ export class ServerHelp extends Command<ServerConfig, Context, any, Response> {
 
         let result = `${this.config.name} v${this.config.version} by ${this.config.author}\n`;
 
-        result += '\n';
-        result += this.config.description + '\n';
+        if (this.config.description) {
+            result += '\n';
+            result += this.config.description + '\n';
+        }
+
         result += '\n';
         result += 'Commands:\n';
         result += commands
