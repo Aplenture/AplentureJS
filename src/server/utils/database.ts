@@ -117,25 +117,32 @@ export class Database {
 
         const connection = await this.pool.getConnection();
 
-        const result = await connection.query({
-            sql: query,
-            insertIdAsNumber: true,
-            checkDuplicate: false,
-            decimalAsNumber: true,
-            bigIntAsNumber: true
-        });
+        try {
+            const result = await connection.query({
+                sql: query,
+                insertIdAsNumber: true,
+                checkDuplicate: false,
+                decimalAsNumber: true,
+                bigIntAsNumber: true
+            });
 
-        stopwatch.stop();
-        connection.release();
+            stopwatch.stop();
+            connection.release();
 
-        // delete result.meta;
+            if (Array.isArray(result))
+                result.forEach(entry => Database.decodeEntry(entry));
 
-        if (Array.isArray(result))
-            result.forEach(entry => Database.decodeEntry(entry));
+            Database.onMessage.emit(this, `executed ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
 
-        Database.onMessage.emit(this, `executed ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
+            return result;
+        } catch (error) {
+            stopwatch.stop();
+            connection.release();
 
-        return result;
+            Database.onMessage.emit(this, error.message);
+
+            throw error;
+        }
     }
 
     public fetch(query: string, callback: (result: Entry, index: number) => Promise<any>, values: readonly Type[] = []): Promise<void> {
@@ -159,6 +166,7 @@ export class Database {
 
             stream.on("error", error => {
                 connection.release();
+                Database.onMessage.emit(this, error.message);
                 reject(error);
             });
 
