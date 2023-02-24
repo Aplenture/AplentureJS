@@ -75,6 +75,19 @@ export class TableViewController extends ViewController {
         }
     }
 
+    public cellAtIndex(index: number, category?: number): View {
+        if (undefined == category) {
+            category = 0;
+
+            while (this._cells[category] && index >= this._cells[category].length) {
+                category++;
+                index -= this._cells[category].length;
+            }
+        }
+
+        return this._cells[category] && this._cells[category][index];
+    }
+
     public isRowSelected(category: number, row: number): boolean {
         if (0 > category)
             return;
