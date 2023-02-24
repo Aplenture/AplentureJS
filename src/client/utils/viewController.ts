@@ -72,7 +72,7 @@ export class ViewController {
         const child = this._children[index];
 
         this._children.splice(index, 1);
-        this.view.removeChildAtIndex(index);
+        this.view.removeChild(child.view);
 
         child._parent = null;
 
