@@ -10,6 +10,8 @@ export class PopupViewController extends ViewController {
 
     public readonly stacktViewController = new StackViewController();
 
+    public readonly closeButton = new View('close');
+
     public autoHide = false;
 
     constructor(...classes: readonly string[]) {
@@ -29,11 +31,17 @@ export class PopupViewController extends ViewController {
     public get children(): readonly ViewController[] { return this.stacktViewController.children; }
 
     public init(): void {
+        const closeButtonContainer = new View('close-button-container');
+
+        closeButtonContainer.appendChild(this.closeButton);
+
         super.appendChild(this.stacktViewController);
 
         this.stacktViewController.view.propaginateClickEvents = false;
+        this.stacktViewController.view.appendChild(closeButtonContainer);
 
         View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view, listener: this });
+        View.onClick.on(() => this.stacktViewController.popViewController(), { sender: this.closeButton, listener: this });
 
         StackViewController.onPush.on(() => !(this.view as any).div.parentNode && document.body.appendChild((this.view as any).div), { sender: this.stacktViewController, listener: this });
         StackViewController.onPop.on(() => 0 == this.children.length && (this.view as any).div.parentNode && document.body.removeChild((this.view as any).div), { sender: this.stacktViewController, listener: this });
@@ -67,7 +75,7 @@ export class PopupViewController extends ViewController {
 
         const textLabel = new Label('text');
         const doneButton = new Button('done');
-        
+
         viewController.titleBar.title = title;
         viewController.contentView.appendChild(textLabel);
         viewController.footerBar.appendChild(doneButton);
