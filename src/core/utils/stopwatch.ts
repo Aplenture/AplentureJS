@@ -1,21 +1,23 @@
-import { Milliseconds } from "../other/time";
+interface Options {
+    readonly start?: number;
+    readonly stop?: number;
+}
 
 export class Stopwatch {
-    private _running = false;
-    private _start = 0;
-    private _stop = 0;
+    private _running: boolean;
+    private _start: number;
+    private _stop: number;
 
-    constructor(public readonly updateDuration = Milliseconds.Second) { }
+    constructor(options?: Options) {
+        this.reset(options)
+    }
 
     public get isRunning(): boolean { return this._running; }
     public get duration(): number { return (this._stop || Date.now()) - this._start; }
 
-    public get seconds(): number { return this.duration / Milliseconds.Second; }
-    public get minutes(): number { return this.duration / Milliseconds.Minute; }
-    public get hours(): number { return this.duration / Milliseconds.Hour; }
-
     public start(time = Date.now()) {
-        if (this._running) throw new Error("stopwatch is currently running");
+        if (this._running)
+            throw new Error("stopwatch is currently running");
 
         this._running = true;
         this._start = time;
@@ -23,16 +25,21 @@ export class Stopwatch {
     }
 
     public stop(time = Date.now()) {
-        if (!this._running) throw new Error("stopwatch is not running");
+        if (!this._running)
+            throw new Error("stopwatch is not running");
 
         this._running = false;
         this._stop = time;
     }
 
     public restart(time = Date.now()) {
-        if (this._running)
-            this.stop(time);
-
+        this.reset();
         this.start(time);
+    }
+
+    public reset(options: Options = {}) {
+        this._running = false;
+        this._start = options.start || 0;
+        this._stop = options.stop || 0;
     }
 }

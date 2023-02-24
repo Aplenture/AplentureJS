@@ -1,27 +1,59 @@
-import { Milliseconds } from "../other/time";
+import { Milliseconds, trimTime } from "../other/time";
 import { Event } from "./event";
 import { Stopwatch } from "./stopwatch";
 
-export class Updateloop extends Stopwatch {
-    public static readonly onUpdate = new Event<Updateloop, number>('Updateloop.onUpdate');
+export class Updateloop {
+    public static readonly onError = new Event<Updateloop, Error>('Updateloop.onError');
 
-    private _interval: NodeJS.Timer;
+    private readonly stopwatch = new Stopwatch();
 
-    constructor(public readonly updateDuration = Milliseconds.Second) {
-        super();
-    }
+    private _lastUpdate = 0;
+
+    constructor(
+        public readonly action: (time: number) => Promise<any>,
+        public readonly interval = Milliseconds.Second
+    ) { }
+
+    public get isRunning(): boolean { return this.stopwatch.isRunning; }
+    public get duration(): number { return this.stopwatch.duration; }
+    public get lastUpdate(): number { return this._lastUpdate; }
 
     public start(time?: number) {
-        super.start(time);
+        if (this.isRunning)
+            throw new Error("Updateloop is currently running");
 
-        this._interval = setInterval(() => Updateloop.onUpdate.emit(this, this.duration), this.updateDuration);
+        this.stopwatch.start(time);
+
+        const loop = async () => {
+            if (!this.isRunning) return;
+
+            const start = Date.now();
+            const nextUpdate = this._lastUpdate + this.interval;
+
+            if (start < nextUpdate)
+                return setTimeout(loop, nextUpdate - start);
+
+            this._lastUpdate = trimTime(this.interval, start);
+
+            try {
+                await this.action(this._lastUpdate);
+            } catch (error) {
+                Updateloop.onError.emit(this, error);
+            }
+
+            const stop = Date.now();
+            const delay = this.interval - (stop % this.interval);
+
+            return setTimeout(loop, delay);
+        };
+
+        loop();
     }
 
     public stop(time?: number) {
-        super.stop(time);
+        if (!this.isRunning)
+            throw new Error("Updateloop is not running");
 
-        clearInterval(this._interval);
-
-        this._interval = null;
+        this.stopwatch.stop(time);
     }
 }
