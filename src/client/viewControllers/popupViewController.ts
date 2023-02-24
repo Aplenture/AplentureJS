@@ -84,7 +84,7 @@ export class PopupViewController extends ViewController {
 
         textLabel.text = text;
 
-        doneButton.text = '#_done';
+        doneButton.text = '#_ok';
         doneButton.tabIndex = 1;
 
         View.onEnterKey.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
