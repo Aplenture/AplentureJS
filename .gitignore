@@ -9,7 +9,7 @@ setup/
 
 config.json
 
-index.js
+index.js*
 
 !/**/.gitkeep
 !config.template.json
