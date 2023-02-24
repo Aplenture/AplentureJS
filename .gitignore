@@ -1,5 +1,7 @@
 node_modules/
 dist/
+debug/
+setup/
 
 .DS_Store
 
