@@ -14,7 +14,7 @@ import { RequestHeader } from "../../core/enums/constants";
 import { ResponseType } from "../../core/enums/responseType";
 import { ResponseCode } from "../../core/enums/responseCode";
 import { RequestMethod } from "../../core/enums/requestMethod";
-import { BadRequestError, ForbiddenError, UnauthorizedError } from "../../core/utils/error";
+import { BadRequestError, ClientError, ForbiddenError, UnauthorizedError } from "../../core/utils/error";
 import { ErrorMessage } from "../../core/enums/errorMessage";
 import { parseToString } from "../../core/other/text";
 import { AccessEntity } from "../entities/accessEntity";
@@ -194,8 +194,16 @@ export class Server {
             response.writeHead(result.code, responseHeaders);
             response.end(result.data);
         } catch (error) {
-            response.writeHead(error.code || ResponseCode.InternalServerError, responseHeaders);
-            response.end(error.code ? error.message : 'something_went_wrong');
+            const code = isNaN(error.code)
+                ? ResponseCode.InternalServerError
+                : error.code;
+
+            const message = error instanceof ClientError
+                ? error.message
+                : '#_something_went_wrong';
+
+            response.writeHead(code, responseHeaders);
+            response.end(message);
 
             Server.onError.emit(this, error);
         }
