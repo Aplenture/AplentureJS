@@ -48,6 +48,9 @@ export class TableViewController extends ViewController {
     }
 
     public render() {
+        if (!this.source)
+            throw new Error('missing table view controller data source');
+
         const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
 
         this._header = this.source.createHeader && this.source.createHeader(this);
