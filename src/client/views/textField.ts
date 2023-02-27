@@ -1,3 +1,4 @@
+import { Milliseconds } from "../../core";
 import { Event } from "../../core/utils/event";
 import { Localization } from "../../core/utils/localization";
 import { View } from "../utils/view";
@@ -44,8 +45,8 @@ export class TextField extends View {
     public get dateValue(): Date { return new Date(this.input.value); }
     public set dateValue(value: Date) {
         this.input.value = this.type == TextFieldType.Date
-            ? value.toLocaleDateString('en-ca')
-            : value.toISOString().slice(0, 16);
+            ? new Date(value.getTime() - value.getTimezoneOffset() * Milliseconds.Minute).toLocaleDateString('en-ca')
+            : new Date(value.getTime() - value.getTimezoneOffset() * Milliseconds.Minute).toISOString().slice(0, 16);
     }
 
     public get numberValue(): number { return Number(this.input.value); }
