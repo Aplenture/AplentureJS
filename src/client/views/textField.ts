@@ -11,7 +11,7 @@ export enum TextFieldType {
 }
 
 export class TextField extends View {
-    public static readonly onChange = new Event<TextField, string>('TextField.onChange');
+    public readonly onChange = new Event<TextField, string>('TextField.onChange');
 
     protected readonly label = document.createElement('span');
     protected readonly input = document.createElement('input');
@@ -26,7 +26,7 @@ export class TextField extends View {
         this.div.appendChild(this.input);
 
         this.input.type = 'text';
-        this.input.addEventListener("input", (event: InputEvent) => TextField.onChange.emit(this, event.data));
+        this.input.addEventListener("input", (event: InputEvent) => this.onChange.emit(this, event.data));
 
         this.label.innerText = '_text_field_title_';
     }

@@ -12,13 +12,11 @@ export class BodyViewController extends ContainerViewController {
 
         this.titleBar = new TitleBar(...classes, 'body-title-bar');
         this.footerBar = new Bar(...classes, 'body-footer-bar');
+
+        this.view.appendChild(this.titleBar);
+        this.view.appendChild(this.contentView);
+        this.view.appendChild(this.footerBar);
     }
 
     public get contentView(): View { return this.contentViewController.view; }
-
-    public init(): void {
-        this.view.appendChild(this.titleBar);
-        super.init();
-        this.view.appendChild(this.footerBar);
-    }
 }

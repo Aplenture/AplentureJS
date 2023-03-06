@@ -31,8 +31,8 @@ const DEFAULT_PORT_HTTPS = 443;
 const MESSAGE_STOP = "stop";
 
 export class Server {
-    public static readonly onMessage = new Event<Server, string>('Server.onMessage');
-    public static readonly onError = new Event<Server, Error>('Server.onError');
+    public readonly onMessage = new Event<Server, string>('Server.onMessage');
+    public readonly onError = new Event<Server, Error>('Server.onError');
 
     private readonly commander = new Commander();
     private readonly servers: HTTP.Server[] = [];
@@ -44,12 +44,11 @@ export class Server {
         public readonly config: ServerConfig
     ) {
         this.commander.addCommand(COMMAND_HELP, ServerHelp, config, { commands: this.commander.commands });
-
-        Commander.onMessage.on(message => Server.onMessage.emit(this, message), { sender: this.commander });
+        this.commander.onMessage.on(message => this.onMessage.emit(this, message));
     }
 
     public init() {
-        Server.onMessage.emit(this, "init");
+        this.onMessage.emit(this, "init");
     }
 
     public start(...configs: readonly HTTPConfig[]): Promise<void> {
@@ -83,21 +82,21 @@ export class Server {
 
             this.servers.push(server);
 
-            Server.onMessage.emit(this, `start ${config.protocol} ${Object.keys(config).map(key => `--${key} ${config[key]}`).join(' ')}`);
+            this.onMessage.emit(this, `start ${config.protocol} ${Object.keys(config).map(key => `--${key} ${config[key]}`).join(' ')}`);
         });
 
-        return new Promise(resolve => Server.onMessage.on(() => resolve(), { sender: this, args: MESSAGE_STOP }));
+        return new Promise(resolve => this.onMessage.on(() => resolve(), { args: MESSAGE_STOP }));
     }
 
     public stop() {
         this.servers.forEach(server => server.close());
         this.servers.splice(0, this.servers.length);
 
-        Server.onMessage.emit(this, MESSAGE_STOP);
+        this.onMessage.emit(this, MESSAGE_STOP);
     }
 
     public addCommand(command: string, _constructor: new (...args: any[]) => ServerCommand<any, any, any>, ...args: any[]): void {
-        Server.onMessage.emit(this, `add command '${command}'`);
+        this.onMessage.emit(this, `add command '${command}'`);
         this.commander.addCommand(command, _constructor, ...args);
     }
 
@@ -154,7 +153,7 @@ export class Server {
         // for securty reasons
         delete args.account;
 
-        Server.onMessage.emit(this, `'${ip}' requested '${request.url}'`);
+        this.onMessage.emit(this, `'${ip}' requested '${request.url}'`);
 
         try {
             const instance = this.commander.getCommand<ServerCommand<any, any, any>>(command || COMMAND_HELP);
@@ -205,7 +204,7 @@ export class Server {
             response.writeHead(code, responseHeaders);
             response.end(message);
 
-            Server.onError.emit(this, error);
+            this.onError.emit(this, error);
         }
     }
 

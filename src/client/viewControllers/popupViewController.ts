@@ -1,3 +1,4 @@
+import { INavigationViewController } from "../interfaces/navigationViewController";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Button } from "../views/button";
@@ -5,32 +6,16 @@ import { Label } from "../views/label";
 import { BodyViewController } from "./bodyViewController";
 import { StackViewController } from "./stackViewController";
 
-export class PopupViewController extends ViewController {
+export class PopupViewController extends ViewController implements INavigationViewController {
     private static _instance: PopupViewController;
 
     public readonly stacktViewController = new StackViewController();
 
     public readonly closeButton = new View('close');
 
-    public autoHide = false;
-
     constructor(...classes: readonly string[]) {
         super(...classes, 'popup-view-controller');
-    }
 
-    protected static get instance(): PopupViewController {
-        if (!this._instance) {
-            this._instance = new PopupViewController();
-            this._instance.init();
-            this._instance.update();
-        }
-
-        return this._instance;
-    }
-
-    public get children(): readonly ViewController[] { return this.stacktViewController.children; }
-
-    public init(): void {
         const closeButtonContainer = new View('close-button-container');
 
         closeButtonContainer.appendChild(this.closeButton);
@@ -40,34 +25,33 @@ export class PopupViewController extends ViewController {
         this.stacktViewController.view.propaginateClickEvents = false;
         this.stacktViewController.view.appendChild(closeButtonContainer);
 
-        View.onClick.on(() => this.autoHide && this.removeFromParent(), { sender: this.view, listener: this });
-        View.onClick.on(() => this.stacktViewController.popViewController(), { sender: this.closeButton, listener: this });
+        this.closeButton.onClick.on(() => this.stacktViewController.popViewController());
 
-        StackViewController.onPush.on(() => !(this.view as any).div.parentNode && document.body.appendChild((this.view as any).div), { sender: this.stacktViewController, listener: this });
-        StackViewController.onPop.on(() => 0 == this.children.length && (this.view as any).div.parentNode && document.body.removeChild((this.view as any).div), { sender: this.stacktViewController, listener: this });
-
-        super.init();
+        this.stacktViewController.onPush.on(() => !(this.view as any).div.parentNode && document.body.appendChild((this.view as any).div));
+        this.stacktViewController.onPop.on(() => 0 == this.children.length && (this.view as any).div.parentNode && document.body.removeChild((this.view as any).div));
     }
 
-    public deinit() {
-        View.onClick.off({ listener: this });
+    protected static get instance(): PopupViewController {
+        if (!this._instance) {
+            this._instance = new PopupViewController();
+            this._instance.load();
+        }
 
-        StackViewController.onPush.off({ listener: this });
-        StackViewController.onPop.off({ listener: this });
-
-        super.deinit();
+        return this._instance;
     }
+
+    public get children(): readonly ViewController[] { return this.stacktViewController.children; }
 
     public focus() {
         this.stacktViewController.focus();
     }
 
     public static pushViewController(next: ViewController): Promise<void> {
-        return this.instance.stacktViewController.pushViewController(next);
+        return this.instance.pushViewController(next);
     }
 
-    public static popViewController(): ViewController {
-        return this.instance.stacktViewController.popViewController();
+    public static popViewController(): Promise<ViewController> {
+        return this.instance.popViewController();
     }
 
     public static pushMessage(text: string, title: string): Promise<void> {
@@ -79,25 +63,18 @@ export class PopupViewController extends ViewController {
         viewController.titleBar.title = title;
         viewController.contentView.appendChild(textLabel);
         viewController.footerBar.appendChild(doneButton);
-        viewController.init();
-        viewController.update();
+        viewController.load();
 
         textLabel.text = text;
 
         doneButton.text = '#_ok';
         doneButton.tabIndex = 1;
 
-        View.onEnterKey.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
-        View.onEscapeKey.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
+        doneButton.onEnterKey.on(() => this.popViewController());
+        doneButton.onEscapeKey.on(() => this.popViewController());
+        doneButton.onClick.on(() => this.popViewController());
 
-        Button.onClick.on(() => this.popViewController(), { sender: doneButton, listener: viewController });
-
-        return this.pushViewController(viewController).then(() => {
-            View.onEnterKey.off({ listener: viewController });
-            View.onEscapeKey.off({ listener: viewController });
-
-            Button.onClick.off({ listener: viewController });
-        });
+        return this.pushViewController(viewController);
     }
 
     public static queryBoolean(text: string, title: string): Promise<boolean> {
@@ -113,8 +90,7 @@ export class PopupViewController extends ViewController {
         viewController.contentView.appendChild(textLabel);
         viewController.footerBar.appendChild(noButton);
         viewController.footerBar.appendChild(yesButton);
-        viewController.init();
-        viewController.update();
+        viewController.load();
 
         textLabel.text = text;
 
@@ -124,26 +100,27 @@ export class PopupViewController extends ViewController {
         noButton.text = '#_no';
         noButton.tabIndex = 2;
 
-        View.onEnterKey.on(() => (value = true) && this.popViewController(), { sender: yesButton, listener: viewController });
-        View.onEnterKey.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
+        yesButton.onEnterKey.on(() => (value = true) && this.popViewController());
+        noButton.onEnterKey.on(() => (value = false) || this.popViewController());
 
-        View.onEscapeKey.on(() => (value = false) || this.popViewController(), { sender: yesButton, listener: viewController });
-        View.onEscapeKey.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
+        yesButton.onEscapeKey.on(() => (value = false) || this.popViewController());
+        noButton.onEscapeKey.on(() => (value = false) || this.popViewController());
 
-        Button.onClick.on(() => (value = true) && this.popViewController(), { sender: yesButton, listener: viewController });
-        Button.onClick.on(() => (value = false) || this.popViewController(), { sender: noButton, listener: viewController });
+        yesButton.onClick.on(() => (value = true) && this.popViewController());
+        noButton.onClick.on(() => (value = false) || this.popViewController());
 
-        return this.pushViewController(viewController).then(() => {
-            View.onEnterKey.off({ listener: viewController });
-            View.onEscapeKey.off({ listener: viewController });
-
-            Button.onClick.off({ listener: viewController });
-
-            return value;
-        });
+        return this.pushViewController(viewController).then(() => value);
     }
 
     public static pushError(error: Error, title = '#_error'): Promise<void> {
         return this.pushMessage(error.message, title);
+    }
+
+    public pushViewController(next: ViewController): Promise<void> {
+        return this.stacktViewController.pushViewController(next);
+    }
+
+    public popViewController(): Promise<ViewController> {
+        return this.stacktViewController.popViewController();
     }
 }

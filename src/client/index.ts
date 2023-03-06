@@ -25,7 +25,7 @@ export * from "./viewControllers/bodyViewController";
 export * from "./viewControllers/containerViewController";
 export * from "./viewControllers/loginViewController";
 export * from "./viewControllers/logoutViewController";
-export * from "./viewControllers/navigationViewController";
+export * from "./interfaces/navigationViewController";
 export * from "./viewControllers/passwordViewController";
 export * from "./viewControllers/popupViewController";
 export * from "./viewControllers/stackViewController";

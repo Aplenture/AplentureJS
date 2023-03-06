@@ -3,7 +3,7 @@ import { Localization } from "../../core/utils/localization";
 import { View } from "../utils/view";
 
 export class Switch extends View {
-    public static readonly onChange = new Event<Switch, boolean>('Switch.onChange');
+    public readonly onChange = new Event<Switch, boolean>('Switch.onChange');
 
     protected readonly label = document.createElement('span');
     protected readonly input = document.createElement('input');
@@ -16,7 +16,7 @@ export class Switch extends View {
         const span2 = document.createElement('span');
 
         this.input.type = 'checkbox';
-        this.input.addEventListener('change', () => Switch.onChange.emit(this, this.input.checked));
+        this.input.addEventListener('change', () => this.onChange.emit(this, this.input.checked));
 
         label.appendChild(this.input);
         label.appendChild(span1);

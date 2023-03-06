@@ -1,5 +1,4 @@
 import { Session } from "../utils/session";
-import { View } from "../utils/view";
 import { Button } from "../views/button";
 import { Switch } from "../views/switch";
 import { TextField, TextFieldType } from "../views/textField";
@@ -14,22 +13,18 @@ export class LoginViewController extends BodyViewController {
 
     public readonly keepLoginSwitch = new Switch('keepLogin');
 
-    public session: Session;
-
     constructor(...classes: string[]) {
         super(...classes, 'login-view-controller');
-    }
 
-    public init() {
         this.contentView.appendChild(this.usernameTextfield);
         this.contentView.appendChild(this.passwordTextfield);
         this.contentView.appendChild(this.keepLoginSwitch);
 
         this.footerBar.appendChild(this.loginButton);
 
-        View.onEnterKey.on(() => this.login(), { sender: this.usernameTextfield });
-        View.onEnterKey.on(() => this.login(), { sender: this.passwordTextfield });
-        Button.onClick.on(() => this.login(), { sender: this.loginButton });
+        this.usernameTextfield.onEnterKey.on(() => this.login());
+        this.passwordTextfield.onEnterKey.on(() => this.login());
+        this.loginButton.onClick.on(() => this.login());
 
         this.titleBar.title = '#_login';
         this.loginButton.text = '#_login';
@@ -43,8 +38,6 @@ export class LoginViewController extends BodyViewController {
 
         this.keepLoginSwitch.title = '#_remember_me';
         this.keepLoginSwitch.description = '#_remember_me_description';
-
-        super.init();
     }
 
     public focus() {
@@ -77,7 +70,7 @@ export class LoginViewController extends BodyViewController {
         const keepLogin = this.keepLoginSwitch.isEnabled;
         const label = navigator.userAgent;
 
-        this.session
+        Session
             .login(username, password, keepLogin, label)
             .then(() => this.clear())
             .then(() => this.removeFromParent())

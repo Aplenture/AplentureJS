@@ -6,12 +6,10 @@ import { Help } from "../commands/help";
 import { formatDuration } from "../other/time";
 import { parseArgs } from "../other/text";
 
-const MAX_LENGTH_RESULT = 30;
-
 export const COMMAND_HELP = 'help';
 
 export class Commander {
-    public static readonly onMessage = new Event<Commander, string>('Commander.onMessage');
+    public readonly onMessage = new Event<Commander, string>('Commander.onMessage');
 
     private readonly _commands: NodeJS.Dict<Singleton<Command<any, any, any, any>>> = {};
 
@@ -71,11 +69,11 @@ export class Commander {
             const result = await instance.execute(args);
             stopwatch.stop();
 
-            Commander.onMessage.emit(this, `executed ${commandLine} in (${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })})`);
+            this.onMessage.emit(this, `executed ${commandLine} in (${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })})`);
 
             return result as TRes;
         } catch (error) {
-            Commander.onMessage.emit(this, `executed ${commandLine} >> ${error.stack}`);
+            this.onMessage.emit(this, `executed ${commandLine} >> ${error.stack}`);
 
             throw error;
         }

@@ -10,7 +10,7 @@ type Type = string | number
 type Entry = NodeJS.ReadOnlyDict<any>;
 
 export class Database {
-    public static readonly onMessage = new Event<Database, string>('Database.onMessage');
+    public readonly onMessage = new Event<Database, string>('Database.onMessage');
 
     private pool: MySQL.Pool;
 
@@ -96,11 +96,11 @@ export class Database {
                 const executedUpdates = await this.query(`SELECT * FROM \`updates\` WHERE \`path\`=?`, [update]);
 
                 if (executedUpdates.length) {
-                    Database.onMessage.emit(this, `skip update '${update}' (already executed)`);
+                    this.onMessage.emit(this, `skip update '${update}' (already executed)`);
                     continue;
                 }
 
-                Database.onMessage.emit(this, `execute update '${update}'`);
+                this.onMessage.emit(this, `execute update '${update}'`);
 
                 await this.query(query);
                 await this.query(`INSERT INTO \`updates\` (\`path\`) VALUES (?)`, [update]);
@@ -132,14 +132,14 @@ export class Database {
             if (Array.isArray(result))
                 result.forEach(entry => Database.decodeEntry(entry));
 
-            Database.onMessage.emit(this, `executed ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
+            this.onMessage.emit(this, `executed ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
 
             return result;
         } catch (error) {
             stopwatch.stop();
             connection.release();
 
-            Database.onMessage.emit(this, error.message);
+            this.onMessage.emit(this, error.message);
 
             throw error;
         }
@@ -166,7 +166,7 @@ export class Database {
 
             stream.on("error", error => {
                 connection.release();
-                Database.onMessage.emit(this, error.message);
+                this.onMessage.emit(this, error.message);
                 reject(error);
             });
 
@@ -174,7 +174,7 @@ export class Database {
                 stopwatch.stop();
                 connection.release();
                 resolve();
-                Database.onMessage.emit(this, `fetched ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
+                this.onMessage.emit(this, `fetched ${query} in ${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })}`);
             });
 
             stream.on("data", async entry => {

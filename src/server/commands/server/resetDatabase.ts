@@ -19,14 +19,12 @@ export class ResetDatabase extends Command<Config, void, Args, string> {
     );
 
     public async execute(args: Args): Promise<string> {
-        const databaseMessageCallback = message => this.message(message);
-
-        Database.onMessage.on(databaseMessageCallback);
-
         for (const name in this.config.databases) {
             const config = this.config.databases[name];
             const database = new Database(name, config);
             const directory = `${process.env.PWD}/${args.directory}/${name}`;
+
+            database.onMessage.on(message => this.message(message));
 
             this.message(`drop database '${name}'`);
             await Database.drop(config);
@@ -39,8 +37,6 @@ export class ResetDatabase extends Command<Config, void, Args, string> {
             await database.update(directory);
             await database.close();
         }
-
-        Database.onMessage.off(databaseMessageCallback);
 
         return "databases reset";
     }

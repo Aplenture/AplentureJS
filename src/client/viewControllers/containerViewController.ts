@@ -5,15 +5,11 @@ export class ContainerViewController extends ViewController {
 
     constructor(...classes: string[]) {
         super(...classes, 'container-view-controller');
+
+        super.appendChild(this.contentViewController);
     }
 
     public get children(): readonly ViewController[] { return this.contentViewController.children; }
-
-    public init(): void {
-        super.appendChild(this.contentViewController);
-
-        super.init();
-    }
 
     public appendChild(child: ViewController): number {
         return this.contentViewController.appendChild(child);

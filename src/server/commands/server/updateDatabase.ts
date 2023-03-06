@@ -19,13 +19,11 @@ export class UpdateDatabase extends Command<Config, void, Args, string> {
     );
 
     public async execute(args: Args): Promise<string> {
-        const databaseMessageCallback = message => this.message(message);
-
-        Database.onMessage.on(databaseMessageCallback);
-
         for (const name in this.config.databases) {
             const database = new Database(name, this.config.databases[name]);
             const directory = `${process.env.PWD}/${args.directory}/${name}`;
+
+            database.onMessage.on(message => this.message(message));
 
             this.message(`update database '${name}'`);
 
@@ -33,8 +31,6 @@ export class UpdateDatabase extends Command<Config, void, Args, string> {
             await database.update(directory);
             await database.close();
         }
-
-        Database.onMessage.off(databaseMessageCallback);
 
         return "databases updated";
     }

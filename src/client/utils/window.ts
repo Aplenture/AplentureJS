@@ -1,11 +1,12 @@
 import { Event, Localization } from "../../core";
+import { WindowConfig } from "../models/windowConfig";
 import { View } from "./view";
 
 export abstract class Window {
     public static readonly onResize = new Event<Window, void>('Window.onResize');
     public static readonly onDebugChanged = new Event<Window, boolean>('Window.onDebugChanged');
 
-    private static initialized = false;
+    private static _initialized = false;
     private static _debug = false;
 
     public static get title(): string { return document.title; }
@@ -20,19 +21,16 @@ export abstract class Window {
         this.onDebugChanged.emit(this, value);
     }
 
-    public static init(debug: boolean) {
-        this.debug = debug;
+    public static init(config: WindowConfig) {
+        if (this._initialized)
+            throw new Error('Window is already initialized');
 
-        if (this.initialized)
-            return;
-
-        this.initialized = true;
+        this._initialized = true;
+        this.debug = config.debug;
 
         window.addEventListener('resize', () => this.onResize.emit(this));
 
         Event.onEmit.on((args, sender) => this._debug && console.log(sender.name, args));
-        View.onClick.on((_, sender) => this._debug && console.log(`clicked view '${sender.id}'`));
-        View.onEnterKey.on((_, sender) => this._debug && console.log(`clicked view '${sender.id}'`));
         Localization.onMissingTranslation.on(key => this._debug && console.warn(`missing translation for key '${key}'`));
     }
 }

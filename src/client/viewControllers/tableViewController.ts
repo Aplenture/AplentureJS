@@ -20,6 +20,9 @@ export class TableViewController extends ViewController {
         super(...classes, 'table-view-controller');
 
         this.titleLabel.text = 'table title';
+
+        this.view.appendChild(this.titleLabel);
+        this.view.appendChild(this.tableView);
     }
 
     public get header(): View { return this._header; }
@@ -28,23 +31,10 @@ export class TableViewController extends ViewController {
     public get selectionMode(): TableSelectionMode { return this.tableView.selectionMode; }
     public set selectionMode(value: TableSelectionMode) { this.tableView.selectionMode = value; }
 
-    public init(): void {
-        this.view.appendChild(this.titleLabel);
-        this.view.appendChild(this.tableView);
-
-        super.init();
-    }
-
-    public update(): Promise<void> {
+    public load(): Promise<void> {
         this.render();
 
-        return super.update();
-    }
-
-    public deinit(): void {
-        View.onClick.off({ listener: this });
-
-        super.deinit();
+        return super.load();
     }
 
     public render() {
@@ -176,7 +166,7 @@ export class TableViewController extends ViewController {
 
         cell.isClickable = this.selectionMode != TableSelectionMode.None;
 
-        View.onClick.on(() => {
+        cell.onClick.on(() => {
             if (this.selectionMode == TableSelectionMode.None)
                 return;
 
@@ -184,7 +174,7 @@ export class TableViewController extends ViewController {
                 this.deselectRow(category, row);
             else
                 this.selectRow(category, row);
-        }, { sender: cell, listener: this });
+        });
 
         return cell;
     }

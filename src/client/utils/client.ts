@@ -6,43 +6,40 @@ import { Localization } from "../../core/utils/localization";
 import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
 import { Window } from "./window";
-import { ViewController } from "./viewController";
 import { LoginViewController } from "../viewControllers/loginViewController";
 import { PopupViewController } from "../viewControllers/popupViewController";
 import { Event } from "../../core";
+import { ViewController } from "./viewController";
 
-export abstract class Client<TConfig extends ClientConfig> {
-    public static readonly onLoaded = new Event<Client<any>, void>('Client.onLoaded');
+export abstract class Client {
+    public static readonly onLoaded = new Event<void, void>('Client.onLoaded');
 
-    public readonly rootViewController = new ViewController('root');
+    private static _initialized = false;
+    private static _rootViewController: ViewController;
 
-    public readonly router: Router;
-    public readonly session: Session;
+    public static get rootViewController(): ViewController { return this._rootViewController; }
 
-    constructor(config: TConfig) {
-        this.router = new Router(config);
-        this.session = new Session(config);
-    }
+    public static async init(rootViewController: ViewController, config: ClientConfig) {
+        if (this._initialized)
+            throw new Error('Client is already initialized');
 
-    public get window(): Window { return Window; }
+        this._initialized = true;
+        this._rootViewController = rootViewController;
 
-    public async init(config: TConfig) {
-        (window as any).app = this;
-
-        Window.init(config.debug);
+        Window.init(config);
 
         window.addEventListener('unhandledrejection', event => PopupViewController.pushError(event.reason || '#_something_went_wrong'));
 
-        await Client.loadTranslation(config.localizationPath, config.defaultLanguage);
+        await this.loadTranslation(config.localizationPath, config.defaultLanguage);
 
-        Router.onRouteChanged.on((route, router) => route.isPrivate && !this.session.access && router.changeRoute(config.unauthorizedRoute), { sender: this.router });
-        Session.onAccessChanged.on(access => !access && this.router.route.isPrivate && this.router.changeRoute(config.defaultRoute), { sender: this.session });
+        Router.onRouteChanged.on(route => route.isPrivate && !Session.access && Router.changeRoute(config.unauthorizedRoute));
+        Session.onAccessChanged.on(access => !access && Router.route.isPrivate && Router.changeRoute(config.defaultRoute));
         Request.onSending.on((params, request) => {
             if (!request.isPrivate) return;
-            if (!this.session.access) throw new Error('#_error_no_access');
+            if (!Session.access) throw new Error('#_error_no_access');
 
-            request.setHeader(RequestHeader.APIKey, this.session.access.api);
-            request.setHeader(RequestHeader.Signature, this.session.access.sign(params));
+            request.setHeader(RequestHeader.APIKey, Session.access.api);
+            request.setHeader(RequestHeader.Signature, Session.access.sign(params));
         });
 
         document.body.appendChild((this.rootViewController.view as any).div);
@@ -53,26 +50,20 @@ export abstract class Client<TConfig extends ClientConfig> {
             window.addEventListener('load', () => this.handleLoaded(config), { once: true });
     }
 
-    protected abstract setup(config: TConfig): Promise<void>;
+    protected static async handleLoaded(config: ClientConfig) {
+        await this.rootViewController.load();
+        await Session.init(config);
+        await Router.init(config);
 
-    protected async handleLoaded(config: TConfig) {
-        await this.setup(config);
-        this.rootViewController.init();
-        await this.session.init();
-        this.router.init();
-        await this.rootViewController.update();
-
-        if (config.loginEnabled && !this.session.hasAccess && this.router.route.has('login')) {
+        if (config.loginEnabled && !Session.hasAccess && Router.route.has('login')) {
             const viewController = new LoginViewController();
 
-            viewController.session = this.session;
-            viewController.init();
-            viewController.update();
+            await viewController.load();
 
             PopupViewController.pushViewController(viewController);
         }
 
-        Client.onLoaded.emit(this);
+        this.onLoaded.emit();
     }
 
     private static async loadTranslation(path: string, defaultLanguage: string): Promise<void> {

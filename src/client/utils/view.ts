@@ -2,10 +2,10 @@ import { Localization } from "../../core";
 import { Event } from "../../core/utils/event";
 
 export class View {
-    public static readonly onClick = new Event<View, void>('View.onClick');
-    public static readonly onEnterKey = new Event<View, void>('View.onEnterKey');
-    public static readonly onEscapeKey = new Event<View, void>('View.onEscapeKey');
-    public static readonly onHiddenChanged = new Event<View, boolean>('View.onHiddenChanged');
+    public readonly onClick = new Event<View, void>('View.onClick');
+    public readonly onEnterKey = new Event<View, void>('View.onEnterKey');
+    public readonly onEscapeKey = new Event<View, void>('View.onEscapeKey');
+    public readonly onHiddenChanged = new Event<View, boolean>('View.onHiddenChanged');
 
     public index: number = null;
     public propaginateClickEvents = true;
@@ -23,7 +23,7 @@ export class View {
         this.div.addEventListener('mousedown', event => event.detail > 1 && event.preventDefault(), false);
 
         this.div.addEventListener('click', event => {
-            View.onClick.emit(this);
+            this.onClick.emit(this);
 
             if (!this.propaginateClickEvents)
                 event.stopPropagation();
@@ -35,12 +35,12 @@ export class View {
 
             switch (event.key) {
                 case 'Enter':
-                    View.onEnterKey.emit(this);
+                    this.onEnterKey.emit(this);
                     event.preventDefault();
                     break;
 
                 case 'Escape':
-                    View.onEscapeKey.emit(this);
+                    this.onEscapeKey.emit(this);
                     event.preventDefault();
                     break;
             }
@@ -80,7 +80,7 @@ export class View {
         else
             this.div.classList.remove('hidden');
 
-        View.onHiddenChanged.emit(this, value);
+        this.onHiddenChanged.emit(this, value);
     }
 
     public get isDisabled(): boolean { return this.div.classList.contains('disabled'); }
@@ -122,7 +122,7 @@ export class View {
     }
 
     public click() {
-        View.onClick.emit(this);
+        this.onClick.emit(this);
     }
 
     public hasClass(value: string): boolean {

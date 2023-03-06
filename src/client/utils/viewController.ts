@@ -18,16 +18,12 @@ export class ViewController {
     public get parent(): ViewController { return this._parent; }
     public get children(): readonly ViewController[] { return this._children; }
 
-    public init() {
-        this._children.forEach(child => child.init());
+    public async load() {
+        await Promise.all(this._children.map(child => child.load()));
     }
 
-    public deinit() {
-        this._children.forEach(child => child.deinit());
-    }
-
-    public async update() {
-        await Promise.all(this._children.map(child => child.update()));
+    public async unload() {
+        await Promise.all(this._children.map(child => child.unload()));
     }
 
     public focus() {
