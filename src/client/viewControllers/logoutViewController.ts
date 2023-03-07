@@ -1,6 +1,6 @@
+import { PopupController } from "../utils/popupController";
 import { Session } from "../utils/session";
 import { BodyViewController } from "./bodyViewController";
-import { PopupViewController } from "./popupViewController";
 
 export class LogoutViewController extends BodyViewController {
     constructor(...classes: string[]) {
@@ -10,7 +10,7 @@ export class LogoutViewController extends BodyViewController {
     }
 
     public focus() {
-        PopupViewController.queryBoolean('#_do_you_want_to_logout', '#_logout')
+        PopupController.queryBoolean('#_do_you_want_to_logout', '#_logout')
             .then(result => result && Session.logout());
     }
 }
