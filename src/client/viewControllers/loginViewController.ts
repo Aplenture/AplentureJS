@@ -1,9 +1,9 @@
+import { PopupController } from "../utils/popupController";
 import { Session } from "../utils/session";
 import { Button } from "../views/button";
 import { Switch } from "../views/switch";
 import { TextField, TextFieldType } from "../views/textField";
 import { BodyViewController } from "./bodyViewController";
-import { PopupViewController } from "./popupViewController";
 
 export class LoginViewController extends BodyViewController {
     public readonly loginButton = new Button('login');
@@ -54,7 +54,7 @@ export class LoginViewController extends BodyViewController {
         const username = this.usernameTextfield.value;
 
         if (!username) {
-            await PopupViewController.pushMessage('#_username_not_set', '#_login');
+            await PopupController.pushMessage('#_username_not_set', '#_login');
             this.usernameTextfield.focus();
             return;
         }
@@ -62,7 +62,7 @@ export class LoginViewController extends BodyViewController {
         const password = this.passwordTextfield.value;
 
         if (!password) {
-            await PopupViewController.pushMessage('#_password_not_set', '#_login');
+            await PopupController.pushMessage('#_password_not_set', '#_login');
             this.passwordTextfield.focus();
             return;
         }

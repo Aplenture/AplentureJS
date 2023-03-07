@@ -1,5 +1,6 @@
 export * from "./enums/tableSelectionMode";
 
+export * from "./interfaces/navigationViewController";
 export * from "./interfaces/tableViewControllerDataDelegate";
 export * from "./interfaces/tableViewControllerDataSource";
 
@@ -7,6 +8,7 @@ export * from "./models/clientConfig";
 export * from "./models/route";
 export * from "./models/routerConfig";
 export * from "./models/sessionConfig";
+export * from "./models/windowConfig";
 
 export * from "./requests/boolRequest";
 export * from "./requests/jsonRequest";
@@ -14,6 +16,7 @@ export * from "./requests/numberRequest";
 export * from "./requests/textRequest";
 
 export * from "./utils/client";
+export * from "./utils/popupController";
 export * from "./utils/request";
 export * from "./utils/router";
 export * from "./utils/session";
@@ -25,9 +28,7 @@ export * from "./viewControllers/bodyViewController";
 export * from "./viewControllers/containerViewController";
 export * from "./viewControllers/loginViewController";
 export * from "./viewControllers/logoutViewController";
-export * from "./interfaces/navigationViewController";
 export * from "./viewControllers/passwordViewController";
-export * from "./viewControllers/popupViewController";
 export * from "./viewControllers/stackViewController";
 export * from "./viewControllers/tableViewController";
 

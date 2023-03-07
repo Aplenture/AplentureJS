@@ -1,57 +1,48 @@
-import { INavigationViewController } from "../interfaces/navigationViewController";
-import { View } from "../utils/view";
-import { ViewController } from "../utils/viewController";
+import { View } from "./view";
+import { ViewController } from "./viewController";
 import { Button } from "../views/button";
 import { Label } from "../views/label";
-import { BodyViewController } from "./bodyViewController";
-import { StackViewController } from "./stackViewController";
+import { BodyViewController } from "../viewControllers/bodyViewController";
+import { StackViewController } from "../viewControllers/stackViewController";
 
-export class PopupViewController extends ViewController implements INavigationViewController {
-    private static _instance: PopupViewController;
+export abstract class PopupController {
+    private static viewController: ViewController;
+    private static stackViewController: StackViewController;
+    private static closeButton: View;
 
-    public readonly stacktViewController = new StackViewController();
+    private static initialized = false;
 
-    public readonly closeButton = new View('close');
-
-    constructor(...classes: readonly string[]) {
-        super(...classes, 'popup-view-controller');
+    public static async init() {
+        if (this.initialized)
+            throw new Error('PopupController is already initialized');
 
         const closeButtonContainer = new View('close-button-container');
 
+        this.initialized = true;
+        this.viewController = new ViewController('popup-view-controller');
+        this.stackViewController = new StackViewController();
+        this.closeButton = new View('close');
+
         closeButtonContainer.appendChild(this.closeButton);
 
-        super.appendChild(this.stacktViewController);
+        this.viewController.appendChild(this.stackViewController);
 
-        this.stacktViewController.view.propaginateClickEvents = false;
-        this.stacktViewController.view.appendChild(closeButtonContainer);
+        this.stackViewController.view.propaginateClickEvents = false;
+        this.stackViewController.view.appendChild(closeButtonContainer);
 
-        this.closeButton.onClick.on(() => this.stacktViewController.popViewController());
+        this.closeButton.onClick.on(() => this.stackViewController.popViewController());
+        this.stackViewController.onPush.on(() => !(this.viewController.view as any).div.parentNode && document.body.appendChild((this.viewController.view as any).div));
+        this.stackViewController.onPop.on(() => 0 == this.stackViewController.children.length && (this.viewController.view as any).div.parentNode && document.body.removeChild((this.viewController.view as any).div));
 
-        this.stacktViewController.onPush.on(() => !(this.view as any).div.parentNode && document.body.appendChild((this.view as any).div));
-        this.stacktViewController.onPop.on(() => 0 == this.children.length && (this.view as any).div.parentNode && document.body.removeChild((this.view as any).div));
-    }
-
-    protected static get instance(): PopupViewController {
-        if (!this._instance) {
-            this._instance = new PopupViewController();
-            this._instance.load();
-        }
-
-        return this._instance;
-    }
-
-    public get children(): readonly ViewController[] { return this.stacktViewController.children; }
-
-    public focus() {
-        this.stacktViewController.focus();
+        await this.viewController.load();
     }
 
     public static pushViewController(next: ViewController): Promise<void> {
-        return this.instance.pushViewController(next);
+        return this.stackViewController.pushViewController(next);
     }
 
     public static popViewController(): Promise<ViewController> {
-        return this.instance.popViewController();
+        return this.stackViewController.popViewController();
     }
 
     public static pushMessage(text: string, title: string): Promise<void> {
@@ -114,13 +105,5 @@ export class PopupViewController extends ViewController implements INavigationVi
 
     public static pushError(error: Error, title = '#_error'): Promise<void> {
         return this.pushMessage(error.message, title);
-    }
-
-    public pushViewController(next: ViewController): Promise<void> {
-        return this.stacktViewController.pushViewController(next);
-    }
-
-    public popViewController(): Promise<ViewController> {
-        return this.stacktViewController.popViewController();
     }
 }

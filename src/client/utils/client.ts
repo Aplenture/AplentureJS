@@ -7,9 +7,9 @@ import { RequestHeader } from "../../core/enums/constants";
 import { JSONRequest } from "../requests/jsonRequest";
 import { Window } from "./window";
 import { LoginViewController } from "../viewControllers/loginViewController";
-import { PopupViewController } from "../viewControllers/popupViewController";
 import { Event } from "../../core";
 import { ViewController } from "./viewController";
+import { PopupController } from "./popupController";
 
 export abstract class Client {
     public static readonly onLoaded = new Event<void, void>('Client.onLoaded');
@@ -26,9 +26,10 @@ export abstract class Client {
         this._initialized = true;
         this._rootViewController = rootViewController;
 
-        Window.init(config);
+        await Window.init(config);
+        await PopupController.init();
 
-        window.addEventListener('unhandledrejection', event => PopupViewController.pushError(event.reason || '#_something_went_wrong'));
+        window.addEventListener('unhandledrejection', event => PopupController.pushError(event.reason || '#_something_went_wrong'));
 
         await this.loadTranslation(config.localizationPath, config.defaultLanguage);
 
@@ -60,7 +61,7 @@ export abstract class Client {
 
             await viewController.load();
 
-            PopupViewController.pushViewController(viewController);
+            PopupController.pushViewController(viewController);
         }
 
         this.onLoaded.emit();
