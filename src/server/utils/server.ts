@@ -2,13 +2,10 @@ import * as FS from "fs";
 import * as hTTPS from "https";
 import * as HTTP from "http";
 import { ServerCommand } from "./serverCommand";
-import { Event } from "../../core/utils/event";
 import { Commander, COMMAND_HELP } from "../../core/utils/commander";
 import { AccessRepository } from "../repositories/accessRepository";
 import { ServerConfig } from "../models/serverConfig";
-import { ServerHelp } from "../commands/other/serverHelp";
 import { Protocol } from "../enums/protocol";
-import { HTTPConfig } from "../models/httpConfig";
 import { ResponseHeader } from "../../core/enums/responseHeader";
 import { RequestHeader } from "../../core/enums/constants";
 import { ResponseType } from "../../core/enums/responseType";
@@ -21,6 +18,11 @@ import { AccessEntity } from "../entities/accessEntity";
 import { createSign } from "../../core/crypto/hash";
 import { Response } from "./response";
 import { HasAccess } from "../commands/user/hasAccess";
+import { Log } from "./log";
+import { ServerContext } from "../models/serverContext";
+import { Database } from "./database";
+import { Command, Event, Singleton } from "../../core";
+import { createInstance } from "../other/fs";
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_TIMEOUT = 5000;
@@ -30,29 +32,131 @@ const DEFAULT_PORT_HTTPS = 443;
 
 const MESSAGE_STOP = "stop";
 
-export class Server {
-    public readonly onMessage = new Event<Server, string>('Server.onMessage');
-    public readonly onError = new Event<Server, Error>('Server.onError');
+interface Options {
+    readonly context?: ServerContext;
+    readonly configPath?: string;
+    readonly debug?: boolean;
+}
 
-    private readonly commander = new Commander();
+export class Server {
+    public readonly onStart = new Event<Server, void>('Server.onStart');
+    public readonly onStop = new Event<Server, void>('Server.onStop');
+
+    public readonly log: Log;
+    public readonly config: ServerConfig;
+    public readonly context: ServerContext;
+
     private readonly servers: HTTP.Server[] = [];
 
-    public get name(): string { return this.config.name; }
+    private initialized = false;
+    private localCommander: Commander;
+    private globalCommander: Commander;
 
-    constructor(
-        public readonly access: AccessRepository,
-        public readonly config: ServerConfig
-    ) {
-        this.commander.addCommand(COMMAND_HELP, ServerHelp, config, { commands: this.commander.commands });
-        this.commander.onMessage.on(message => this.onMessage.emit(this, message));
+    constructor(options: Options = {}) {
+        const infos = JSON.parse(FS.readFileSync(process.env.PWD + '/package.json').toString());
+        const logName = options.debug
+            ? this.config.name + '.debug'
+            : this.config.name;
+
+        this.config = Object.assign({}, require(process.env.PWD + options.configPath || '/config.json'), {
+            name: infos.name,
+            version: infos.version,
+            author: infos.author,
+            description: infos.description,
+        });
+
+        this.context = options.context || {
+            server: this,
+            databases: {},
+            repositories: {}
+        };
+
+        this.log = Log.createFileLog(`${process.env.PWD}/${logName}.log`);
     }
 
-    public init() {
-        this.onMessage.emit(this, "init");
+    private get access(): AccessRepository { return this.context.repositories[AccessRepository.name] as AccessRepository; };
+
+    public async init() {
+        if (this.initialized)
+            throw new Error('Server is already initialized');
+
+        const localCommands: NodeJS.Dict<Singleton<Command<any, any, any, any>>> = {};
+        const globalCommands: NodeJS.Dict<Singleton<ServerCommand<any, any, any>>> = {};
+
+        this.initialized = true;
+
+        this.log.write("init");
+
+        process.title = this.config.name;
+
+        process.on('exit', code => this.log.write("exit with code " + code));
+        process.on('uncaughtException', error => this.log.error(error));
+        process.on('unhandledRejection', reason => this.log.error(new Error(reason.toString())));
+
+        this.localCommander.onMessage.on(message => this.log.write(message, this.constructor.name + '.local'));
+        this.localCommander.onCommand.on((message, command) => this.log.write(message, command + '.local'));
+
+        this.globalCommander.onMessage.on(message => this.log.write(message, this.constructor.name + '.global'));
+        this.globalCommander.onCommand.on((message, command) => this.log.write(message, command + '.global'));
+
+        // instanciate all databases by config
+        Object.keys(this.config.databases).forEach(name => {
+            const config = this.config.databases[name];
+
+            if (this.config.debug)
+                (config.database as any) += '_debug';
+
+            this.context.databases[name] = new Database(name, config);
+        });
+
+        // instanciate all repositories by config
+        Object.keys(this.config.repositories).forEach(name => {
+            if (!this.context.databases[this.config.repositories[name].database])
+                throw new Error(`missing database '${this.config.repositories[name].database}' for '${name}'`);
+
+            this.context.repositories[name] = createInstance(
+                this.config.repositories[name].path,
+                this.config.repositories[name].class,
+                this.context.databases[this.config.repositories[name].database],
+                this.config.repositories[name].table
+            );
+        });
+
+        // load global commands by config
+        Object.keys(this.config.globalCommands).forEach(command => globalCommands[command] = localCommands[command] = new Singleton<ServerCommand<any, any, any>>(require(`${process.env.PWD}/${this.config.globalCommands[command].path}.js`)[this.config.globalCommands[command].class], this.config, this.context));
+
+        // load local commands by config
+        Object.keys(this.config.localCommands).forEach(command => localCommands[command] = new Singleton(require(`${process.env.PWD}/${this.config.localCommands[command].path}.js`)[this.config.localCommands[command].class], this.config, this.context));
+
+        this.localCommander = new Commander(localCommands, false);
+        this.globalCommander = new Commander(globalCommands, false);
+
+        // initialize all databases
+        await Promise.all(Object.values(this.context.databases).map(database => database.init()));
     }
 
-    public start(...configs: readonly HTTPConfig[]): Promise<void> {
-        configs.forEach(config => {
+    public execute<T>(command: string, args?: any): Promise<T> {
+        return this.localCommander.execute(command, args);
+    }
+
+    public executeLine<T>(commandLine: string): Promise<T> {
+        return this.localCommander.executeLine(commandLine);
+    }
+
+    public async executeCommandLine(): Promise<string> {
+        const command = process.argv.slice(2).join(' ') || "info";
+
+        try {
+            const result = await this.localCommander.executeLine(command);
+
+            return result.toString();
+        } catch (error) {
+            return error.stack;
+        }
+    }
+
+    public start() {
+        this.config.servers.forEach(config => {
             if (!config.enabled)
                 return;
 
@@ -82,22 +186,20 @@ export class Server {
 
             this.servers.push(server);
 
-            this.onMessage.emit(this, `start ${config.protocol} ${Object.keys(config).map(key => `--${key} ${config[key]}`).join(' ')}`);
+            this.log.write(`start ${config.protocol} ${Object.keys(config).map(key => `--${key} ${config[key]}`).join(' ')}`);
         });
 
-        return new Promise(resolve => this.onMessage.on(() => resolve(), { args: MESSAGE_STOP }));
+        this.onStart.emit(this);
     }
 
     public stop() {
         this.servers.forEach(server => server.close());
         this.servers.splice(0, this.servers.length);
 
-        this.onMessage.emit(this, MESSAGE_STOP);
-    }
+        Object.values(this.context.databases).forEach(database => database.close());
 
-    public addCommand(command: string, _constructor: new (...args: any[]) => ServerCommand<any, any, any>, ...args: any[]): void {
-        this.onMessage.emit(this, `add command '${command}'`);
-        this.commander.addCommand(command, _constructor, ...args);
+        this.log.write(MESSAGE_STOP);
+        this.onStop.emit(this);
     }
 
     private async onRequest(
@@ -153,10 +255,10 @@ export class Server {
         // for securty reasons
         delete args.account;
 
-        this.onMessage.emit(this, `'${ip}' requested '${request.url}'`);
+        this.log.write(`'${ip}' requested '${request.url}'`);
 
         try {
-            const instance = this.commander.getCommand<ServerCommand<any, any, any>>(command || COMMAND_HELP);
+            const instance = this.globalCommander.getCommand<ServerCommand<any, any, any>>(command || COMMAND_HELP);
 
             if (!instance)
                 throw new BadRequestError(ErrorMessage.InvalidRoute);
@@ -186,7 +288,7 @@ export class Server {
                 delete args.api;
             }
 
-            const result: Response = await this.commander.execute(command || COMMAND_HELP, args);
+            const result: Response = await this.globalCommander.execute(command || COMMAND_HELP, args);
 
             responseHeaders[ResponseHeader.ContentType] = result.type;
 
@@ -204,7 +306,7 @@ export class Server {
             response.writeHead(code, responseHeaders);
             response.end(message);
 
-            this.onError.emit(this, error);
+            this.log.error(error, this.constructor.name);
         }
     }
 
