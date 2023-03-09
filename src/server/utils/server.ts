@@ -155,7 +155,7 @@ export class Server {
         }
     }
 
-    public start() {
+    public start(): Promise<void> {
         this.config.servers.forEach(config => {
             if (!config.enabled)
                 return;
@@ -190,6 +190,8 @@ export class Server {
         });
 
         this.onStart.emit(this);
+
+        return new Promise(resolve => this.onStop.once(() => resolve()));
     }
 
     public stop() {
