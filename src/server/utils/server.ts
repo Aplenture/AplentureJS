@@ -131,6 +131,16 @@ export class Server {
             );
         });
 
+        // load default global commands
+        globalCommands[COMMAND_INFO] = new Singleton(ServerInfo, this.config, { commands: globalCommands });
+        globalCommands[COMMAND_HAS_ACCESS] = new Singleton(HasAccess, this.config, this.context);
+        
+        // load default local commands
+        localCommands[COMMAND_INFO] = new Singleton(ServerInfo, this.config, { commands: globalCommands });
+        localCommands[COMMAND_START] = new Singleton(StartServer, this.config, { server: this });
+        localCommands[COMMAND_RESET] = new Singleton(ResetDatabase, this.config, this.context);
+        localCommands[COMMAND_UPDATE] = new Singleton(UpdateDatabase, this.config, this.context);
+        
         // load global commands by config
         Object.keys(this.config.globalCommands).forEach(command => globalCommands[command] = localCommands[command] = new Singleton<ServerCommand<any, any, any>>(require(`${process.env.PWD}/${this.config.globalCommands[command].path}.js`)[this.config.globalCommands[command].class], this.config, this.context));
 
