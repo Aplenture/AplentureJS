@@ -67,7 +67,7 @@ export class Database {
     }
 
     public async update(directory?: string): Promise<void> {
-        const updatePath = `${process.env.PWD}/${directory || DIRECTORY_UPDATE}/${name}`;
+        const updatePath = `${process.env.PWD}/${directory || DIRECTORY_UPDATE}/${this.name}`;
 
         await this.query(`CREATE TABLE IF NOT EXISTS \`updates\` (
             \`id\` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,

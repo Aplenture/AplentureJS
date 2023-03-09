@@ -4,8 +4,8 @@ import { HTTPConfig } from "./httpConfig";
 import { RepositoryConfig } from "./repositoryConfig";
 
 export interface ServerConfig {
-    readonly debug: boolean;
     readonly name: string;
+    readonly debug: boolean;
     readonly version: string;
     readonly author: string;
     readonly description: string;

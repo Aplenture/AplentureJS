@@ -23,6 +23,10 @@ import { ServerContext } from "../models/serverContext";
 import { Database } from "./database";
 import { Command, Event, Singleton } from "../../core";
 import { createInstance } from "../other/fs";
+import { ServerInfo } from "../commands/other/serverInfo";
+import { StartServer } from "../commands/server/startServer";
+import { ResetDatabase } from "../commands/server/resetDatabase";
+import { UpdateDatabase } from "../commands/server/updateDatabase";
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_TIMEOUT = 5000;
@@ -30,12 +34,19 @@ const DEFAULT_TIME_WINDOW = 10000;
 const DEFAULT_PORT_HTTP = 80;
 const DEFAULT_PORT_HTTPS = 443;
 
+const COMMAND_INFO = "info";
+const COMMAND_HAS_ACCESS = "hasAccess";
+const COMMAND_START = "start";
+const COMMAND_RESET = "reset";
+const COMMAND_UPDATE = "update";
+
 const MESSAGE_STOP = "stop";
 
 interface Options {
+    readonly debug?: boolean;
+    readonly clearLog?: boolean;
     readonly context?: ServerContext;
     readonly configPath?: string;
-    readonly debug?: boolean;
 }
 
 export class Server {
@@ -54,29 +65,32 @@ export class Server {
 
     constructor(options: Options = {}) {
         const infos = JSON.parse(FS.readFileSync(process.env.PWD + '/package.json').toString());
-        const logName = options.debug
-            ? this.config.name + '.debug'
-            : this.config.name;
+        const debug = infos.debug || options.debug || false;
+        const name = debug
+            ? infos.name + '.debug'
+            : infos.name;
 
-        this.config = Object.assign({}, require(process.env.PWD + options.configPath || '/config.json'), {
-            name: infos.name,
+        this.config = Object.assign({}, require(process.env.PWD + (options.configPath || '/config.json')), {
+            name,
+            debug,
             version: infos.version,
             author: infos.author,
             description: infos.description,
         });
 
         this.context = options.context || {
-            server: this,
             databases: {},
             repositories: {}
         };
 
-        this.log = Log.createFileLog(`${process.env.PWD}/${logName}.log`);
+        this.log = Log.createFileLog(`${process.env.PWD}/${name}.log`, options.clearLog);
     }
+
+    public get name(): string { return this.config.name; }
 
     private get access(): AccessRepository { return this.context.repositories[AccessRepository.name] as AccessRepository; };
 
-    public async init() {
+    public async init(setupProcessTitle = true) {
         if (this.initialized)
             throw new Error('Server is already initialized');
 
@@ -86,6 +100,9 @@ export class Server {
         this.initialized = true;
 
         this.log.write("init");
+
+        if (setupProcessTitle)
+            process.title = this.config.name;
 
         process.on('exit', code => this.log.write("exit with code " + code));
         process.on('uncaughtException', error => this.log.error(error));
@@ -98,7 +115,7 @@ export class Server {
             if (this.config.debug)
                 (config.database as any) += '_debug';
 
-            this.context.databases[name] = new Database(name, config);
+            (this.context.databases[name] as any) = new Database(name, config);
         });
 
         // instanciate all repositories by config
@@ -106,7 +123,7 @@ export class Server {
             if (!this.context.databases[this.config.repositories[name].database])
                 throw new Error(`missing database '${this.config.repositories[name].database}' for '${name}'`);
 
-            this.context.repositories[name] = createInstance(
+            (this.context.repositories[name] as any) = createInstance(
                 this.config.repositories[name].path,
                 this.config.repositories[name].class,
                 this.context.databases[this.config.repositories[name].database],
@@ -132,22 +149,27 @@ export class Server {
         await Promise.all(Object.values(this.context.databases).map(database => database.init()));
     }
 
-    public execute<T>(command: string, args?: any): Promise<T> {
-        return this.localCommander.execute(command, args);
+    public async execute(command: string, args?: any): Promise<string> {
+        const result = await this.localCommander.execute(command, args);
+
+        return result.toString();
     }
 
-    public executeLine<T>(commandLine: string): Promise<T> {
-        return this.localCommander.executeLine(commandLine);
+    public async executeLine(commandLine: string): Promise<string> {
+        const result = await this.localCommander.executeLine(commandLine);
+
+        return result.toString();
     }
 
     public async executeCommandLine(): Promise<string> {
-        const command = process.argv.slice(2).join(' ') || "info";
+        const command = process.argv.slice(2).join(' ') || COMMAND_INFO;
 
         try {
             const result = await this.localCommander.executeLine(command);
 
             return result.toString();
         } catch (error) {
+            this.log.error(error, this.constructor.name + '.local');
             return error.stack;
         }
     }
@@ -305,7 +327,7 @@ export class Server {
             response.writeHead(code, responseHeaders);
             response.end(message);
 
-            this.log.error(error, this.constructor.name);
+            this.log.error(error, this.constructor.name + '.global');
         }
     }
 

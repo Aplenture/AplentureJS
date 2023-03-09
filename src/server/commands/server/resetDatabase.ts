@@ -5,7 +5,7 @@ import { DatabaseConfig } from "../../models/databaseConfig";
 import { Database } from "../../utils/database";
 
 interface Config {
-    readonly databases: readonly DatabaseConfig[];
+    readonly databases: NodeJS.ReadOnlyDict<DatabaseConfig>;
 }
 
 interface Args {

@@ -9,9 +9,10 @@ interface Context {
     readonly commands: NodeJS.ReadOnlyDict<Singleton<ServerCommand<any, any, any>>>;
 }
 
-export class ServerInfo extends Command<ServerConfig, Context, any, Response> {
-    public description = "Returna the API description.";
-    public property = null;
+export class ServerInfo extends ServerCommand<ServerConfig, Context, any> {
+    public readonly isPrivate = false;
+    public readonly description = "Returns the API description.";
+    public readonly property = null;
 
     public async execute(): Promise<Response> {
         const nameLabel = this.config.debug
@@ -23,6 +24,9 @@ export class ServerInfo extends Command<ServerConfig, Context, any, Response> {
 
         const maxCommandNameLength = Math.max(...commands.map(command => command.length));
 
+        const publicCommands = commands.filter(command => !this.context.commands[command].instance.isPrivate);
+        const privateCommands = commands.filter(command => this.context.commands[command].instance.isPrivate);
+
         let result = `${nameLabel} v${this.config.version} by ${this.config.author}\n`;
 
         if (this.config.description) {
@@ -30,20 +34,23 @@ export class ServerInfo extends Command<ServerConfig, Context, any, Response> {
             result += this.config.description + '\n';
         }
 
-        result += '\n';
-        result += 'Public Commands:\n';
-        result += commands
-            .filter(command => !this.context.commands[command].instance.isPrivate)
-            .map(command => `  ${command}${' '.repeat(maxCommandNameLength - command.length)} - ${this.context.commands[command].instance.description}`)
-            .join('\n');
+        if (publicCommands.length) {
+            result += '\n';
+            result += 'Public Commands:\n';
+            result += publicCommands
+                .map(command => `  ${command}${' '.repeat(maxCommandNameLength - command.length)} - ${this.context.commands[command].instance.description}`)
+                .join('\n');
+        }
 
         result += '\n';
-        result += '\n';
-        result += 'Private Commands:\n';
-        result += commands
-            .filter(command => this.context.commands[command].instance.isPrivate)
-            .map(command => `  ${command}${' '.repeat(maxCommandNameLength - command.length)} - ${this.context.commands[command].instance.description}`)
-            .join('\n');
+
+        if (privateCommands.length) {
+            result += '\n';
+            result += 'Private Commands:\n';
+            result += privateCommands
+                .map(command => `  ${command}${' '.repeat(maxCommandNameLength - command.length)} - ${this.context.commands[command].instance.description}`)
+                .join('\n');
+        }
 
         return new TextResponse(result);
     }
