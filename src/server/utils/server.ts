@@ -87,17 +87,9 @@ export class Server {
 
         this.log.write("init");
 
-        process.title = this.config.name;
-
         process.on('exit', code => this.log.write("exit with code " + code));
         process.on('uncaughtException', error => this.log.error(error));
         process.on('unhandledRejection', reason => this.log.error(new Error(reason.toString())));
-
-        this.localCommander.onMessage.on(message => this.log.write(message, this.constructor.name + '.local'));
-        this.localCommander.onCommand.on((message, command) => this.log.write(message, command + '.local'));
-
-        this.globalCommander.onMessage.on(message => this.log.write(message, this.constructor.name + '.global'));
-        this.globalCommander.onCommand.on((message, command) => this.log.write(message, command + '.global'));
 
         // instanciate all databases by config
         Object.keys(this.config.databases).forEach(name => {
@@ -128,8 +120,13 @@ export class Server {
         // load local commands by config
         Object.keys(this.config.localCommands).forEach(command => localCommands[command] = new Singleton(require(`${process.env.PWD}/${this.config.localCommands[command].path}.js`)[this.config.localCommands[command].class], this.config, this.context));
 
-        this.localCommander = new Commander(localCommands, false);
+        this.localCommander = new Commander(localCommands, true);
+        this.localCommander.onMessage.on(message => this.log.write(message, this.constructor.name + '.local'));
+        this.localCommander.onCommand.on((message, command) => this.log.write(message, command + '.local'));
+
         this.globalCommander = new Commander(globalCommands, false);
+        this.globalCommander.onMessage.on(message => this.log.write(message, this.constructor.name + '.global'));
+        this.globalCommander.onCommand.on((message, command) => this.log.write(message, command + '.global'));
 
         // initialize all databases
         await Promise.all(Object.values(this.context.databases).map(database => database.init()));
