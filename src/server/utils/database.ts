@@ -9,6 +9,8 @@ import { decodeString, encodeString } from "../../core/other/text";
 type Type = string | number
 type Entry = NodeJS.ReadOnlyDict<any>;
 
+const DIRECTORY_UPDATE = 'database';
+
 export class Database {
     public readonly onMessage = new Event<Database, string>('Database.onMessage');
 
@@ -64,14 +66,16 @@ export class Database {
         this.pool = null;
     }
 
-    public async update(directory: string): Promise<void> {
+    public async update(directory?: string): Promise<void> {
+        const updatePath = `${process.env.PWD}/${directory || DIRECTORY_UPDATE}/${name}`;
+
         await this.query(`CREATE TABLE IF NOT EXISTS \`updates\` (
             \`id\` BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
             \`time\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             \`path\` TEXT NOT NULL
             ) DEFAULT CHARSET=utf8`);
 
-        const folders = fs.readdirSync(directory, { withFileTypes: true })
+        const folders = fs.readdirSync(updatePath, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name)
             .sort((a, b) => {
@@ -83,14 +87,14 @@ export class Database {
 
         for (let i = 0; i < folders.length; ++i) {
             const folder = folders[i];
-            const files = fs.readdirSync(`${directory}/${folder}`);
+            const files = fs.readdirSync(`${updatePath}/${folder}`);
 
             for (let j = 0; j < files.length; ++j) {
                 const file = files[j];
                 const update = `${folder}/${file}`;
-                const path = `${directory}/${update}`;
+                const filePath = `${updatePath}/${update}`;
                 const query = fs
-                    .readFileSync(path)
+                    .readFileSync(filePath)
                     .toString();
 
                 const executedUpdates = await this.query(`SELECT * FROM \`updates\` WHERE \`path\`=?`, [update]);
