@@ -1,3 +1,5 @@
 export class RouterConfig {
-    readonly defaultRoute?: string;
+    readonly routes: {
+        readonly default: string;
+    }
 }

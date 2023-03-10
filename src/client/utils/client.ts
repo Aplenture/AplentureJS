@@ -11,30 +11,39 @@ import { Event } from "../../core";
 import { ViewController } from "./viewController";
 import { PopupController } from "./popupController";
 
+const DEFAULT_CONFIG_PATH = '/config.json';
+
+interface Options {
+    readonly configPath?: string;
+}
+
 export abstract class Client {
     public static readonly onLoaded = new Event<void, void>('Client.onLoaded');
 
     private static _initialized = false;
     private static _rootViewController: ViewController;
+    private static _config: ClientConfig;
 
     public static get rootViewController(): ViewController { return this._rootViewController; }
+    public static get config(): ClientConfig { return this._config; }
 
-    public static async init(rootViewController: ViewController, config: ClientConfig) {
+    public static async init(rootViewController: ViewController, options: Options = {}) {
         if (this._initialized)
             throw new Error('Client is already initialized');
 
         this._initialized = true;
         this._rootViewController = rootViewController;
+        this._config = await new JSONRequest<void, ClientConfig>(options.configPath || DEFAULT_CONFIG_PATH).send();;
 
-        await Window.init(config);
+        await Window.init(this.config);
         await PopupController.init();
 
         window.addEventListener('unhandledrejection', event => PopupController.pushError(event.reason || '#_something_went_wrong'));
 
-        await this.loadTranslation(config.localizationPath, config.defaultLanguage);
+        await this.loadTranslation(this.config.localizationPath, this.config.defaultLanguage);
 
-        Router.onRouteChanged.on(route => route.isPrivate && !Session.access && Router.changeRoute(config.unauthorizedRoute));
-        Session.onAccessChanged.on(access => !access && Router.route.isPrivate && Router.changeRoute(config.defaultRoute));
+        Router.onRouteChanged.on(route => route.isPrivate && !Session.access && Router.changeRoute(this.config.routes.unauthorized));
+        Session.onAccessChanged.on(access => !access && Router.route.isPrivate && Router.changeRoute(this.config.routes.default));
         Request.onSending.on((params, request) => {
             if (!request.isPrivate) return;
             if (!Session.access) throw new Error('#_error_no_access');
@@ -46,17 +55,17 @@ export abstract class Client {
         document.body.appendChild((this.rootViewController.view as any).div);
 
         if (document.readyState === 'complete')
-            await this.handleLoaded(config);
+            await this.handleLoaded();
         else
-            window.addEventListener('load', () => this.handleLoaded(config), { once: true });
+            window.addEventListener('load', () => this.handleLoaded(), { once: true });
     }
 
-    protected static async handleLoaded(config: ClientConfig) {
+    protected static async handleLoaded() {
         await this.rootViewController.load();
-        await Session.init(config);
-        await Router.init(config);
+        await Session.init(this.config);
+        await Router.init(this.config);
 
-        if (config.loginEnabled && !Session.hasAccess && Router.route.has('login')) {
+        if (this.config.loginEnabled && !Session.hasAccess && Router.route.has('login')) {
             const viewController = new LoginViewController();
 
             await viewController.load();

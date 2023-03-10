@@ -52,10 +52,10 @@ export abstract class Session {
         const serializedAccess = window.sessionStorage.getItem(KEY_ACCESS)
             || window.localStorage.getItem(KEY_ACCESS);
 
-        this.hasAccessRequest = new BoolRequest(config.hasAccessURL);
-        this.loginRequest = new JSONRequest(config.loginURL);
-        this.logoutRequest = new BoolRequest(config.logoutURL, { isPrivate: true });
-        this.changePasswordRequest = new BoolRequest(config.changePasswordURL, { isPrivate: true });
+        this.hasAccessRequest = new BoolRequest(config.server.endpoint + config.server.api.hasAccess);
+        this.loginRequest = new JSONRequest(config.server.endpoint + config.server.api.login);
+        this.logoutRequest = new BoolRequest(config.server.endpoint + config.server.api.logout, { isPrivate: true });
+        this.changePasswordRequest = new BoolRequest(config.server.endpoint + config.server.api.changePassword, { isPrivate: true });
 
         if (!serializedAccess)
             return;

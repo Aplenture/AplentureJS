@@ -8,7 +8,7 @@ export abstract class Router {
 
     private static readonly _routes: Route[] = [];
     private static readonly _history = new Lifo<string>();
-    
+
     private static _initialized = false;
     private static _route: Route = null;
     private static _defaultRoute: string;
@@ -23,7 +23,7 @@ export abstract class Router {
             throw new Error('Router is already initialized');
 
         this._initialized = true;
-        this._defaultRoute = config.defaultRoute;
+        this._defaultRoute = config.routes.default;
 
         window.addEventListener('popstate', async () => {
             this._history.pop();
@@ -69,6 +69,9 @@ export abstract class Router {
         const routeParts = window.location.pathname.split('/');
 
         this._route = this.findRoute(routeParts[1], parseInt(routeParts[2]));
+
+        if (this._route.name != routeParts[1])
+            window.history.replaceState({}, this._route.name, this._route.toString());
 
         if (0 == this._history.count && this._route.name != this._defaultRoute)
             this._history.push(this._defaultRoute);
