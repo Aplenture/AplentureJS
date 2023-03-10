@@ -30,7 +30,9 @@ export abstract class PopupController {
         this.stackViewController.view.propaginateClickEvents = false;
         this.stackViewController.view.appendChild(closeButtonContainer);
 
+        this.closeButton.propaginateClickEvents = false;
         this.closeButton.onClick.on(() => this.stackViewController.popViewController());
+
         this.stackViewController.onPush.on(() => !(this.viewController.view as any).div.parentNode && document.body.appendChild((this.viewController.view as any).div));
         this.stackViewController.onPop.on(() => 0 == this.stackViewController.children.length && (this.viewController.view as any).div.parentNode && document.body.removeChild((this.viewController.view as any).div));
 
