@@ -23,8 +23,8 @@ describe("Singleton", () => {
         let counter = 0;
         let emittedInstance: TestClass | null = null;
         
-        Singleton.onInstantiated.on(() => counter++);
-        Singleton.onInstantiated.on(instance => emittedInstance = instance);
+        singleton.onInstantiated.on(() => counter++);
+        singleton.onInstantiated.on(instance => emittedInstance = instance);
 
         singleton.instance;
         singleton.instance;

@@ -3,7 +3,7 @@ import { Event } from "./event";
 import { Stopwatch } from "./stopwatch";
 
 export class Updateloop {
-    public static readonly onError = new Event<Updateloop, Error>('Updateloop.onError');
+    public readonly onError = new Event<Updateloop, Error>('Updateloop.onError');
 
     private readonly stopwatch = new Stopwatch();
 
@@ -38,7 +38,7 @@ export class Updateloop {
             try {
                 await this.action(this._lastUpdate);
             } catch (error) {
-                Updateloop.onError.emit(this, error);
+                this.onError.emit(this, error);
             }
 
             const stop = Date.now();

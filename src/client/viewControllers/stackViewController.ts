@@ -1,9 +1,10 @@
 import { Event, Lifo } from "../../core";
+import { INavigationViewController as INavigationViewController } from "../interfaces/navigationViewController";
 import { ViewController } from "../utils/viewController";
 
-export class StackViewController extends ViewController {
-    public static readonly onPush = new Event<StackViewController, ViewController>('StackViewController.onPush');
-    public static readonly onPop = new Event<StackViewController, ViewController>('StackViewController.onPop');
+export class StackViewController extends ViewController implements INavigationViewController {
+    public readonly onPush = new Event<StackViewController, ViewController>('StackViewController.onPush');
+    public readonly onPop = new Event<StackViewController, ViewController>('StackViewController.onPop');
 
     private history = new Lifo<ViewController>();
 
@@ -11,30 +12,24 @@ export class StackViewController extends ViewController {
         super(...classes, 'stack-view-controller');
     }
 
-    public deinit(): void {
-        StackViewController.onPop.off({ listener: this });
-
-        super.deinit();
-    }
-
     public async pushViewController(next: ViewController): Promise<void> {
         if (0 > this.appendChild(next))
             return Promise.reject();
 
-        next.view.isVisible = true;
-
-        await this.update();
+        await this.load();
 
         this.focus();
 
-        return new Promise<void>(resolve => StackViewController.onPop.once(() => resolve(), { sender: this, listener: this, args: next }));
+        return new Promise<void>(resolve => this.onPop.once(() => resolve(), { listener: this, args: next }));
     }
 
-    public popViewController(): ViewController {
+    public async popViewController(): Promise<ViewController> {
         const current = this.children[0];
 
-        if (current)
+        if (current) {
+            current.unload();
             this.removeChild(current);
+        }
 
         if (this.children[0])
             this.focus();
@@ -51,7 +46,7 @@ export class StackViewController extends ViewController {
         }
 
         if (0 <= index)
-            StackViewController.onPush.emit(this, child);
+            this.onPush.emit(this, child);
 
         return index;
     }
@@ -61,7 +56,7 @@ export class StackViewController extends ViewController {
 
         if (0 == index) {
             super.appendChild(this.history.pop());
-            StackViewController.onPop.emit(this, child);
+            this.onPop.emit(this, child);
         }
 
         return index;
@@ -72,7 +67,7 @@ export class StackViewController extends ViewController {
 
         if (child) {
             super.appendChild(this.history.pop());
-            StackViewController.onPop.emit(this, child);
+            this.onPop.emit(this, child);
         }
 
         return child;
@@ -84,7 +79,7 @@ export class StackViewController extends ViewController {
         super.removeAllChildren();
 
         while (child) {
-            this.children.forEach(child => StackViewController.onPop.emit(this, child));
+            this.children.forEach(child => this.onPop.emit(this, child));
             child = this.history.pop();
         }
     }

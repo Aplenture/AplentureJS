@@ -3,63 +3,45 @@ import { Event, EventHandler } from "../../core/utils/event";
 import { Route } from "../models/route";
 import { RouterConfig } from "../models/routerConfig";
 
-export class Router {
-    public static readonly onRouteChanged = new Event<Router, Route>('Router.onRouteChanged');
+export abstract class Router {
+    public static readonly onRouteChanged = new Event<void, Route>('Router.onRouteChanged');
 
-    private readonly routes: Route[] = [];
-    private readonly defaultRoute: string;
+    private static readonly _routes: Route[] = [];
+    private static readonly _history = new Lifo<string>();
 
-    private _route: Route = null;
+    private static _initialized = false;
+    private static _route: Route = null;
+    private static _defaultRoute: string;
 
-    private history = new Lifo<string>();
+    public static get route(): Route { return this._route; }
 
-    constructor(config: RouterConfig) {
-        this.defaultRoute = config.defaultRoute;
+    public static get index(): number { return this._route && this._route.index; }
+    public static get historyLength(): number { return this._history.count; }
+
+    public static init(config: RouterConfig) {
+        if (this._initialized)
+            throw new Error('Router is already initialized');
+
+        this._initialized = true;
+        this._defaultRoute = config.routes.default;
 
         window.addEventListener('popstate', async () => {
-            this.history.pop();
-            this.init();
+            this._history.pop();
+            this.setupRoute();
         });
+
+        this.setupRoute();
     }
 
-    public get route(): Route { return this._route; }
-
-    public get index(): number { return this._route && this._route.index; }
-    public get historyLength(): number { return this.history.count; }
-
-    public init() {
-        const routeParts = window.location.pathname.split('/');
-
-        this._route = this.findRoute(routeParts[1], parseInt(routeParts[2]));
-
-        if (0 == this.history.count && this._route.name != this.defaultRoute)
-            this.history.push(this.defaultRoute);
-
-        Router.onRouteChanged.emit(this, this._route);
-    }
-
-    public addRoute(name: string, onRouteChanged: EventHandler<Router, Route>, isPrivate = false) {
+    public static addRoute(name: string, onRouteChanged: EventHandler<void, Route>, isPrivate = false) {
         const route = new Route(name, isPrivate);
 
-        this.routes.push(route);
+        this._routes.push(route);
 
         Router.onRouteChanged.on(onRouteChanged, { args: route });
     }
 
-    public removeRoute(name) {
-        const index = this.routes.findIndex(route => route.name == name);
-
-        if (0 > index)
-            return;
-
-        this.routes.splice(index, 1);
-    }
-
-    public removeAllRoutes() {
-        this.routes.splice(0, this.routes.length);
-    }
-
-    public changeRoute(name: string, index: number = null) {
+    public static changeRoute(name: string, index: number = null) {
         const route = this.findRoute(name, index);
 
         if (this._route && route.name == this._route.name && route.index == this._route.index)
@@ -67,26 +49,40 @@ export class Router {
 
         const routeString = route.toString();
 
-        this.history.push(routeString);
+        this._history.push(routeString);
         window.history.pushState({}, route.name, routeString);
 
         this._route = route;
 
-        Router.onRouteChanged.emit(this, route);
+        Router.onRouteChanged.emit(null, route);
     }
 
-    public back() {
+    public static back() {
         window.history.back();
     }
 
-    public reload() {
-        Router.onRouteChanged.emit(this, this._route);
+    public static reload() {
+        Router.onRouteChanged.emit(null, this._route);
     }
 
-    private findRoute(name: string, index?: number) {
-        const route = this.routes.find(route => route.name == name)
-            || this.routes.find(route => route.name == this.defaultRoute)
-            || this.routes[0];
+    private static setupRoute() {
+        const routeParts = window.location.pathname.split('/');
+
+        this._route = this.findRoute(routeParts[1], parseInt(routeParts[2]));
+
+        if (this._route.name != routeParts[1])
+            window.history.replaceState({}, this._route.name, this._route.toString());
+
+        if (0 == this._history.count && this._route.name != this._defaultRoute)
+            this._history.push(this._defaultRoute);
+
+        Router.onRouteChanged.emit(null, this._route);
+    }
+
+    private static findRoute(name: string, index?: number) {
+        const route = this._routes.find(route => route.name == name)
+            || this._routes.find(route => route.name == this._defaultRoute)
+            || this._routes[0];
 
         if (!route)
             throw new Error('#_no_routes');

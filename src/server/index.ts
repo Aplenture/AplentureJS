@@ -1,5 +1,5 @@
-export * from "./commands/other/serverHelp";
 export * from "./commands/other/ping";
+export * from "./commands/other/serverInfo";
 
 export * from "./commands/server/resetDatabase";
 export * from "./commands/server/startServer";
@@ -16,10 +16,12 @@ export * from "./entities/accountEntity";
 
 export * from "./enums/protocol";
 
+export * from "./models/commandConfig";
 export * from "./models/databaseConfig";
 export * from "./models/httpConfig";
 export * from "./models/repositoryConfig";
 export * from "./models/serverConfig";
+export * from "./models/serverContext";
 
 export * from "./other/fs";
 

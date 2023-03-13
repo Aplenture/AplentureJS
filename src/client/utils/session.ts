@@ -9,19 +9,19 @@ import { JSONRequest } from "../requests/jsonRequest";
 
 const KEY_ACCESS = 'session.access';
 
-export class Session {
+export abstract class Session {
     public static readonly onAccessChanged = new Event<Session, Access>('Session.onAccessChanged');
     public static readonly onLogin = new Event<Session, Access>('Session.onLogin');
     public static readonly onLogout = new Event<Session, void>('Session.onLogout');
 
-    private readonly logoutRequest: BoolRequest<void>;
-    private readonly hasAccessRequest: BoolRequest<{
+    private static logoutRequest: BoolRequest<void>;
+    private static hasAccessRequest: BoolRequest<{
         readonly api: string,
         readonly signature: string,
         readonly timestamp: number
     }>;
 
-    private readonly loginRequest: JSONRequest<{
+    private static loginRequest: JSONRequest<{
         readonly timestamp: number,
         readonly username: string,
         readonly sign: string,
@@ -32,26 +32,30 @@ export class Session {
         readonly secret: string
     }>;
 
-    private readonly changePasswordRequest: BoolRequest<{
+    private static changePasswordRequest: BoolRequest<{
         readonly old: string;
         readonly new: string;
     }>;
 
-    private _access: Access = null;
+    private static _initialized = false;
+    private static _access: Access = null;
 
-    constructor(config: SessionConfig) {
-        this.hasAccessRequest = new BoolRequest(config.hasAccessURL);
-        this.loginRequest = new JSONRequest(config.loginURL);
-        this.logoutRequest = new BoolRequest(config.logoutURL, { isPrivate: true });
-        this.changePasswordRequest = new BoolRequest(config.changePasswordURL, { isPrivate: true });
-    }
+    public static get access(): Access { return this._access; }
+    public static get hasAccess(): boolean { return !!this._access; }
 
-    public get access(): Access { return this._access; }
-    public get hasAccess(): boolean { return !!this._access; }
+    public static async init(config: SessionConfig) {
+        if (this._initialized)
+            throw new Error('Session is already initialized');
 
-    public async init() {
+        this._initialized = true;
+
         const serializedAccess = window.sessionStorage.getItem(KEY_ACCESS)
             || window.localStorage.getItem(KEY_ACCESS);
+
+        this.hasAccessRequest = new BoolRequest(config.server.endpoint + config.server.api.hasAccess);
+        this.loginRequest = new JSONRequest(config.server.endpoint + config.server.api.login);
+        this.logoutRequest = new BoolRequest(config.server.endpoint + config.server.api.logout, { isPrivate: true });
+        this.changePasswordRequest = new BoolRequest(config.server.endpoint + config.server.api.changePassword, { isPrivate: true });
 
         if (!serializedAccess)
             return;
@@ -69,7 +73,7 @@ export class Session {
         Session.onAccessChanged.emit(this, access);
     }
 
-    public updateAccess(access: Access, keepLogin = false) {
+    public static updateAccess(access: Access, keepLogin = false) {
         const serialization = access.toHex();
 
         this._access = access;
@@ -85,7 +89,7 @@ export class Session {
         Session.onAccessChanged.emit(this, access);
     }
 
-    public resetAccess() {
+    public static resetAccess() {
         this._access = null;
 
         window.localStorage.removeItem(KEY_ACCESS);
@@ -94,7 +98,7 @@ export class Session {
         Session.onAccessChanged.emit(this, null);
     }
 
-    public async login(username: string, password: string, keepLogin?: boolean, label?: string): Promise<Access> {
+    public static async login(username: string, password: string, keepLogin?: boolean, label?: string): Promise<Access> {
         const timestamp = Date.now();
         const hash = toHashInt(timestamp.toString());
         const privateKey = EC.createPrivateKey(password);
@@ -117,7 +121,7 @@ export class Session {
         return access;
     }
 
-    public async changePassword(oldPassword: string, newPassword: string): Promise<boolean> {
+    public static async changePassword(oldPassword: string, newPassword: string): Promise<boolean> {
         const oldPrivateKey = EC.createPrivateKey(oldPassword);
         const oldPublickey = EC.secp256k1.createPublicKey(oldPrivateKey).toString();
 
@@ -132,7 +136,7 @@ export class Session {
         return true;
     }
 
-    public async logout(): Promise<boolean> {
+    public static async logout(): Promise<boolean> {
         if (!this._access)
             return true;
 
@@ -145,7 +149,7 @@ export class Session {
         return true;
     }
 
-    private async testAccess(access = this._access): Promise<boolean> {
+    private static async testAccess(access = this._access): Promise<boolean> {
         const timestamp = Date.now();
 
         return await this.hasAccessRequest.send({

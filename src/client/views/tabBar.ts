@@ -4,7 +4,7 @@ import { Bar } from "./bar";
 import { Label } from "./label";
 
 export class TabBar extends Bar {
-    public static readonly onItemClicked = new Event<TabBar, number>('TabBar.onItemClicked');
+    public readonly onItemClicked = new Event<TabBar, number>('TabBar.onItemClicked');
 
     constructor(...classes: string[]) {
         super(...classes, 'tab-bar-view');
@@ -34,32 +34,8 @@ export class TabBar extends Bar {
 
         child.isClickable = true;
 
-        View.onClick.on(() => this.selectedIndex = index, { sender: child, listener: this });
-        View.onClick.on(() => TabBar.onItemClicked.emit(this, index), { sender: child, listener: this });
-
-        return index;
-    }
-
-    public removeAllChildren() {
-        View.onClick.off({ listener: this });
-
-        super.removeAllChildren();
-    }
-
-    public removeChildAtIndex(index: number): View {
-        const child = super.removeChildAtIndex(index);
-
-        if (child)
-            View.onClick.off({ sender: child });
-
-        return child;
-    }
-
-    public removeChild(child: View): number {
-        const index = super.removeChild(child);
-
-        if (0 <= index)
-            View.onClick.off({ sender: child });
+        this.onClick.on(() => this.selectedIndex = index);
+        this.onClick.on(() => this.onItemClicked.emit(this, index));
 
         return index;
     }

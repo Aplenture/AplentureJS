@@ -1,9 +1,8 @@
+import { PopupController } from "../utils/popupController";
 import { Session } from "../utils/session";
-import { View } from "../utils/view";
 import { Button } from "../views/button";
 import { TextField, TextFieldType } from "../views/textField";
 import { BodyViewController } from "./bodyViewController";
-import { PopupViewController } from "./popupViewController";
 
 export class PasswordViewController extends BodyViewController {
     public readonly currentPasswordTextField = new TextField('current-password');
@@ -12,15 +11,11 @@ export class PasswordViewController extends BodyViewController {
 
     public readonly changePasswordButton = new Button('change-password');
 
-    public session: Session;
-
     constructor(...classes: string[]) {
         super(...classes, 'password-view-controller');
 
         this.title = '#_password';
-    }
 
-    public init(): void {
         this.contentView.appendChild(this.currentPasswordTextField);
         this.contentView.appendChild(this.newPasswordTextField);
         this.contentView.appendChild(this.repeatPasswordTextField);
@@ -39,26 +34,16 @@ export class PasswordViewController extends BodyViewController {
         this.repeatPasswordTextField.title = '#_repeat_password';
         this.repeatPasswordTextField.type = TextFieldType.Password;
 
-        View.onClick.on(() => this.changePassword(), { sender: this.changePasswordButton, listener: this });
-
-        View.onEnterKey.on(() => this.changePassword(), { sender: this.currentPasswordTextField, listener: this });
-        View.onEnterKey.on(() => this.changePassword(), { sender: this.newPasswordTextField, listener: this });
-        View.onEnterKey.on(() => this.changePassword(), { sender: this.repeatPasswordTextField, listener: this });
-
-        super.init();
+        this.changePasswordButton.onClick.on(() => this.changePassword());
+        this.currentPasswordTextField.onEnterKey.on(() => this.changePassword());
+        this.newPasswordTextField.onEnterKey.on(() => this.changePassword());
+        this.repeatPasswordTextField.onEnterKey.on(() => this.changePassword());
     }
 
-    public async update(): Promise<void> {
+    public async load(): Promise<void> {
         this.clear();
 
-        await super.update();
-    }
-
-    public deinit(): void {
-        View.onClick.off({ listener: this });
-        View.onEnterKey.off({ listener: this });
-
-        super.deinit();
+        await super.load();
     }
 
     public focus(): void {
@@ -73,32 +58,32 @@ export class PasswordViewController extends BodyViewController {
 
     public async changePassword() {
         if (!this.currentPasswordTextField.value) {
-            await PopupViewController.pushMessage('#_current_password_not_set', '#_change_password');
+            await PopupController.pushMessage('#_current_password_not_set', '#_change_password');
             this.currentPasswordTextField.focus();
             return;
         }
 
         if (!this.newPasswordTextField.value) {
-            await PopupViewController.pushMessage('#_new_password_not_set', '#_change_password');
+            await PopupController.pushMessage('#_new_password_not_set', '#_change_password');
             this.newPasswordTextField.focus();
             return;
         }
 
         if (!this.repeatPasswordTextField.value) {
-            await PopupViewController.pushMessage('#_repeat_password_not_set', '#_change_password');
+            await PopupController.pushMessage('#_repeat_password_not_set', '#_change_password');
             this.repeatPasswordTextField.focus();
             return;
         }
 
         if (this.newPasswordTextField.value != this.repeatPasswordTextField.value) {
-            await PopupViewController.pushMessage('#_repeat_password_not_matching', '#_change_password');
+            await PopupController.pushMessage('#_repeat_password_not_matching', '#_change_password');
             this.repeatPasswordTextField.value = '';
             this.repeatPasswordTextField.focus();
             return;
         }
 
-        if (await this.session.changePassword(this.currentPasswordTextField.value, this.newPasswordTextField.value)) {
-            await PopupViewController.pushMessage('#_password_changed', '#_change_password');
+        if (await Session.changePassword(this.currentPasswordTextField.value, this.newPasswordTextField.value)) {
+            await PopupController.pushMessage('#_password_changed', '#_change_password');
             this.clear();
             this.focus();
         }

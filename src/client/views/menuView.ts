@@ -3,7 +3,7 @@ import { View } from "../utils/view";
 import { Label } from "./label";
 
 export class MenuView extends View {
-    public static readonly onItemClicked = new Event<MenuView, number>('MenuView.onItemClicked');
+    public readonly onItemClicked = new Event<MenuView, number>('MenuView.onItemClicked');
 
     constructor(...classes: string[]) {
         super(...classes, 'menu-view');
@@ -33,32 +33,8 @@ export class MenuView extends View {
 
         child.isClickable = true;
 
-        View.onClick.on(() => this.selectedIndex = index, { sender: child, listener: this });
-        View.onClick.on(() => MenuView.onItemClicked.emit(this, index), { sender: child, listener: this });
-
-        return index;
-    }
-
-    public removeAllChildren() {
-        View.onClick.off({ listener: this });
-
-        super.removeAllChildren();
-    }
-
-    public removeChildAtIndex(index: number): View {
-        const child = super.removeChildAtIndex(index);
-
-        if (child)
-            View.onClick.off({ sender: child });
-
-        return child;
-    }
-
-    public removeChild(child: View): number {
-        const index = super.removeChild(child);
-
-        if (0 <= index)
-            View.onClick.off({ sender: child });
+        this.onClick.on(() => this.selectedIndex = index);
+        this.onClick.on(() => this.onItemClicked.emit(this, index));
 
         return index;
     }

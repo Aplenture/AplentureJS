@@ -1,7 +1,7 @@
 import { Event } from "./event";
 
 export class Singleton<T> {
-    public static onInstantiated = new Event<Singleton<any>, any>('Singleton.onInstantiated');
+    public onInstantiated = new Event<Singleton<T>, T>('Singleton.onInstantiated');
 
     private readonly args: any[];
 
@@ -17,7 +17,7 @@ export class Singleton<T> {
 
         this._instance = new this._constructor(...this.args);
 
-        Singleton.onInstantiated.emit(this, this._instance);
+        this.onInstantiated.emit(this, this._instance);
 
         return this._instance;
     }

@@ -2,30 +2,25 @@ import { Singleton } from "./singleton";
 import { Command } from "./command";
 import { Event } from "./event";
 import { Stopwatch } from "./stopwatch";
-import { Help } from "../commands/help";
 import { formatDuration } from "../other/time";
 import { parseArgs } from "../other/text";
-
-const MAX_LENGTH_RESULT = 30;
+import { Help } from "../commands/help";
 
 export const COMMAND_HELP = 'help';
 
 export class Commander {
-    public static readonly onMessage = new Event<Commander, string>('Commander.onMessage');
+    public readonly onMessage = new Event<Commander, string>('Commander.onMessage');
+    public readonly onCommand = new Event<string, string>('Commander.onCommand');
 
-    private readonly _commands: NodeJS.Dict<Singleton<Command<any, any, any, any>>> = {};
+    constructor(public readonly commands: NodeJS.ReadOnlyDict<Singleton<Command<any, any, any, any>>> = {}, addHelpCommand = true) {
+        if (addHelpCommand)
+            (commands[COMMAND_HELP] as any) = new Singleton(Help, null, { commands });
 
-    constructor() {
-        this.addCommand(COMMAND_HELP, Help, null, { commands: this._commands });
+        for (const key in commands)
+            commands[key].onInstantiated.once(instance => instance.onMessage.on(message => this.onCommand.emit(key, message)));
     }
 
-    public get commands(): NodeJS.ReadOnlyDict<Singleton<Command<any, any, any, any>>> { return this._commands; }
-
-    public addCommand<TConfig, TContext, TArgs, TRes>(command: string, _constructor: new (...args: any[]) => Command<TConfig, TContext, TArgs, TRes>, ...args: any[]) {
-        this._commands[command.toLowerCase()] = new Singleton(_constructor, ...args);
-    }
-
-    public execute<TArgs>(command: string, args?: any): Promise<TArgs> {
+    public execute<T>(command: string, args?: any): Promise<T> {
         const data = [];
 
         for (const key in args)
@@ -34,7 +29,7 @@ export class Commander {
         return this.executeCommand(`${command} ${data.join(' ')}`, command, args);
     }
 
-    public executeLine<TArgs>(commandLine: string): Promise<TArgs> {
+    public executeLine<T>(commandLine: string): Promise<T> {
         const split = commandLine.split(' ');
         const command = split[0] || COMMAND_HELP;
         const args = parseArgs(commandLine.substring(command.length));
@@ -43,14 +38,14 @@ export class Commander {
     }
 
     public hasCommand(name: string): boolean {
-        return !!this._commands[name.toLowerCase()];
+        return !!this.commands[name.toLowerCase()];
     }
 
     public getCommand<T extends Command<any, any, any, any>>(name: string): T {
         if (!this.hasCommand(name))
             throw new Error(`unknown command '${name}'`);
 
-        return this._commands[name.toLowerCase()].instance as T;
+        return this.commands[name.toLowerCase()].instance as T;
     }
 
     protected async executeCommand<TRes>(commandLine: string, command: string, args = {}): Promise<TRes> {
@@ -58,10 +53,10 @@ export class Commander {
 
         command = command.toLowerCase();
 
-        if (!this._commands[command])
+        if (!this.commands[command])
             throw new Error(`Unknown command '${command}'. Type '${COMMAND_HELP}' for help.`);
 
-        const instance = this._commands[command].instance;
+        const instance = this.commands[command].instance;
 
         try {
             if (instance.property)
@@ -71,11 +66,11 @@ export class Commander {
             const result = await instance.execute(args);
             stopwatch.stop();
 
-            Commander.onMessage.emit(this, `executed ${commandLine} in (${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })})`);
+            this.onMessage.emit(this, `executed ${commandLine} in (${formatDuration(stopwatch.duration, { seconds: true, milliseconds: true })})`);
 
             return result as TRes;
         } catch (error) {
-            Commander.onMessage.emit(this, `executed ${commandLine} >> ${error.stack}`);
+            this.onMessage.emit(this, `executed ${commandLine} >> ${error.stack}`);
 
             throw error;
         }

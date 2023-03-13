@@ -12,7 +12,7 @@ export abstract class Localization {
 
     public static init(language: string, dictionary: NodeJS.ReadOnlyDict<string> = {}) {
         if (this._initialized)
-            throw new Error('localization already initialized');
+            throw new Error('Localization already initialized');
 
         this._initialized = true;
         this._language = language;

@@ -3,7 +3,7 @@ import { Localization } from "../../core/utils/localization";
 import { View } from "../utils/view";
 
 export class Dropbox extends View {
-    public static readonly onSelected = new Event<Dropbox, number>('Dropbox.onSelected');
+    public readonly onSelected = new Event<Dropbox, number>('Dropbox.onSelected');
 
     protected readonly label = document.createElement('span');
     protected readonly select = document.createElement('select');
@@ -19,7 +19,7 @@ export class Dropbox extends View {
         this.div.appendChild(this.label);
         this.div.appendChild(this.select);
 
-        this.select.addEventListener('change', () => Dropbox.onSelected.emit(this, this.select.selectedIndex));
+        this.select.addEventListener('change', () => this.onSelected.emit(this, this.select.selectedIndex));
     }
 
     public get title(): string { return this.label.innerText; }
