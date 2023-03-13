@@ -10,11 +10,11 @@ export class TableView extends View {
         this.alternatingBackgroundColor = true;
     }
 
-    public get selectedRows(): readonly View[] {
+    public get selectedCells(): readonly View[] {
         return this.findCells().filter(child => child.isSelected);
     }
 
-    public get selectedRowIndices(): readonly number[] {
+    public get selectedCellIndices(): readonly number[] {
         const cells = this.findCells();
 
         return cells

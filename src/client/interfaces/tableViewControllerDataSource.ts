@@ -1,7 +1,7 @@
 import { View } from "../utils/view";
 import { TableViewController } from "../viewControllers/tableViewController";
 
-export interface TableViewControllerSource {
+export interface TableViewControllerDataSource {
     numberOfCategories?(sender: TableViewController): number;
     numberOfCells(sender: TableViewController, category: number): number;
     createHeader?(sender: TableViewController,): View;

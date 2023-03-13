@@ -33,7 +33,12 @@ export abstract class Client {
 
         this._initialized = true;
         this._rootViewController = rootViewController;
-        this._config = await new JSONRequest<void, ClientConfig>(options.configPath || DEFAULT_CONFIG_PATH).send();;
+
+        try {
+            this._config = await new JSONRequest<void, ClientConfig>(options.configPath || DEFAULT_CONFIG_PATH).send();;
+        } catch (error) {
+            throw new Error('Something went wrong while loading the configuration. config.json may be missing.');
+        }
 
         await Window.init(this.config);
         await PopupController.init();

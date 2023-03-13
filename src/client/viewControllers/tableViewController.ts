@@ -1,6 +1,6 @@
 import { TableSelectionMode } from "../enums/tableSelectionMode";
-import { TableViewControllerDelegate } from "../interfaces/tableViewControllerDataDelegate";
-import { TableViewControllerSource } from "../interfaces/tableViewControllerDataSource";
+import { TableViewControllerDelegate } from "../interfaces/tableViewControllerDelegate";
+import { TableViewControllerDataSource } from "../interfaces/tableViewControllerDataSource";
 import { View } from "../utils/view";
 import { ViewController } from "../utils/viewController";
 import { Label } from "../views/label";
@@ -10,7 +10,7 @@ export class TableViewController extends ViewController {
     public readonly titleLabel = new Label('title');
     public readonly tableView = new TableView();
 
-    public source: TableViewControllerSource;
+    public dataSource: TableViewControllerDataSource;
     public delegate: TableViewControllerDelegate;
 
     private _header: View;
@@ -38,14 +38,14 @@ export class TableViewController extends ViewController {
     }
 
     public render() {
-        if (!this.source)
+        if (!this.dataSource)
             throw new Error('missing table view controller data source');
 
-        const numCategories = this.source.numberOfCategories && this.source.numberOfCategories(this) || 1;
+        const numCategories = this.dataSource.numberOfCategories && this.dataSource.numberOfCategories(this) || 1;
 
-        this._header = this.source.createHeader && this.source.createHeader(this);
+        this._header = this.dataSource.createHeader && this.dataSource.createHeader(this);
 
-        this.deselectAllRows();
+        this.deselectAllCells();
 
         this.tableView.removeAllChildren();
 
@@ -53,8 +53,8 @@ export class TableViewController extends ViewController {
             this.tableView.appendHeader(this._header);
 
         for (let category = 0; category < numCategories; ++category) {
-            const numCells = this.source.numberOfCells(this, category);
-            const categoryView = this.source.createCategory && this.source.createCategory(this, category);
+            const numCells = this.dataSource.numberOfCells(this, category);
+            const categoryView = this.dataSource.createCategory && this.dataSource.createCategory(this, category);
 
             if (categoryView)
                 this.tableView.appendCategory(categoryView);
@@ -62,7 +62,7 @@ export class TableViewController extends ViewController {
             for (let row = 0; row < numCells; ++row) {
                 const cell = this.reuseCell(category, row);
 
-                this.source.updateCell(this, cell, row, category);
+                this.dataSource.updateCell(this, cell, row, category);
                 this.tableView.appendCell(cell);
             }
         }
@@ -81,7 +81,7 @@ export class TableViewController extends ViewController {
         return this._cells[category] && this._cells[category][index];
     }
 
-    public isRowSelected(category: number, row: number): boolean {
+    public isCellSelected(category: number, row: number): boolean {
         if (0 > category)
             return;
 
@@ -97,8 +97,8 @@ export class TableViewController extends ViewController {
         return this._cells[category][row].isSelected;
     }
 
-    public deselectAllRows(): void {
-        this.tableView.selectedRows.forEach(cell => {
+    public deselectAllCells(): void {
+        this.tableView.selectedCells.forEach(cell => {
             cell.isSelected = false;
 
             if (this.delegate && this.delegate.deselectedCell)
@@ -106,8 +106,8 @@ export class TableViewController extends ViewController {
         });
     }
 
-    public deselectRow(category: number, row: number): void {
-        if (!this.isRowSelected(category, row))
+    public deselectCell(category: number, row: number): void {
+        if (!this.isCellSelected(category, row))
             return;
 
         const cell = this._cells[category][row];
@@ -118,7 +118,7 @@ export class TableViewController extends ViewController {
             this.delegate.deselectedCell(this, cell);
     }
 
-    public selectRow(category: number, row: number): void {
+    public selectCell(category: number, row: number): void {
         if (this.selectionMode == TableSelectionMode.None)
             return;
 
@@ -134,13 +134,13 @@ export class TableViewController extends ViewController {
         if (row >= this._cells[category].length)
             return;
 
-        if (this.isRowSelected(category, row))
+        if (this.isCellSelected(category, row))
             return;
 
         const cell = this._cells[category][row];
 
         if (this.selectionMode == TableSelectionMode.Single)
-            this.deselectAllRows();
+            this.deselectAllCells();
 
         if (this.selectionMode != TableSelectionMode.Clickable)
             cell.isSelected = true;
@@ -162,7 +162,7 @@ export class TableViewController extends ViewController {
     }
 
     private createCell(category: number, row: number): View {
-        const cell = this.source.createCell(this, category);
+        const cell = this.dataSource.createCell(this, category);
 
         cell.isClickable = this.selectionMode != TableSelectionMode.None;
 
@@ -170,10 +170,10 @@ export class TableViewController extends ViewController {
             if (this.selectionMode == TableSelectionMode.None)
                 return;
 
-            if (this.isRowSelected(category, row))
-                this.deselectRow(category, row);
+            if (this.isCellSelected(category, row))
+                this.deselectCell(category, row);
             else
-                this.selectRow(category, row);
+                this.selectCell(category, row);
         });
 
         return cell;

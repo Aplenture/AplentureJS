@@ -1,8 +1,10 @@
 export * from "./enums/tableSelectionMode";
 
+export * from "./interfaces/gridViewControllerDelegate";
+export * from "./interfaces/gridViewControllerDataSource";
 export * from "./interfaces/navigationViewController";
-export * from "./interfaces/tableViewControllerDataDelegate";
 export * from "./interfaces/tableViewControllerDataSource";
+export * from "./interfaces/tableViewControllerDelegate";
 
 export * from "./models/clientConfig";
 export * from "./models/route";
@@ -26,6 +28,7 @@ export * from "./utils/window";
 
 export * from "./viewControllers/bodyViewController";
 export * from "./viewControllers/containerViewController";
+export * from "./viewControllers/gridViewController";
 export * from "./viewControllers/loginViewController";
 export * from "./viewControllers/logoutViewController";
 export * from "./viewControllers/passwordViewController";
@@ -36,6 +39,7 @@ export * from "./views/bar";
 export * from "./views/button";
 export * from "./views/canvas";
 export * from "./views/dropbox";
+export * from "./views/gridView";
 export * from "./views/imageView";
 export * from "./views/label";
 export * from "./views/menuView";
